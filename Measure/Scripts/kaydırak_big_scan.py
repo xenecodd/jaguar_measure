@@ -1,0 +1,119 @@
+import numpy as np
+import open3d as o3d
+import matplotlib.pyplot as plt
+from scipy.optimize import leastsq
+from MecheyePackage import edges
+
+# Çember fitting için yardımcı fonksiyonlar
+def calc_radius(xc, yc, x, y):
+    return np.sqrt((x - xc)**2 + (y - yc)**2)
+
+def cost_function(params, x, y):
+    xc, yc, r = params
+    return calc_radius(xc, yc, x, y) - r
+
+def initial_guess(x, y):
+    xc = np.mean(x)
+    yc = np.mean(y)
+    r = np.mean(np.sqrt((x - xc)**2 + (y - yc)**2))
+    return [xc, yc, r]
+
+def kaydırak(points, b_vertical=None, datum_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=57.67):
+    """
+    Nokta bulutu üzerinde kaydırma, filtreleme ve çember fitting işlemleri yapar.
+
+    Parameters:
+    - points: numpy.ndarray, giriş nokta bulutu (Nx3 boyutunda).
+    - y_divisor: float, Y ekseninde filtreleme için bölme faktörü.
+    - delta_y: float, X ekseni için filtreleme genişliği.
+    - crc_l: float, Y ekseninde filtreleme uzunluğu.
+
+    Returns:
+    - yc, zc: float, fitted circle'ın merkezi koordinatları.
+    - r_outer: float, fitted circle'ın yarıçapı.
+    """
+    
+    z67_1 = 0
+    
+    # Y eksenini ters çevir
+    points[:, 1] = -points[:, 1]
+    
+    # Minimum değerleri çıkararak noktaları kaydır
+    min_vals = np.min(points, axis=0)
+    points -= min_vals
+            
+
+    # Min ve max değerleri hesapla
+    x_min, x_max = np.min(points[:, 0]), np.max(points[:, 0])
+    y_min, y_max = np.min(points[:, 1]), np.max(points[:, 1])
+    z_min, z_max = np.min(points[:, 2]), np.max(points[:, 2])
+
+    # Y ve Z ekseni filtreleme sınırlarını belirle
+    y_min_filter = y_min + (y_divisor * (y_max - y_min)) - 2
+    y_max_filter = y_min_filter + crc_l
+    x_center = (x_min + x_max) / 2
+
+    z_min_filter = z_min + 0.05 * (z_max - z_min)
+    z_max_filter = z_min_filter + 100
+
+    # Filtreleme işlemi
+    filtered_points = points[
+        (points[:, 0] > x_center - delta_y) &
+        (points[:, 0] < x_center + delta_y) &
+        (points[:, 1] > y_min_filter) &
+        (points[:, 1] < y_max_filter)
+    ]
+
+    # Kenar işleme (2D)
+    projected_points_2d = edges.process_and_visualize(filtered_points[:, [1, 2]])
+    # projected_points_2d = filtered_points[:, [1, 2]]
+    # Çember fitting için 2D koordinatlar
+    scale= edges.get_scale()
+    y_2d, z_2d = projected_points_2d[:, 1] / scale, projected_points_2d[:, 0] / scale
+    
+    if b_vertical:
+        b_vertical= - b_vertical
+        b_vertical= b_vertical - min_vals[1]
+        l_79_73 = np.max(y_2d) - b_vertical
+        print("l_79_73",l_79_73)
+    
+    
+    # Başlangıç tahmini ve fitting işlemi
+    guess = initial_guess(y_2d, z_2d)
+    result, _ = leastsq(cost_function, guess, args=(y_2d, z_2d))
+    yc, zc, r_outer = result
+
+    print(f"Seçilen çemberin merkezi: ({yc:.2f}, {zc:.2f}), Yarıçap: {r_outer:.2f}")
+    
+    # Çember noktalarını oluştur
+    theta = np.linspace(0, 2 * np.pi, 100)
+    circle_y = yc + r_outer * np.cos(theta)
+    circle_z = zc + r_outer * np.sin(theta)
+    
+    if datum_vertical:
+        datum_vertical = datum_vertical - min_vals[2]
+        z67_1= zc-datum_vertical
+    # Görselleştirme
+    plt.figure(figsize=(8, 8))
+    plt.scatter(points[:,1], points[:,2], color='green', label='Noktalar')
+    plt.scatter(y_2d, z_2d, color='blue', label='Noktalar')
+    plt.plot(circle_y, circle_z, color='red', label=f'Fitted Circle (r={r_outer:.2f})')
+    plt.title("Y-Z Düzleminde Nokta Bulutu ve Çember Fitting")
+    plt.xlabel("Y")
+    plt.ylabel("Z")
+    plt.axis('equal')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    # # Open3D ile 3D görselleştirme
+    filtered_pcd = o3d.geometry.PointCloud()
+    filtered_pcd.points = o3d.utility.Vector3dVector(points)
+    filtered_pcd.paint_uniform_color([0, 0, 1])  # Mavi renk
+
+    # Filtrelenmiş noktaları kaydetme
+    filtered_pcd_path = "/home/rog/Documents/scanner/transform/scripts/filtered_points.ply"
+    o3d.io.write_point_cloud(filtered_pcd_path, filtered_pcd)
+    print(f"Filtrelenmiş noktalar kaydedildi: {filtered_pcd_path}")
+
+    return yc, zc, r_outer, z67_1
