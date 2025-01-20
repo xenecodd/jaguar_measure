@@ -4,7 +4,7 @@ from mecheye.profiler import *
 from mecheye.profiler_utils import *
 
 profiler = Profiler()
-status = profiler.connect("192.168.23.200", 5000)
+status = profiler.connect("192.168.23.19", 5000)
 if status.is_ok:
     print("bağlantı başarılı")
 else:

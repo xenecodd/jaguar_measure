@@ -50,13 +50,13 @@ def arm_horn_lengths(points, b_vertical=None):
         print("Uyarı: Filtrelenmiş nokta bulutlarından biri boş!")
 
     # Filtrelenmiş noktaları PointCloud olarak kaydet
-    def save_filtered_point_cloud(points_array, file_path):
-        if points_array.size > 0:
-            pcd = o3d.geometry.PointCloud()
-            pcd.points = o3d.utility.Vector3dVector(points_array)
-            o3d.io.write_point_cloud(file_path, pcd)
-        else:
-            print(f"'{file_path}' boş bir veri içeriyor, kaydedilmedi.")
+    # def save_filtered_point_cloud(points_array, file_path):
+    #     if points_array.size > 0:
+    #         pcd = o3d.geometry.PointCloud()
+    #         pcd.points = o3d.utility.Vector3dVector(points_array)
+    #         o3d.io.write_point_cloud(file_path, pcd)
+    #     else:
+    #         print(f"'{file_path}' boş bir veri içeriyor, kaydedilmedi.")
             
     # Filtrelenmiş noktaları kaydet
     # save_filtered_point_cloud(filtered_points, "filtered_points.ply")
@@ -67,3 +67,4 @@ def arm_horn_lengths(points, b_vertical=None):
 
     l_248 = b_vertical-np.min(end_length[:,1])
     print("l_248",l_248)
+    return l_248

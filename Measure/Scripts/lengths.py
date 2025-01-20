@@ -9,7 +9,7 @@ def get_40(points):
 
 
 
-def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8):
+def horn_diff(pcd, y_offset_low=60, y_offset_high=100, z_threshold=8):
     """
     Nokta bulutunun X-Y düzlemindeki sol ve sağ bölgesini analiz eder ve farkları görselleştirir.
 
@@ -22,6 +22,7 @@ def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8):
     Returns:
     - x_difference: float, sol ve sağ bölge arasındaki X farkı.
     """
+    points = np.asarray(pcd).copy()
     # Medyan ve Y-Z eksenindeki filtreleme aralıkları
     median = np.median(points[:, 0])
     y_min, y_max = np.min(points[:, 1]) + y_offset_low, np.min(points[:, 1]) + y_offset_high
@@ -48,10 +49,10 @@ def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8):
         
         if difference > 1:
             ok = False
-            print("17", difference)
+            print("feature14", difference)
         else:
             ok = True
-            print("17", difference)
+            print("feature14", difference)
     
     
     # Görselleştirme
@@ -90,7 +91,7 @@ def filter_and_visualize_projection_with_ply(points, output_file_filtered='filte
         (points[:, 0] > median - 1) &
         (points[:, 1] < y_max) &
         (points[:, 1] > y_max - 50) &
-        (points[:, 2] > z_max - 15)
+        (points[:, 2] > z_max - 10)
     ]
 
     # Y eksenindeki yüksekliği hesapla (l_7_1)

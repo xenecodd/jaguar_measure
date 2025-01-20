@@ -11,28 +11,23 @@ class CircleFitter:
         """
         CircleFitter sınıfı, verilen nokta bulutu (pcd) üzerinde çember fitting işlemleri yapar.
         """
-        self.pcd = pcd  # Nokta bulutunu numpy dizisine dönüştür
-        self.commonp = None  # Şeritteki maksimum Y değeri
+        self.pcd = pcd
+        self.pcd[:,1] -= np.min(self.pcd[:,1])
+        self.commonp = None
+        self.datum = self.get_datum()  # Initialize datum
 
-    def min_max_y_in_strip(self, strip_width=0.5):
+
+    def max_y_strip(self):
         """
-        X ekseninde orta noktadan geçen şeritteki Y değerinin maksimum ve minimum değerini
-        sağlayan noktaların XYZ koordinatlarını bulur.
+        Şerit içindeki noktaların minimum ve maksimum Y koordinatlarını döndürür.
         """
-        x_center = (np.min(self.pcd[:, 0]) + np.max(self.pcd[:, 0])) / 2
-        strip_points = self.pcd[np.abs(self.pcd[:, 0] - x_center) < strip_width / 2]
-        if len(strip_points) == 0:
+        points = self.pcd
+        x_center = (np.min(points[:, 0]) + np.max(points[:, 0])) / 2  # Y eksenindeki orta nokta
+        strip_points = points[np.abs(points[:, 0] - x_center) < 5]  # Şeritteki noktaları seç
+        if len(strip_points) == 0:  
             raise ValueError("Şerit içinde nokta bulunamadı.")
-        
-        # Y ekseninde maksimum ve minimum değerleri sağlayan noktalar
-        max_idx = np.argmax(strip_points[:, 1])
-        
-        self.commonp = strip_points[max_idx]  # Y max noktasının XYZ koordinatları
-        self.datum = np.min(strip_points[:,1])
-        
-        return self.commonp, self.datum
+        return np.max(strip_points[:, 1])
 
-    
     def get_B(self, strip_width=20):
         points = self.pcd
         y_center = (np.min(points[:, 1]) + np.max(points[:, 1])) / 2  # Y eksenindeki orta nokta
@@ -42,15 +37,25 @@ class CircleFitter:
         return np.max(strip_points[:, 2])
     
     def get_datum(self):
+        strip_width = 1
+        x_center = np.median(self.pcd[:, 0])
+        strip_points = self.pcd[np.abs(self.pcd[:, 0] - x_center) < strip_width / 2]
+        self.datum = np.min(strip_points[:,1])
+
         return self.datum
     
-    def get_commonp(self):
+    def get_distance(self):
         """
-        Şeritteki maksimum Y değerini döner.
+        Çember merkezinin doğru noktaya öklid mesafesini hesaplar.
         """
-        if self.commonp is None:
-            raise ValueError("commonp değeri henüz hesaplanmadı. max_y_in_strip çağrılmalı.")
-        return self.commonp
+        xc_outer, zc_outer = self.xc_outer_2, self.zc_outer_2
+        median = np.median(self.pcd[:, 0])
+        z_center = self.datum + 102.1
+        distance = np.hypot(xc_outer - median, zc_outer - z_center)
+        ok = distance < 3
+        print("merkez uzaklık_3mm", distance)
+        return distance, ok
+    
 
     def fit_circle(self, x, y):
         """
@@ -73,17 +78,15 @@ class CircleFitter:
         result, _ = leastsq(cost_function, guess, args=(x, y))
         return result  # xc, yc, r
 
-    def fit_circles_and_plot(self, z_1_3=102.1):
+    def fit_circles_and_plot(self):
         """
         Nokta bulutunun X-Z düzleminde çember fitting işlemlerini gerçekleştirir ve görselleştirir.
         """
         try:
-            self.min_max_y_in_strip()  # Şeritteki max Y değerini hesapla
-            print(f"Şeritteki max Y: {self.commonp}")
             print(f"B: {self.get_B()}")
             # X-Z düzlemine projekte edilen noktalar
             projected_points_2d = self.pcd[:, [0, 1]]
-
+            
             # Y ekseninde üst yarıda kalan noktaları filtrele
             y_median = np.median(projected_points_2d[:, 1])  # Y ekseni için median değer
             upper_half_points = projected_points_2d
@@ -128,6 +131,7 @@ class CircleFitter:
             x_outer_circle_2 = xc_outer_2 + r_outer_2 * np.cos(theta)
             z_outer_circle_2 = zc_outer_2 + r_outer_2 * np.sin(theta)
 
+
             plt.figure(figsize=(8, 8))
             plt.scatter(x2d, z2d, s=1, color='blue', label='Noktalar')
             plt.plot(x_outer_circle, z_outer_circle, color='red', label=f'Çember 1 (R = {r_outer:.2f})')
@@ -143,20 +147,12 @@ class CircleFitter:
             print(f"Çember 2 Merkezi: ({xc_outer_2:.2f}, {zc_outer_2:.2f}), Yarıçap: {r_outer_2:.2f}")
             print(f"ALT Çember merkezi tabana uzaklığı: ({zc_outer-self.datum})")
             print(f"ÜST Çember merkezi tabana uzaklığı: ({zc_outer_2-self.datum})")
-            
-            median =np.median(self.pcd[:,0])
-            z_center = self.datum + z_1_3
-            distance = np.sqrt((xc_outer - median)**2 + (zc_outer - z_center)**2)
-            if (distance<3):
-                ok = True
-                print("merkez uzaklık_3mm",distance)
-            else:
-                ok = False
-                print("merkez uzaklık_3mm",distance)
-            return (xc_outer, zc_outer, r_outer), (xc_outer_2, zc_outer_2, r_outer_2),ok
+                        
+            self.xc_outer_2, self.zc_outer_2, self.r_outer_2 = xc_outer_2, zc_outer_2, r_outer_2
+
+            return (xc_outer, zc_outer, r_outer), (xc_outer_2, zc_outer_2, r_outer_2)
         except Exception as e:
             print(f"Hata: {e}")
-
 
 
 def save_3d_filter_box_as_point_cloud(file_path, x_min, x_max, y_min, y_max, z_min, z_max):

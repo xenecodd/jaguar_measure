@@ -36,7 +36,7 @@ def process_and_visualize(points):
     # Kenarların koordinatlarını çıkar
     edge_coords = np.column_stack(np.where(edges > 0))  # Kenar piksellerinin koordinatları
 
-    # # Görselleştirme
+    # Görselleştirme
     # plt.figure(figsize=(12, 6))
     # plt.subplot(1, 2, 1)
     # plt.title("Orijinal Noktalar")

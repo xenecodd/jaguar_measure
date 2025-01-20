@@ -18,7 +18,7 @@ def initial_guess(x, y):
     r = np.mean(np.sqrt((x - xc)**2 + (y - yc)**2))
     return [xc, yc, r]
 
-def kaydırak(points, b_vertical=None, datum_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=57.67):
+def kaydırak(pcd, b_vertical=None, datum_vertical=None, y_divisor=0.22, delta_y=0.5, crc_l=57.67):
     """
     Nokta bulutu üzerinde kaydırma, filtreleme ve çember fitting işlemleri yapar.
 
@@ -33,7 +33,8 @@ def kaydırak(points, b_vertical=None, datum_vertical=None, y_divisor=0.21, delt
     - r_outer: float, fitted circle'ın yarıçapı.
     """
     
-    z67_1 = 0
+    points = np.asarray(pcd).copy()
+    l79_73 = 0
     
     # Y eksenini ters çevir
     points[:, 1] = -points[:, 1]
@@ -71,12 +72,6 @@ def kaydırak(points, b_vertical=None, datum_vertical=None, y_divisor=0.21, delt
     scale= edges.get_scale()
     y_2d, z_2d = projected_points_2d[:, 1] / scale, projected_points_2d[:, 0] / scale
     
-    if b_vertical:
-        b_vertical= - b_vertical
-        b_vertical= b_vertical - min_vals[1]
-        l_79_73 = np.max(y_2d) - b_vertical
-        print("l_79_73",l_79_73)
-    
     
     # Başlangıç tahmini ve fitting işlemi
     guess = initial_guess(y_2d, z_2d)
@@ -84,6 +79,12 @@ def kaydırak(points, b_vertical=None, datum_vertical=None, y_divisor=0.21, delt
     yc, zc, r_outer = result
 
     print(f"Seçilen çemberin merkezi: ({yc:.2f}, {zc:.2f}), Yarıçap: {r_outer:.2f}")
+
+    if b_vertical:
+        b_vertical= - b_vertical
+        b_vertical= b_vertical - min_vals[1]
+        l79_73 =  yc - b_vertical
+        print("l_79_73",l79_73)
     
     # Çember noktalarını oluştur
     theta = np.linspace(0, 2 * np.pi, 100)
@@ -107,13 +108,13 @@ def kaydırak(points, b_vertical=None, datum_vertical=None, y_divisor=0.21, delt
     plt.show()
 
     # # Open3D ile 3D görselleştirme
-    filtered_pcd = o3d.geometry.PointCloud()
-    filtered_pcd.points = o3d.utility.Vector3dVector(points)
-    filtered_pcd.paint_uniform_color([0, 0, 1])  # Mavi renk
+    # filtered_pcd = o3d.geometry.PointCloud()
+    # filtered_pcd.points = o3d.utility.Vector3dVector(points)
+    # filtered_pcd.paint_uniform_color([0, 0, 1])  # Mavi renk
 
-    # Filtrelenmiş noktaları kaydetme
-    filtered_pcd_path = "/home/rog/Documents/scanner/transform/scripts/filtered_points.ply"
-    o3d.io.write_point_cloud(filtered_pcd_path, filtered_pcd)
-    print(f"Filtrelenmiş noktalar kaydedildi: {filtered_pcd_path}")
+    # # Filtrelenmiş noktaları kaydetme
+    # filtered_pcd_path = "/home/rog/Documents/scanner/transform/scripts/filtered_points.ply"
+    # o3d.io.write_point_cloud(filtered_pcd_path, filtered_pcd)
+    # print(f"Filtrelenmiş noktalar kaydedildi: {filtered_pcd_path}")
 
-    return yc, zc, r_outer, z67_1
+    return yc, zc, r_outer, l79_73

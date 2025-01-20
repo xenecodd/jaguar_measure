@@ -1,0 +1,12 @@
+# Python bytecode files
+__pycache__/
+*.pyc
+
+# PLY files
+*.ply
+
+# Excel files
+*.xlsx
+
+# STL files
+*.stl

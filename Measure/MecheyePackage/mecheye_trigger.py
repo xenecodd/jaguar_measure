@@ -8,7 +8,11 @@ from time import sleep
 from multiprocessing import Lock
 from .robot_control import send_command,login
 import threading
-from time import sleep
+import sys
+sys.path.append('/home/eypan/Downloads/')
+import Robot # type: ignore
+
+robot = Robot.RPC('192.168.58.2')
 
 mutex = Lock()
 
@@ -222,44 +226,12 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         # Komutları gönder
         send_command({"cmd": 105, "data": {"name": lua_name}})
 
-        if lua_name == "SCAN.lua":
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(p2,100,-1,0,0)"}})
-            sleep(3)
-            send_command({"cmd": 303, "data": {"mode": "0"}})
-            send_command({"cmd":101,"data":{}})
-            status = self.profiler.start_acquisition()
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            if self.is_software_trigger:
-                status = self.profiler.trigger_software()
-                
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            while True:
-                mutex.acquire()
-                if self.callback.profile_batch.is_empty():
-                    mutex.release()
-                    sleep(0.5)
-                else:
-                    mutex.release()
-                    break
-
-            status = self.profiler.stop_acquisition()
-            if not status.is_ok():
-                show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)
-
-        if lua_name == "musti.lua":
+        
+        if lua_name == "small.lua":
             send_command({"cmd": 303, "data": {"mode": "1"}})
-            # İlk tarama işlemi
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(p30,100,-1,0,0)"}})
-            sleep(5)
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(p31,100,-1,0,0)"}})
-            
+
+            send_command({"cmd": 1001, "data": {"pgline": "Lin(scrc2,100,-1,0,0)"}})
+
             status = self.profiler.start_acquisition()
             if not status.is_ok():
                 show_error(status)
@@ -271,76 +243,6 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             if not status.is_ok():
                 show_error(status)
                 return False
-            sleep(5)
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(p30,100,-1,0,0)"}})
-            while True:
-                mutex.acquire()
-                if self.callback.profile_batch.is_empty():
-                    mutex.release()
-                    sleep(0.5)
-                else:
-                    mutex.release()
-                    break
-
-            status = self.profiler.stop_acquisition()
-            if not status.is_ok():
-                show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)
-
-        elif lua_name == "191.lua":
-            send_command({"cmd": 303, "data": {"mode": "1"}})
-            # Tarama komutlarını sırasıyla gönder
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(p191,100,-1,0,0)"}})
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(p192,100,-1,0,0)"}})
-            status = self.profiler.start_acquisition()
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            if self.is_software_trigger:
-                status = self.profiler.trigger_software()
-                
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            # Profil veri toplama işlemi
-            while True:
-                mutex.acquire()
-                if self.callback.profile_batch.is_empty():
-                    mutex.release()
-                    sleep(0.5)
-                else:
-                    mutex.release()
-                    break
-
-            status = self.profiler.stop_acquisition()
-            if not status.is_ok():
-                show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)
-
-            # Son komut
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(p30,100,-1,0,0)"}})
-            
-        elif lua_name == "vertical.lua":
-            send_command({"cmd": 303, "data": {"mode": "1"}})
-            send_command({"cmd":1001,"data":{"pgline":"PTP(V1,100,-1,0)"}})
-            sleep(7)
-            # Tarama komutlarını sırasıyla gönder
-            status = self.profiler.start_acquisition()
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            if self.is_software_trigger:
-                status = self.profiler.trigger_software()
-                
-            if not status.is_ok():
-                show_error(status)
-                return False
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(V2,100,-1,0,0)"}})
-            sleep(5)
-            send_command({"cmd":1001,"data":{"pgline":"PTP(H2,100,-1,0)"}})
             # send_command({"cmd": 1001, "data": {"pgline": "Lin(V1,100,-1,0,0)"}})
             # Profil veri toplama işlemi
             while True:
@@ -352,15 +254,23 @@ class TriggerWithExternalDeviceAndFixedRate(object):
                     mutex.release()
                     break
 
+            # point_H2 = [-585, 60, 445.005, -84.703, -89.947, 174.614]
+
+            # robot.MoveCart(point_H2, 0, 0)
+
             status = self.profiler.stop_acquisition()
+
+            h_2 = [-24.92808729115099, -56.15732325185643, 80.42666595761139, -204.25672474474, 24.83976156404703, -89.95757754486387]
+            ret = robot.MoveJ(h_2, 0, 0, vel=100)
+
             if not status.is_ok():
                 show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)  
+            self.profile_batch.append(self.callback.profile_batch)
              
         elif lua_name == "horizontal.lua":
-            sleep(3)
             send_command({"cmd": 303, "data": {"mode": "1"}})
-            # Tarama komutlarını sırasıyla gönder
+            send_command({"cmd": 1001, "data": {"pgline": "Lin(H1,100,-1,0,0)"}})
+
             status = self.profiler.start_acquisition()
             if not status.is_ok():
                 show_error(status)
@@ -372,11 +282,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             if not status.is_ok():
                 show_error(status)
                 return False
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(H1,100,-1,0,0)"}})
-            sleep(6)
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(H2,100,-1,0,0)"}})
 
-            # send_command({"cmd": 1001, "data": {"pgline": "Lin(V1,100,-1,0,0)"}})
             # Profil veri toplama işlemi
             while True:
                 mutex.acquire()
@@ -386,12 +292,49 @@ class TriggerWithExternalDeviceAndFixedRate(object):
                 else:
                     mutex.release()
                     break
-
             status = self.profiler.stop_acquisition()
+
+            p_91 = [-26.72701693997524, -99.22372950185644, 114.794728496287, -195.5716516475866, -63.27189530476485, -0.00021755105198019808]
+            ret = robot.MoveJ(p_91, 0, 0, vel=100)
             if not status.is_ok():
                 show_error(status)
             self.profile_batch.append(self.callback.profile_batch)    
                 
+        elif lua_name == "vertical.lua":
+            send_command({"cmd": 303, "data": {"mode": "1"}})
+                
+            send_command({"cmd": 1001, "data": {"pgline": "Lin(90,100,-1,0,0)"}})
+            # Tarama komutlarını sırasıyla gönder
+            status = self.profiler.start_acquisition()
+            if not status.is_ok():
+                show_error(status)
+                return False
+
+            if self.is_software_trigger:
+                status = self.profiler.trigger_software()
+                
+            if not status.is_ok():
+                show_error(status)
+                return False
+            # send_command({"cmd": 1001, "data": {"pgline": "Lin(V1,100,-1,0,0)"}})
+            # Profil veri toplama işlemi
+            while True:
+                mutex.acquire()
+                if self.callback.profile_batch.is_empty():
+                    mutex.release()
+                    sleep(0.5)
+                else:
+                    mutex.release()
+                    break
+
+            status = self.profiler.stop_acquisition()
+
+            scrc = [-5.9326171875, -74.58998878403466, 91.40015857054455, -196.742946511448, 5.83406656095297, 89.98324856899752]
+            ret = robot.MoveJ(scrc, 0, 0, vel=100)
+            
+            if not status.is_ok():
+                show_error(status)
+            self.profile_batch.append(self.callback.profile_batch)  
         return True
 
 
