@@ -55,29 +55,29 @@ def horn_diff(pcd, y_offset_low=60, y_offset_high=100, z_threshold=8):
             print("feature14", difference)
     
     
-    # Görselleştirme
-    plt.figure(figsize=(8, 8))
-    plt.scatter(points[:, 0], points[:, 1], s=1, color='blue', alpha=0.5, label='Object')
-    plt.scatter(left[:, 0], left[:, 1], s=10, color='green', label='Left')
-    plt.scatter(right[:, 0], right[:, 1], s=10, color='red', label='Right')
-    plt.title("X-Y Düzleminde Boynuz Farkları")
-    plt.xlabel("X")
-    plt.ylabel("Y")
-    plt.axis('equal')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+    # # Görselleştirme
+    # plt.figure(figsize=(8, 8))
+    # plt.scatter(points[:, 0], points[:, 1], s=1, color='blue', alpha=0.5, label='Object')
+    # plt.scatter(left[:, 0], left[:, 1], s=10, color='green', label='Left')
+    # plt.scatter(right[:, 0], right[:, 1], s=10, color='red', label='Right')
+    # plt.title("X-Y Düzleminde Boynuz Farkları")
+    # plt.xlabel("X")
+    # plt.ylabel("Y")
+    # plt.axis('equal')
+    # plt.legend()
+    # plt.grid(True)
+    # plt.show()
 
     # X farkını hesapla
     if len(left) > 0 and len(right) > 0:
-        return np.min(right[:, 0]) - np.max(left[:, 0]),ok
+        return np.min(right[:, 0]) - np.max(left[:, 0]),difference
     else:
         print("Sol veya sağ bölge için yeterli nokta yok.")
         return 0
 
 
 
-def filter_and_visualize_projection_with_ply(points, output_file_filtered='filtered_points.ply', output_file_all='all_points.ply'):
+def filter_and_visualize_projection_with_ply(points, datum_horizontal=None):
     # X ekseninde ortadaki bölgeyi seç
     median = np.median(points[:, 0])
 
@@ -91,12 +91,13 @@ def filter_and_visualize_projection_with_ply(points, output_file_filtered='filte
         (points[:, 0] > median - 1) &
         (points[:, 1] < y_max) &
         (points[:, 1] > y_max - 50) &
-        (points[:, 2] > z_max - 10)
+        (points[:, 2] > z_max - 12)
     ]
 
-    # Y eksenindeki yüksekliği hesapla (l_7_1)
     l_7_1 = np.max(projected_points_2d[:, 1]) - np.min(projected_points_2d[:, 1])
-
+    print("l_7_1:", l_7_1)
+    l_88_6 = np.max(projected_points_2d[:, 1]) - datum_horizontal
+    l_81_5 = np.min(projected_points_2d[:, 1]) - datum_horizontal
     # Görselleştirme
     plt.figure(figsize=(8, 8))
     plt.scatter(points[:, 2], points[:, 1], color='red', s=1, label="All Points (Y-Z Proj.)")
@@ -109,5 +110,5 @@ def filter_and_visualize_projection_with_ply(points, output_file_filtered='filte
     plt.grid(True)
     plt.show()
 
-    return l_7_1
+    return l_88_6,l_81_5
 

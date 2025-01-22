@@ -10,7 +10,7 @@ def arm_horn_lengths(points, b_vertical=None):
     # print(min_x, min_y, min_z)
 
     val_y = 0.1
-    val_z = 0.27
+    val_z = 0.25
     # Hesaplamalar: Bölme değerlerini kullanarak filtreleme parametrelerini dinamik hale getirme
 
     y_min = min_y + val_y * (max_y - min_y)

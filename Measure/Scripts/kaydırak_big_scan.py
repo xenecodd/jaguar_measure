@@ -18,7 +18,7 @@ def initial_guess(x, y):
     r = np.mean(np.sqrt((x - xc)**2 + (y - yc)**2))
     return [xc, yc, r]
 
-def kaydırak(pcd, b_vertical=None, datum_vertical=None, y_divisor=0.22, delta_y=0.5, crc_l=57.67):
+def kaydırak(pcd, b_vertical=None, y_divisor=0.22, delta_y=0.5, crc_l=57.67):
     """
     Nokta bulutu üzerinde kaydırma, filtreleme ve çember fitting işlemleri yapar.
 
@@ -91,21 +91,22 @@ def kaydırak(pcd, b_vertical=None, datum_vertical=None, y_divisor=0.22, delta_y
     circle_y = yc + r_outer * np.cos(theta)
     circle_z = zc + r_outer * np.sin(theta)
     
-    if datum_vertical:
-        datum_vertical = datum_vertical - min_vals[2]
-        z67_1= zc-datum_vertical
-    # Görselleştirme
-    plt.figure(figsize=(8, 8))
-    plt.scatter(points[:,1], points[:,2], color='green', label='Noktalar')
-    plt.scatter(y_2d, z_2d, color='blue', label='Noktalar')
-    plt.plot(circle_y, circle_z, color='red', label=f'Fitted Circle (r={r_outer:.2f})')
-    plt.title("Y-Z Düzleminde Nokta Bulutu ve Çember Fitting")
-    plt.xlabel("Y")
-    plt.ylabel("Z")
-    plt.axis('equal')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+    # if datum_vertical:
+    #     datum_vertical = datum_vertical - min_vals[2]
+    #     z67_1= zc-datum_vertical
+
+    # # Görselleştirme
+    # plt.figure(figsize=(8, 8))
+    # plt.scatter(points[:,1], points[:,2], color='green', label='Noktalar')
+    # plt.scatter(y_2d, z_2d, color='blue', label='Noktalar')
+    # plt.plot(circle_y, circle_z, color='red', label=f'Fitted Circle (r={r_outer:.2f})')
+    # plt.title("Y-Z Düzleminde Nokta Bulutu ve Çember Fitting")
+    # plt.xlabel("Y")
+    # plt.ylabel("Z")
+    # plt.axis('equal')
+    # plt.legend()
+    # plt.grid(True)
+    # plt.show()
 
     # # Open3D ile 3D görselleştirme
     # filtered_pcd = o3d.geometry.PointCloud()
