@@ -294,8 +294,8 @@ class TriggerWithExternalDeviceAndFixedRate(object):
                     break
             status = self.profiler.stop_acquisition()
 
-            p_91 = [-26.72701693997524, -99.22372950185644, 114.794728496287, -195.5716516475866, -63.27189530476485, -0.00021755105198019808]
-            ret = robot.MoveJ(p_91, 0, 0, vel=100)
+            h1_alt = [-534.997802734375, -100.006637573242, 515.0164184570312, -82.3712692260742, -89.94773864746092, 172.2822875976562]
+            ret = robot.MoveCart(h1_alt, 0, 0, vel=100)
             if not status.is_ok():
                 show_error(status)
             self.profile_batch.append(self.callback.profile_batch)    
@@ -335,6 +335,39 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             if not status.is_ok():
                 show_error(status)
             self.profile_batch.append(self.callback.profile_batch)  
+
+        elif lua_name == "horizontal2.lua":
+            send_command({"cmd": 303, "data": {"mode": "1"}})
+            
+            status = self.profiler.start_acquisition()
+            if not status.is_ok():
+                show_error(status)
+                return False
+
+            if self.is_software_trigger:
+                status = self.profiler.trigger_software()
+                
+            if not status.is_ok():
+                show_error(status)
+                return False
+            h2_alt = [-535.0000610351562, 79.98582458496092, 515.0106811523437, -85.15757751464842, -89.94584655761717, 175.070556640625]
+            robot.MoveL(h2_alt, 0, 0, vel=100)
+            # Profil veri toplama işlemi
+            while True:
+                mutex.acquire()
+                if self.callback.profile_batch.is_empty():
+                    mutex.release()
+                    sleep(0.5)
+                else:
+                    mutex.release()
+                    break
+            status = self.profiler.stop_acquisition()
+
+            p_91 = [-424.9966430664062, 49.99317169189453, 573.0062866210938, -89.99864196777342, -0.00046733912313356996, 90.00043487548828]
+            ret = robot.MoveCart(p_91, 0, 0, vel=100)
+            if not status.is_ok():
+                show_error(status)
+            self.profile_batch.append(self.callback.profile_batch)    
         return True
 
 

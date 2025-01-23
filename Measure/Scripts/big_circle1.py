@@ -57,10 +57,7 @@ class CircleFitter:
             distance (float): Çember merkezinin uzaklığı.
             ok (bool): Mesafenin 3 mm'den küçük olup olmadığını kontrol eder.
         """
-        if reel_datum:
-            datum = reel_datum
-        else:
-            datum = self.datum
+        datum = self.datum
 
         # Çember merkezlerini seç
         if second_crc:
@@ -122,7 +119,7 @@ class CircleFitter:
         result, _ = leastsq(cost_function, guess, args=(x, y))
         return result  # xc, yc, r
 
-    def fit_circles_and_plot(self, find_second_circle=True, val_x=0.19, val_z=0.76, delta_z=17):
+    def fit_circles_and_plot(self, find_second_circle=True, val_x=0.19, val_z=0.796, delta_z=13):
         """
         Nokta bulutunun X-Z düzleminde çember fitting işlemlerini gerçekleştirir ve görselleştirir.
         

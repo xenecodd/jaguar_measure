@@ -91,7 +91,7 @@ def filter_and_visualize_projection_with_ply(points, datum_horizontal=None):
         (points[:, 0] > median - 1) &
         (points[:, 1] < y_max) &
         (points[:, 1] > y_max - 50) &
-        (points[:, 2] > z_max - 12)
+        (points[:, 2] > z_max - 13)
     ]
 
     l_7_1 = np.max(projected_points_2d[:, 1]) - np.min(projected_points_2d[:, 1])

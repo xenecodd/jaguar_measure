@@ -5,8 +5,8 @@ from Scripts import *
 from MecheyePackage import TriggerWithExternalDeviceAndFixedRate, robot
 import open3d as o3d
 import numpy as np
-# import matplotlib
-# matplotlib.use('Agg')
+import matplotlib
+matplotlib.use('Agg')
 import time
 import pandas as pd
 from openpyxl.styles import PatternFill
@@ -169,13 +169,14 @@ def write_current_point_index(index):
     with open(file_path, 'w') as file:
         file.write(str(index))
 j = read_current_point_index()
-range_=4
+range_=7
+same_object =False
 for i in range(range_):
     start_time = time.time()
     send_command({"cmd": 107, "data": {"content": "ResetAllError()"}})
     if i == 0:
         i=i+j
-    point = points[i]
+    point = points[i%4]
 
     # İlk hareket
     ret = robot.MoveCart(point["p_up"], 0, 0, vel=100)
@@ -185,13 +186,16 @@ for i in range(range_):
     robot.WaitMs(500)
     ret = robot.MoveL(point["p_up"], 0, 0, vel=100)
 
-    scrc = [-5.9326171875, -74.58998878403466, 91.40015857054455, -196.742946511448, 5.83406656095297, 89.98324856899752]
-    ret = robot.MoveJ(scrc, 0, 0, vel=100)
+    scrc = [-500.0421752929687, -149.981979370117, 550.0119018554688, 82.80037689208984, 89.9276657104492, -7.29904794692993]
+    ret = robot.MoveCart(scrc, 0, 0, vel=100)
     small = mech_eye.main(lua_name="small.lua")
     # small=clean_point_cloud_numpy(small)
     
     small = rotate_point_cloud(small, 90, "z")
+    # small = rotate_point_cloud(small, 2, "x")
+    small= small[small[:,2]>np.min(small[:,2])+37]
     small= small[small[:,0]<np.min(small[:,0])+50] # gripper filterleniyor bu kısımda
+    small= small[small[:,0]>np.min(small[:,0])+1.5]
     small = to_origin(small)
     rotated_pcd.points = o3d.utility.Vector3dVector(small)
     o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/small.ply", rotated_pcd)
@@ -206,18 +210,53 @@ for i in range(range_):
 
 
 
-    _,z_center_small,radius_small = circle_fitter.fit_circles_and_plot(find_second_circle=False,val_x=0.2,val_z=0.2,delta_z=25)
+    _,z_center_small,radius_small = circle_fitter.fit_circles_and_plot(find_second_circle=False,val_x=0.18,val_z=0.2,delta_z=25)
     s_datum = circle_fitter.get_datum() # s_datum değişkeninin tanımlandığı yerin konumu önemli
     dist_3mm_s,_ = circle_fitter.get_distance(second_crc=False, z_distance_to_datum=23.1)
     print("s_datum", s_datum)
     feature_3 = (z_center_small- s_datum)
 
     horizontal = mech_eye.main(lua_name="horizontal.lua")
-    # horizontal=clean_point_cloud_numpy(horizontal)
-    horizontal = rotate_point_cloud(horizontal, -90, "z")
+
+    #///////////////////////////////////////////////////////////////////
+    horizontal2 = mech_eye.main(lua_name="horizontal2.lua")
+    
+    horizontal2[:,2] -= 70
+    horizontal2[:,0] += 50
+    rotated_pcd.points = o3d.utility.Vector3dVector(horizontal2)
+    o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/horizontal2.ply", rotated_pcd)
+    print("KAYDETTİK HORIZONTAL2")
+    
+    #///////////////////////////////////////////////////////////////////
+
+
+
+
+
+    diff = np.abs(np.max(horizontal2[:,0])-np.min(horizontal[:,0]))
+    print("diff",diff)
+    datum_horizontal = np.min(horizontal[:,0])+diff
+    print("datum_horizontal",datum_horizontal)
+
+    # Çizgi için parametreler
+    x_coord = datum_horizontal  # Çizginin sabit x ekseni koordinatı
+    y_start = np.min(horizontal[:, 1])  # Y ekseni boyunca başlangıç noktası
+    y_end = np.max(horizontal[:, 1])  # Y ekseni boyunca bitiş noktası
+    z_coord = np.min(horizontal[:, 2])  # Çizginin sabit z ekseni koordinatı
+
+    # Çizgi noktalarını oluştur
+    y_values = np.linspace(y_start, y_end, num=100)  # Y ekseni boyunca 100 ara nokta
+    line_points = np.array([[x_coord, y, z_coord] for y in y_values])
+
+    # Çizgiyi nokta bulutuna ekle
+    augmented_point_cloud = np.vstack((horizontal, line_points))
+
+    rotated_pcd.points = o3d.utility.Vector3dVector(horizontal)
+    o3d.io.write_point_cloud("/home/eypan/Documents/alt_jaguar/jaguar_measure/horizontal_pre.ply", rotated_pcd)
+    horizontal = rotate_point_cloud(augmented_point_cloud, -90, "z")
     horizontal = to_origin(horizontal)
     rotated_pcd.points = o3d.utility.Vector3dVector(horizontal)
-    o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/horizontal.ply", rotated_pcd)
+    o3d.io.write_point_cloud("/home/eypan/Documents/alt_jaguar/jaguar_measure/horizontal_post.ply", rotated_pcd)
     l_40 = get_40(horizontal)
 
     circle_fitter = CircleFitter(horizontal)
@@ -227,15 +266,18 @@ for i in range(range_):
     feature_2_z_coord = circle2[1]
     vertical = mech_eye.main(lua_name="vertical.lua")
     # vertical=clean_point_cloud_numpy(vertical)
-    point = points[i+1]
-    ret = robot.MoveCart(point["p_up"], 0, 0, vel=100)
-    ret = robot.MoveL(point["p"], 0, 0, vel=100)
-    robot.WaitMs(500)
-    robot.SetDO(7, 0)
-    robot.WaitMs(500)
-    ret = robot.MoveL(point["p_up"], 0, 0, vel=100)
+    if same_object and i<range_:
+        point = points[i+1]
+        ret = robot.MoveCart(point["p_up"], 0, 0, vel=100)
+        ret = robot.MoveL(point["p"], 0, 0, vel=100)
+        robot.WaitMs(500)
+        robot.SetDO(7, 0)
+        robot.WaitMs(500)
+        ret = robot.MoveL(point["p_up"], 0, 0, vel=100)
+    else :
+        robot.SetDO(7, 0)
     write_current_point_index(i + 1)
-    if i ==4:
+    if i ==range_-1:
         write_current_point_index(0)
     vertical = remove_gripper_points(vertical)
     rotated_pcd.points = o3d.utility.Vector3dVector(vertical)
@@ -275,18 +317,17 @@ for i in range(range_):
 
     l_42 = np.max(vertical[:, 1]) - b_vertical
     l_248 = arm_horn_lengths(vertical_copy, b_vertical)
-    h_v_ztransval =  np.abs(np.max(vertical[:, 2])-datum_vertical)
-    datum_horizontal =  np.max(horizontal[:, 1]) - h_v_ztransval
-    height=np.max(horizontal[:,1])-datum_horizontal
+    height=np.max(horizontal[:,1])-circle_fitter.get_datum()
     print("height", height)
     print("datum_horizontal", datum_horizontal)
-    dist_3mm_h, _ = circle_fitter.get_distance(reel_datum = datum_horizontal)
-    feature_1 = np.abs(datum_horizontal-feature_2_z_coord)
+    dist_3mm_h, _ = circle_fitter.get_distance()
+    feature_1 = np.abs(circle_fitter.get_datum()-feature_2_z_coord)
     mean_3mm = np.mean([dist_3mm_h, dist_3mm_s])
-    l_88_6,l_81_5 = filter_and_visualize_projection_with_ply(horizontal,datum_horizontal)
+    l_88_6,l_81_5 = filter_and_visualize_projection_with_ply(horizontal,circle_fitter.get_datum())
     processing_time = time.time() - start_time
-
     # Append results for this iteration
+
+    # Append new row to results
     results.append({
         "Feature1 (102.1)": feature_1,
         "Feature2 (25mm/2)": feature_2,
@@ -300,7 +341,7 @@ for i in range(range_):
         "Feature10 (R2-22.5)": r2,
         "Feature11 (3mm)": mean_3mm,
         "Feature12 (88.6)": l_88_6,
-        "Feature13 (10.6)": (feature_3-radius_small),
+        "Feature13 (10.6)": (feature_3 - radius_small),
         "Feature14 (81.5)": l_81_5,
         "Feature15 (L23.4)": l_23_4,
         "Feature16 (L17.2)": l_17_2,
@@ -308,41 +349,69 @@ for i in range(range_):
         "Processing Time (s)": processing_time
     })
 
+# Define tolerance values
+tolerances = {
+    "Feature1 (102.1)": (102.1, 1.5),
+    "Feature2 (25mm/2)": (12.5, 0.5),
+    "Feature3 (23.1)": (23.1, 1),
+    "Feature4 (25mm/2)": (12.5, 0.5),
+    "Feature5 (L40)": (40.0, 1.5),
+    "Feature6 (L248)": (248.0, 2.0),
+    "Feature7 (L42)": (42.0, 1.5),
+    "Feature8 (L79.73)": (79.73, 1.5),
+    "Feature9 (R1-62.5)": (62.5, 1.5),
+    "Feature10 (R2-22.5)": (22.5, 1),
+    "Feature11 (3mm)": (0, 1.5),
+    "Feature12 (88.6)": (88.6, 1.5),
+    "Feature13 (10.6)": (10.6, 1.0),
+    "Feature14 (81.5)": (81.5, 1.5),
+    "Feature15 (L23.4)": (23.4, 1.0),
+    "Feature16 (L17.2)": (17.2, 1.0),
+}
 
-
-# Sonuçları ve belirteçler için renk ekle
-output_file = "/home/eypan/Documents/scanner/jaguar_measure/scan_results.xlsx"
-
-# Transform results with iteration tracking
+# Transform results for Excel
 rows = []
 for iteration, result in enumerate(results, start=1):
     for name, value in result.items():
-        rows.append({"iteration": iteration, "name": name, "value": value})
+        rows.append({"Iteration": iteration, "Feature": name, "Value": value})
 
-# DataFrame oluştur
 results_df = pd.DataFrame(rows)
 
-# Excel yazma ve renklendirme işlemi
+# Output file path
+output_file = "/home/eypan/Documents/scanner/jaguar_measure/scan_results.xlsx"
+os.makedirs(os.path.dirname(output_file), exist_ok=True)  # Ensure directory exists
+
 try:
     with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
         results_df.to_excel(writer, index=False, header=True, sheet_name="ScanResults")
 
-        # Workbook ve Sheet alın
+        # Access workbook and sheet
         workbook = writer.book
         worksheet = writer.sheets["ScanResults"]
 
-        # Renk tanımları
-        colors = ["FFC7CE", "C6EFCE"]  # Kırmızı ve Yeşil arka plan renkleri
+        # Apply color coding
+        for row_index, row in enumerate(results_df.itertuples(index=False), start=2):
+            iteration = row.Iteration
+            feature = row.Feature
+            value = row.Value
 
-        # Iterasyon numaralarına göre renk uygula
-        for row_index, row in enumerate(results_df.itertuples(), start=2):  # Başlık satırını atla
-            iteration_color = colors[(row.iteration - 1) % len(colors)]  # Sırayla renk seç
-            fill = PatternFill(start_color=iteration_color, end_color=iteration_color, fill_type="solid")
-            for col_index in range(1, len(results_df.columns) + 1):  # Tüm sütunlara uygula
-                worksheet.cell(row=row_index, column=col_index).fill = fill
+            # Apply iteration-based color (alternating colors for rows)
+            iteration_color = "FCE4D6" if iteration % 2 == 0 else "D9EAD3"  # Light red or green
+            iteration_fill = PatternFill(start_color=iteration_color, end_color=iteration_color, fill_type="solid")
+            for col_index in range(1, len(results_df.columns) + 1):
+                worksheet.cell(row=row_index, column=col_index).fill = iteration_fill
+
+            # Apply tolerance-based color
+            if feature in tolerances:
+                target, tolerance = tolerances[feature]
+                col_index = 3  # 'Value' column
+                cell = worksheet.cell(row=row_index, column=col_index)
+                if target - tolerance <= value <= target + tolerance:
+                    cell.fill = PatternFill(start_color="00B050", end_color="00B050", fill_type="solid")  # Green
+                else:
+                    cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Red
 
 except FileNotFoundError:
     print(f"Error: Could not find the directory for {output_file}. Check the path and try again.")
 
-print("Results successfully saved to Excel with color-coded iterations.")
-
+print("Results successfully saved to Excel with color-coded iterations and tolerance.")
