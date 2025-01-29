@@ -155,7 +155,7 @@ points = [
 ]
 
 # Nokta Indeksi Dosyası
-file_path = "/home/eypan/Documents/scanner/point_index.txt"
+file_path = "/home/eypan/Documents/alt_jaguar/point_index.txt"
 
 # Dosyadan mevcut noktayı oku
 def read_current_point_index():
@@ -168,16 +168,27 @@ def read_current_point_index():
 def write_current_point_index(index):
     with open(file_path, 'w') as file:
         file.write(str(index))
-j = read_current_point_index()
-range_=7
+
+def get_next_valid_index(current_index, ignored_point, total_points):
+    next_index = (current_index + 1) % total_points
+    while (ignored_point and next_index == ignored_point or next_index == ignored_point+1):  # Eğer bir sonraki nokta atlanacaksa bir sonrakine geç
+        next_index = (next_index + 1) % total_points
+    return next_index
+
+range_ = 6
+ignored_point = 2
+current_index = read_current_point_index()
 same_object =False
+same_place_index = 0
 for i in range(range_):
     start_time = time.time()
     send_command({"cmd": 107, "data": {"content": "ResetAllError()"}})
-    if i == 0:
-        i=i+j
-    point = points[i%4]
 
+    # Mevcut noktayı al
+    point = points[same_place_index] if isinstance(same_place_index, int) else points[current_index]
+    print(f"Current point index: {current_index}, Point: {point}")
+
+    # breakpoint()
     # İlk hareket
     ret = robot.MoveCart(point["p_up"], 0, 0, vel=100)
     ret = robot.MoveL(point["p"], 0, 0, vel=100)
@@ -191,14 +202,14 @@ for i in range(range_):
     small = mech_eye.main(lua_name="small.lua")
     # small=clean_point_cloud_numpy(small)
     
-    small = rotate_point_cloud(small, 90, "z")
-    # small = rotate_point_cloud(small, 2, "x")
+    small = rotate_point_cloud(small, 91, "z")
+    # small = rotate_point_cloud(small, -2, "x")
     small= small[small[:,2]>np.min(small[:,2])+37]
     small= small[small[:,0]<np.min(small[:,0])+50] # gripper filterleniyor bu kısımda
-    small= small[small[:,0]>np.min(small[:,0])+1.5]
+    # small= small[small[:,0]>np.min(small[:,0])+1.5]
     small = to_origin(small)
     rotated_pcd.points = o3d.utility.Vector3dVector(small)
-    o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/small.ply", rotated_pcd)
+    o3d.io.write_point_cloud("/home/eypan/Documents/alt_jaguar/jaguar_measure/small.ply", rotated_pcd)
 
 
     z_max = np.max(small[:, 2])
@@ -217,14 +228,20 @@ for i in range(range_):
     feature_3 = (z_center_small- s_datum)
 
     horizontal = mech_eye.main(lua_name="horizontal.lua")
-
+    # horizontal = rotate_point_cloud(horizontal, -1, "z")
+    # horizontal = rotate_point_cloud(horizontal, 1, "y")
+    # horizontal = rotate_point_cloud(horizontal, -1, "x")
     #///////////////////////////////////////////////////////////////////
     horizontal2 = mech_eye.main(lua_name="horizontal2.lua")
+    # horizontal2 = rotate_point_cloud(horizontal2, 1, "z")
+    # horizontal2 = rotate_point_cloud(horizontal2, 1, "y")
+    # horizontal2 = rotate_point_cloud(horizontal2, -1, "x")
+    # horizontal2 = rotate_point_cloud(horizontal2, 1, "z")
     
     horizontal2[:,2] -= 70
     horizontal2[:,0] += 50
     rotated_pcd.points = o3d.utility.Vector3dVector(horizontal2)
-    o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/horizontal2.ply", rotated_pcd)
+    o3d.io.write_point_cloud("/home/eypan/Documents/alt_jaguar/jaguar_measure/horizontal2.ply", rotated_pcd)
     print("KAYDETTİK HORIZONTAL2")
     
     #///////////////////////////////////////////////////////////////////
@@ -235,6 +252,7 @@ for i in range(range_):
 
     diff = np.abs(np.max(horizontal2[:,0])-np.min(horizontal[:,0]))
     print("diff",diff)
+    # horizontal = rotate_point_cloud(horizontal, 1, "z")
     datum_horizontal = np.min(horizontal[:,0])+diff
     print("datum_horizontal",datum_horizontal)
 
@@ -266,8 +284,11 @@ for i in range(range_):
     feature_2_z_coord = circle2[1]
     vertical = mech_eye.main(lua_name="vertical.lua")
     # vertical=clean_point_cloud_numpy(vertical)
+    # Bir sonraki geçerli noktayı hesapla
+    current_index = get_next_valid_index(current_index, ignored_point, len(points))
+    write_current_point_index(current_index)
     if same_object and i<range_:
-        point = points[i+1]
+        point = points[current_index]
         ret = robot.MoveCart(point["p_up"], 0, 0, vel=100)
         ret = robot.MoveL(point["p"], 0, 0, vel=100)
         robot.WaitMs(500)
@@ -275,13 +296,21 @@ for i in range(range_):
         robot.WaitMs(500)
         ret = robot.MoveL(point["p_up"], 0, 0, vel=100)
     else :
+        print("DEVAM")
+        # ret = robot.MoveCart(point["p_up"], 0, 0, vel=100)
+        # robot.WaitMs(500)
         robot.SetDO(7, 0)
-    write_current_point_index(i + 1)
-    if i ==range_-1:
+        # robot.WaitMs(500)
+
+
+
+    # Son iterasyonda indexi sıfırla
+    if i == range_ - 1:  # Son iterasyon
         write_current_point_index(0)
+
     vertical = remove_gripper_points(vertical)
     rotated_pcd.points = o3d.utility.Vector3dVector(vertical)
-    o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/vertical.ply", rotated_pcd)
+    o3d.io.write_point_cloud("/home/eypan/Documents/alt_jaguar/jaguar_measure/vertical.ply", rotated_pcd)
     vertical_copy = vertical.copy()
 
     x_median = np.median(vertical[:, 0])
@@ -323,7 +352,8 @@ for i in range(range_):
     dist_3mm_h, _ = circle_fitter.get_distance()
     feature_1 = np.abs(circle_fitter.get_datum()-feature_2_z_coord)
     mean_3mm = np.mean([dist_3mm_h, dist_3mm_s])
-    l_88_6,l_81_5 = filter_and_visualize_projection_with_ply(horizontal,circle_fitter.get_datum())
+    l_88_6 =(feature_1-feature_2) 
+    l_81_5 = filter_and_visualize_projection_with_ply(horizontal) #filter_and_visualize_projection_with_ply(horizontal,circle_fitter.get_datum())
     processing_time = time.time() - start_time
     # Append results for this iteration
 
@@ -378,7 +408,7 @@ for iteration, result in enumerate(results, start=1):
 results_df = pd.DataFrame(rows)
 
 # Output file path
-output_file = "/home/eypan/Documents/scanner/jaguar_measure/scan_results.xlsx"
+output_file = "/home/eypan/Documents/alt_jaguar/jaguar_measure/scan_results.xlsx"
 os.makedirs(os.path.dirname(output_file), exist_ok=True)  # Ensure directory exists
 
 try:

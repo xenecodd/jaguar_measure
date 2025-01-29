@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
 def get_scale():
-    scale = 15
+    scale = 12
     return scale
 
 def upscale_points(points, scale, image_size=(500, 500)):
@@ -14,16 +14,17 @@ def upscale_points(points, scale, image_size=(500, 500)):
     for x, y in points:
         x, y = int(x * scale), int(y * scale)
         if 0 <= x < upscale_size[1] and 0 <= y < upscale_size[0]:  # Sınırları kontrol et
-            cv2.circle(image, (x, y), radius=2, color=255, thickness=-1)
+            cv2.circle(image, (x, y), radius=2, color=255, thickness=-3)
     return image
 
 def detect_edges(image):
     """Canny kenar algılama ile kenarları tespit edin."""
-    # Median filtresi ile gürültüyü azalt
-    blurred = cv2.GaussianBlur(image, (5, 5), 0)
+    # Daha fazla bulanıklık için kernel boyutunu artır
+    blurred = cv2.GaussianBlur(image, (5, 5), 0)  # Kernel boyutunu artırdık
     # Canny kenar algılama
     edges = cv2.Canny(blurred, 150, 200)  # Optimize edilmiş eşik değerleri
     return edges
+
 
 def process_and_visualize(points):
     """Noktaları işleyin ve görselleştirin."""

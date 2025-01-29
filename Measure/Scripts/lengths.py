@@ -77,7 +77,7 @@ def horn_diff(pcd, y_offset_low=60, y_offset_high=100, z_threshold=8):
 
 
 
-def filter_and_visualize_projection_with_ply(points, datum_horizontal=None):
+def filter_and_visualize_projection_with_ply(points):
     # X ekseninde ortadaki bölgeyi seç
     median = np.median(points[:, 0])
 
@@ -93,11 +93,11 @@ def filter_and_visualize_projection_with_ply(points, datum_horizontal=None):
         (points[:, 1] > y_max - 50) &
         (points[:, 2] > z_max - 13)
     ]
-
-    l_7_1 = np.max(projected_points_2d[:, 1]) - np.min(projected_points_2d[:, 1])
-    print("l_7_1:", l_7_1)
-    l_88_6 = np.max(projected_points_2d[:, 1]) - datum_horizontal
-    l_81_5 = np.min(projected_points_2d[:, 1]) - datum_horizontal
+    
+    l_81_5 = np.min(projected_points_2d[:, 1])-np.min(points[:, 1])
+    print("l_81_5:", l_81_5)
+    # l_88_6 = 0
+    # l_81_5 = 0
     # Görselleştirme
     plt.figure(figsize=(8, 8))
     plt.scatter(points[:, 2], points[:, 1], color='red', s=1, label="All Points (Y-Z Proj.)")
@@ -110,5 +110,5 @@ def filter_and_visualize_projection_with_ply(points, datum_horizontal=None):
     plt.grid(True)
     plt.show()
 
-    return l_88_6,l_81_5
+    return l_81_5
 

@@ -259,9 +259,9 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             # robot.MoveCart(point_H2, 0, 0)
 
             status = self.profiler.stop_acquisition()
-
-            h_2 = [-24.92808729115099, -56.15732325185643, 80.42666595761139, -204.25672474474, 24.83976156404703, -89.95757754486387]
-            ret = robot.MoveJ(h_2, 0, 0, vel=100)
+                
+            h_2 = [-585.0269165039062, 80.00602722167967, 444.9610290527343, -90, -90, 180]
+            ret = robot.MoveCart(h_2, 0, 0, vel=100)
 
             if not status.is_ok():
                 show_error(status)
@@ -294,7 +294,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
                     break
             status = self.profiler.stop_acquisition()
 
-            h1_alt = [-534.997802734375, -100.006637573242, 515.0164184570312, -82.3712692260742, -89.94773864746092, 172.2822875976562]
+            h1_alt = [-534.997802734375, -100.006637573242, 515.0164184570312, -90, -90, 180]
             ret = robot.MoveCart(h1_alt, 0, 0, vel=100)
             if not status.is_ok():
                 show_error(status)
@@ -329,8 +329,8 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
             status = self.profiler.stop_acquisition()
 
-            scrc = [-5.9326171875, -74.58998878403466, 91.40015857054455, -196.742946511448, 5.83406656095297, 89.98324856899752]
-            ret = robot.MoveJ(scrc, 0, 0, vel=100)
+            # scrc = [-5.9326171875, -74.58998878403466, 91.40015857054455, -196.742946511448, 5.83406656095297, 89.98324856899752]
+            # ret = robot.MoveJ(scrc, 0, 0, vel=100)
             
             if not status.is_ok():
                 show_error(status)
@@ -350,7 +350,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             if not status.is_ok():
                 show_error(status)
                 return False
-            h2_alt = [-535.0000610351562, 79.98582458496092, 515.0106811523437, -85.15757751464842, -89.94584655761717, 175.070556640625]
+            h2_alt = [-535.0000610351562, 79.98582458496092, 516.0106811523437, -90, -90, 180]
             robot.MoveL(h2_alt, 0, 0, vel=100)
             # Profil veri toplama işlemi
             while True:
@@ -382,7 +382,6 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         start_time = time.time()
         if not find_and_connect(self.profiler):
             return -1
-
         self.set_parameters()
 
         self.profile_batch = ProfileBatch(self.data_width)

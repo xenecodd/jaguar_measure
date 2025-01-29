@@ -103,7 +103,7 @@ class CircleFitter:
         Verilen X ve Y noktalarına çember fitting yapar.
         """
         def calc_radius(xc, yc, x, y):
-            return np.sqrt((x - xc)**2 + (y - yc)**2)#*1.03
+            return np.sqrt((x - xc)**2 + (y - yc)**2)*1.03
 
         def cost_function(params, x, y):
             xc, yc, r = params
@@ -119,16 +119,20 @@ class CircleFitter:
         result, _ = leastsq(cost_function, guess, args=(x, y))
         return result  # xc, yc, r
 
-    def fit_circles_and_plot(self, find_second_circle=True, val_x=0.19, val_z=0.796, delta_z=13):
+    def fit_circles_and_plot(self, find_second_circle=True, val_x=0.18, val_z=0.796, delta_z=13):
         """
         Nokta bulutunun X-Z düzleminde çember fitting işlemlerini gerçekleştirir ve görselleştirir.
         
         Args:
             find_second_circle (bool): İkinci çemberi bulup bulmama seçeneği.
+            val_x (float): Dinamik filtreleme için X eksenindeki oran.
+            val_z (float): Dinamik filtreleme için Z eksenindeki oran.
+            delta_z (float): Filtreleme bölgesinin Z eksenindeki genişliği.
         """
         try:
             self.find_second_circle = find_second_circle
             print(f"B: {self.get_B()}")
+            
             # X-Z düzlemine projekte edilen noktalar
             rotated_pcd = o3d.geometry.PointCloud()
             rotated_pcd.points = o3d.utility.Vector3dVector(self.pcd)
@@ -145,7 +149,6 @@ class CircleFitter:
             # Dinamik filtreleme parametreleri
             min_x, max_x = np.min(projected_points_2d[:, 0]), np.max(projected_points_2d[:, 0])
             min_z, max_z = np.min(projected_points_2d[:, 1]), np.max(projected_points_2d[:, 1])
-            
             x_min = min_x + val_x * (max_x - min_x)
             x_max = x_min + 28
             z_min = min_z + val_z * (max_z - min_z)
@@ -154,59 +157,49 @@ class CircleFitter:
             # İlk çember fitting
             mask_1 = (x2d > x_min) & (x2d < x_max) & (z2d > z_min) & (z2d < z_max)
             x_2d_1, z_2d_1 = x2d[mask_1], z2d[mask_1]
-
-            # Görselleştirme (orijinal noktalar ve filtreleme bölgesi)
-            plt.figure(figsize=(8, 8))
-            plt.scatter(x2d, z2d, s=1, color='blue', label='Orijinal Noktalar')
-            
-            # Filtreleme bölgesini kırmızı bir dikdörtgen ile göster
-            plt.gca().add_patch(
-                plt.Rectangle((x_min, z_min), x_max - x_min, z_max - z_min,
-                            edgecolor='red', facecolor='none', linewidth=2, label='Filtreleme Bölgesi')
-            )
-
-            plt.legend()
-            plt.title("Orijinal Noktalar ve Filtreleme Bölgesi")
-            plt.xlabel("X")
-            plt.ylabel("Z")
-            plt.axis('equal')
-            plt.show()
-
-            # Çember fitting işlemleri
             xc_outer, zc_outer, r_outer = self.fit_circle(x_2d_1, z_2d_1)
             self.xc_outer, self.zc_outer = xc_outer, zc_outer
-            # Çember çizimi
+
+            # Çemberlerin çizimi
             theta = np.linspace(0, 2 * np.pi, 100)
             x_outer_circle = xc_outer + r_outer * np.cos(theta)
             z_outer_circle = zc_outer + r_outer * np.sin(theta)
 
+            # Görselleştirme
             plt.figure(figsize=(8, 8))
             plt.scatter(x2d, z2d, s=1, color='blue', label='Noktalar')
             plt.plot(x_outer_circle, z_outer_circle, color='red', label=f'Çember 1 (R = {r_outer:.2f})')
 
+            # Filtreleme alanını kare şeklinde çiz
+            plt.gca().add_patch(
+                plt.Rectangle(
+                    (x_min, z_min),  # Dikdörtgenin sol alt köşesi
+                    x_max - x_min,   # Genişlik
+                    z_max - z_min,   # Yükseklik
+                    edgecolor='red', facecolor='none', linewidth=2, label='Filtreleme Bölgesi'
+                )
+            )
+
             if find_second_circle:
+                # İkinci çember fitting
                 zc_min_2 = zc_outer  # İlk çemberin merkezinin alt sınırı
                 zc_max_2 = zc_outer + 5  # İlk çemberin üst sınırı
                 mask_2 = (x2d > x_min) & (x2d < x_max) & (z2d > zc_min_2) & (z2d < zc_max_2)
                 x_2d_2, z_2d_2 = x2d[mask_2], z2d[mask_2]
                 xc_outer_2, zc_outer_2, r_outer_2 = self.fit_circle(x_2d_2, z_2d_2)
                 self.xc_outer_2, self.zc_outer_2 = xc_outer_2, zc_outer_2
-                
+
                 # İkinci çember çizimi
                 x_outer_circle_2 = xc_outer_2 + r_outer_2 * np.cos(theta)
                 z_outer_circle_2 = zc_outer_2 + r_outer_2 * np.sin(theta)
                 plt.plot(x_outer_circle_2, z_outer_circle_2, color='green', label=f'Çember 2 (R = {r_outer_2:.2f})')
-            else:
-                z_max_index = np.argmax(self.pcd[:, 1])  # Maksimum z değerinin indeksi
-                max_point = self.pcd[z_max_index]        # Maksimum z'ye sahip nokta (x, y, z)
-                plt.scatter(x2d, z2d, s=1, color='blue', label='Noktalar')
-                plt.scatter(max_point[0], max_point[1], s=1, color='red', label='Max Z Noktası')  # Maksimum z noktasını çiz
-                plt.title("X-Z Düzleminde Nokta Bulutu ve Çember Fitting")
-                plt.xlabel("X")
-                plt.ylabel("Y")
-                plt.axis('equal')
-                plt.legend()
-                plt.show()
+
+            plt.title("X-Z Düzleminde Nokta Bulutu, Çember Fitting ve Filtreleme Alanı")
+            plt.xlabel("X")
+            plt.ylabel("Z")
+            plt.axis('equal')
+            plt.legend()
+            plt.show()
 
             print(f"Çember 1 Merkezi: ({xc_outer:.2f}, {zc_outer:.2f}), Yarıçap: {r_outer:.2f}")
             if find_second_circle:
@@ -217,7 +210,6 @@ class CircleFitter:
 
         except Exception as e:
             print(f"Hata: {e}")
-
 
 
 def save_3d_filter_box_as_point_cloud(file_path, x_min, x_max, y_min, y_max, z_min, z_max):
