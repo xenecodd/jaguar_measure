@@ -1,3 +1,4 @@
 from .mecheye_trigger import *
-from .robot_control import *
-from .edges import *
+from MecheyePackage.robot_control import *
+from Measure.Scripts.edges import *
+

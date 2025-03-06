@@ -1,3 +1,0 @@
-/home/rog/Documents/scanner/transform/build/CMakeFiles/point_cloud_transform.dir
-/home/rog/Documents/scanner/transform/build/CMakeFiles/edit_cache.dir
-/home/rog/Documents/scanner/transform/build/CMakeFiles/rebuild_cache.dir

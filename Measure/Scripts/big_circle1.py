@@ -3,7 +3,8 @@ import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
 from scipy.optimize import leastsq
-from MecheyePackage import edges
+from Measure.Scripts import edges
+
 
 
 class CircleFitter:
@@ -30,11 +31,13 @@ class CircleFitter:
 
     def get_B(self, strip_width=20):
         points = self.pcd
-        y_center = (np.min(points[:, 1]) + np.max(points[:, 1])) / 2  # Y eksenindeki orta nokta
-        strip_points = points[np.abs(points[:, 1] - y_center) < strip_width / 2]  # Şeritteki noktaları seç
+        medianx =np.median(points[:, 0])
+        mediany = np.median(points[:, 1]) # Y eksenindeki orta nokta
+        strip_points = points[(np.abs(points[:, 1] - mediany) < strip_width / 2) & 
+                              (np.abs(points[:, 0] - medianx) < strip_width / 2)]
         if len(strip_points) == 0:
             raise ValueError("Şerit içinde nokta bulunamadı.")
-        return np.max(strip_points[:, 2])
+        return np.min(strip_points[:, 2])
     
     def get_datum(self):
         strip_width = 1
@@ -92,7 +95,6 @@ class CircleFitter:
         plt.ylabel("Z")
         plt.axis('equal')
         plt.legend()
-        plt.show()
 
         return distance, ok
 
@@ -103,7 +105,7 @@ class CircleFitter:
         Verilen X ve Y noktalarına çember fitting yapar.
         """
         def calc_radius(xc, yc, x, y):
-            return np.sqrt((x - xc)**2 + (y - yc)**2)*1.03
+            return np.sqrt((x - xc)**2 + (y - yc)**2)
 
         def cost_function(params, x, y):
             xc, yc, r = params
@@ -135,8 +137,8 @@ class CircleFitter:
             
             # X-Z düzlemine projekte edilen noktalar
             rotated_pcd = o3d.geometry.PointCloud()
-            rotated_pcd.points = o3d.utility.Vector3dVector(self.pcd)
-            o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/bigcrc.ply", rotated_pcd)
+            # rotated_pcd.points = o3d.utility.Vector3dVector(self.pcd)
+            # o3d.io.write_point_cloud("/home/eypan/Documents/scanner/jaguar_measure/bigcrc.ply", rotated_pcd)
             projected_points_2d = self.pcd[:, [0, 1]]
 
             # Kenar koordinatlarını al
@@ -199,7 +201,6 @@ class CircleFitter:
             plt.ylabel("Z")
             plt.axis('equal')
             plt.legend()
-            plt.show()
 
             print(f"Çember 1 Merkezi: ({xc_outer:.2f}, {zc_outer:.2f}), Yarıçap: {r_outer:.2f}")
             if find_second_circle:
@@ -210,61 +211,3 @@ class CircleFitter:
 
         except Exception as e:
             print(f"Hata: {e}")
-
-
-def save_3d_filter_box_as_point_cloud(file_path, x_min, x_max, y_min, y_max, z_min, z_max):
-    """
-    3 boyutlu filtreleme alanını bir kutu olarak nokta bulutu (PLY formatında) kaydeder.
-    """
-    # Çerçeve köşe noktalarını tanımla (X, Y, Z)
-    box_points = np.array([
-        [x_min, y_min, z_min],  # Köşe 1
-        [x_max, y_min, z_min],  # Köşe 2
-        [x_max, y_max, z_min],  # Köşe 3
-        [x_min, y_max, z_min],  # Köşe 4
-        [x_min, y_min, z_max],  # Köşe 5
-        [x_max, y_min, z_max],  # Köşe 6
-        [x_max, y_max, z_max],  # Köşe 7
-        [x_min, y_max, z_max],  # Köşe 8
-    ])
-
-    # Kutunun kenarlarını tanımlayan noktalar (isteğe bağlı)
-    edges = [
-        [box_points[0], box_points[1]],  # Kenar 1
-        [box_points[1], box_points[2]],  # Kenar 2
-        [box_points[2], box_points[3]],  # Kenar 3
-        [box_points[3], box_points[0]],  # Kenar 4
-        [box_points[4], box_points[5]],  # Kenar 5
-        [box_points[5], box_points[6]],  # Kenar 6
-        [box_points[6], box_points[7]],  # Kenar 7
-        [box_points[7], box_points[4]],  # Kenar 8
-        [box_points[0], box_points[4]],  # Kenar 9
-        [box_points[1], box_points[5]],  # Kenar 10
-        [box_points[2], box_points[6]],  # Kenar 11
-        [box_points[3], box_points[7]],  # Kenar 12
-    ]
-
-    # Kenar noktalarını nokta bulutuna dönüştür
-    line_points = np.vstack(edges)
-
-    # Open3D PointCloud oluştur ve kaydet
-    box_pcd = o3d.geometry.PointCloud()
-    box_pcd.points = o3d.utility.Vector3dVector(line_points)
-    save_point_cloud(file_path, box_pcd)
-
-    
-    
-    
-def save_point_cloud(file_path,pcd):
-    # Ensure that pcd is a PointCloud object, not a numpy array
-    if isinstance(pcd, o3d.geometry.PointCloud):
-        pcd_array = np.asarray(pcd.points)  # Convert PointCloud points to numpy array
-    else:
-        pcd_array = pcd  # If pcd is already a numpy array, use it directly
-
-    # Create a new PointCloud and set the points
-    pcd_new = o3d.geometry.PointCloud()
-    pcd_new.points = o3d.utility.Vector3dVector(pcd_array)
-
-    # Write the point cloud to the file
-    o3d.io.write_point_cloud(file_path, pcd_new)

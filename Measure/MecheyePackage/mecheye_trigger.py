@@ -6,10 +6,10 @@ import cv2
 import numpy as np
 from time import sleep
 from multiprocessing import Lock
-from .robot_control import send_command,login
+from robot_control import send_command, login
 import threading
 import sys
-sys.path.append('/home/eypan/Downloads/')
+sys.path.append('/home/eypan/Downloads/fair_api_old/')
 import Robot # type: ignore
 
 robot = Robot.RPC('192.168.58.2')
@@ -69,7 +69,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         show_error(self.user_set.set_float_value(
             HdrSecondThreshold.name, second_threshold))
 
-    def set_parameters(self):
+    def set_parameters(self,scan_line_count):
         self.user_set = self.profiler.current_user_set()
 
         # Data Acquisition Trigger Source
@@ -82,21 +82,21 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
         # Software Trigger Rate
         show_error(self.user_set.set_float_value(
-            SoftwareTriggerRate.name, 907.0))
+            SoftwareTriggerRate.name, 2665.0))
 
         # Scan Line Count
-        show_error(self.user_set.set_int_value(ScanLineCount.name, 3500))
+        show_error(self.user_set.set_int_value(ScanLineCount.name, scan_line_count))
 
         # Callback Retrieval Timeout
         show_error(self.user_set.set_int_value(CallbackRetrievalTimeout.name, 60000))
 
-        # X-Axis Resolution
-        show_error(self.user_set.set_float_value(
-            XAxisResolution.name, 23.5))
-
-        # Y-Axis Resolution
-        self.user_set.set_float_value(
-            YResolution.name, 154.0)
+        # # X-Axis Resolution
+        # show_error(self.user_set.set_float_value(
+        #     XAxisResolution.name, 23.5))
+        # print("X-Axis Resolution", XAxisResolution.unit, XAxisResolution.description, XAxisResolution.type)
+        # # Y-Axis Resolution
+        # self.user_set.set_float_value(
+        #     YResolution.name, 50)
 
         # Laser Power
         show_error(self.user_set.set_int_value(LaserPower.name, 100))
@@ -109,7 +109,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
         # Analog Gain
         show_error(self.user_set.set_enum_value(
-            AnalogGain.name, AnalogGain.Value_Gain_2))
+            AnalogGain.name, AnalogGain.Value_Gain_5))
 
         # Digital Gain
         show_error(self.user_set.set_int_value(DigitalGain.name, 0))
@@ -137,18 +137,18 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
         # Enable Blind Spot Filtering
         show_error(self.user_set.set_bool_value(
-            EnableBlindSpotFiltering.name, True))
+            EnableBlindSpotFiltering.name, False))
             
         # Enable X-Axis Alignment58
         show_error(self.user_set.set_bool_value(
-            EnableXAxisAlignment.name, True))
+            EnableXAxisAlignment.name, False))
 
         # Exposure Mode
         show_error(self.user_set.set_enum_value(
             ExposureMode.name, ExposureMode.Value_Timed))
 
         # Exposure Time
-        show_error(self.user_set.set_int_value(ExposureTime.name, 1000))
+        show_error(self.user_set.set_int_value(ExposureTime.name, 220))
 
         # Retrieve current values for validation or debugging
         error, self.data_width = self.user_set.get_int_value(DataPointsPerProfile.name)
@@ -202,174 +202,100 @@ class TriggerWithExternalDeviceAndFixedRate(object):
     def acquire_profile_data_using_callback(self, lua_name) -> bool:
         self.profile_batch.clear()
 
-        # Set a large CallbackRetrievalTimeout
         show_error(self.user_set.set_int_value(CallbackRetrievalTimeout.name, 60000))
-
         self.callback = CustomAcquisitionCallback(self.data_width).__disown__()
 
-        # Register the callback function
         status = self.profiler.register_acquisition_callback(self.callback)
         if not status.is_ok():
             show_error(status)
             return False
 
-        # def start_scan_in_thread(cmd_data):
-        #     def scan_task():
-        #         send_command(cmd_data)
-
-        #     # Thread oluştur ve başlat
-        #     scan_thread = threading.Thread(target=scan_task)
-        #     scan_thread.daemon = True  # Ana thread ile birlikte sonlanır
-        #     scan_thread.start()
-        #     scan_thread.join()  # Thread tamamlanmasını bekle
-
-        # Komutları gönder
         send_command({"cmd": 105, "data": {"name": lua_name}})
 
+        extra_commands = [{"cmd": 303, "data": {"mode": "1"}}]
+        pre_move = None
+        post_move = None
+        pre_post_move = None
         
+        scrc2 = [-450, 130, 470, 82.80, 89.93, -7.30]
+        p90    = [-335, -350, 450, -90, 0, 90]
+        p91    = [-335, 200, 450, -90, 0, 90]
+        h1     = [-375, -120, 580, -90, -90, 180]
+        h2     = [-367, 200, 580, -90, -90, 180]
+        h1_alt = [-425, -120, 510, -90, -90, 180]
+        h2_alt = [-418, 200, 510, -90, -90, 180]
+
         if lua_name == "small.lua":
-            send_command({"cmd": 303, "data": {"mode": "1"}})
-
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(scrc2,100,-1,0,0)"}})
-
-            status = self.profiler.start_acquisition()
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            if self.is_software_trigger:
-                status = self.profiler.trigger_software()
-                
-            if not status.is_ok():
-                show_error(status)
-                return False
-            # send_command({"cmd": 1001, "data": {"pgline": "Lin(V1,100,-1,0,0)"}})
-            # Profil veri toplama işlemi
-            while True:
-                mutex.acquire()
-                if self.callback.profile_batch.is_empty():
-                    mutex.release()
-                    sleep(0.5)
-                else:
-                    mutex.release()
-                    break
-
-            # point_H2 = [-585, 60, 445.005, -84.703, -89.947, 174.614]
-
-            # robot.MoveCart(point_H2, 0, 0)
-
-            status = self.profiler.stop_acquisition()
-                
-            h_2 = [-585.0269165039062, 80.00602722167967, 444.9610290527343, -90, -90, 180]
-            ret = robot.MoveCart(h_2, 0, 0, vel=100)
-
-            if not status.is_ok():
-                show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)
-             
+            pre_move = ("MoveL", scrc2)
+            # pre_post_move = ("MoveL", [-500.0104370117187, 100, 450, 82.15313720703125, 89.94375610351562, -7.949760913848877])
+            post_move = ("MoveCart", h2)
         elif lua_name == "horizontal.lua":
-            send_command({"cmd": 303, "data": {"mode": "1"}})
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(H1,100,-1,0,0)"}})
-
-            status = self.profiler.start_acquisition()
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            if self.is_software_trigger:
-                status = self.profiler.trigger_software()
-                
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            # Profil veri toplama işlemi
-            while True:
-                mutex.acquire()
-                if self.callback.profile_batch.is_empty():
-                    mutex.release()
-                    sleep(0.5)
-                else:
-                    mutex.release()
-                    break
-            status = self.profiler.stop_acquisition()
-
-            h1_alt = [-534.997802734375, -100.006637573242, 515.0164184570312, -90, -90, 180]
-            ret = robot.MoveCart(h1_alt, 0, 0, vel=100)
-            if not status.is_ok():
-                show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)    
-                
-        elif lua_name == "vertical.lua":
-            send_command({"cmd": 303, "data": {"mode": "1"}})
-                
-            send_command({"cmd": 1001, "data": {"pgline": "Lin(90,100,-1,0,0)"}})
-            # Tarama komutlarını sırasıyla gönder
-            status = self.profiler.start_acquisition()
-            if not status.is_ok():
-                show_error(status)
-                return False
-
-            if self.is_software_trigger:
-                status = self.profiler.trigger_software()
-                
-            if not status.is_ok():
-                show_error(status)
-                return False
-            # send_command({"cmd": 1001, "data": {"pgline": "Lin(V1,100,-1,0,0)"}})
-            # Profil veri toplama işlemi
-            while True:
-                mutex.acquire()
-                if self.callback.profile_batch.is_empty():
-                    mutex.release()
-                    sleep(0.5)
-                else:
-                    mutex.release()
-                    break
-
-            status = self.profiler.stop_acquisition()
-
-            # scrc = [-5.9326171875, -74.58998878403466, 91.40015857054455, -196.742946511448, 5.83406656095297, 89.98324856899752]
-            # ret = robot.MoveJ(scrc, 0, 0, vel=100)
-            
-            if not status.is_ok():
-                show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)  
-
+            pre_move = ("MoveL", h1)
+            post_move = ("MoveCart", h1_alt)
         elif lua_name == "horizontal2.lua":
-            send_command({"cmd": 303, "data": {"mode": "1"}})
-            
-            status = self.profiler.start_acquisition()
+            pre_move = ("MoveL", h2_alt)
+            # pre_post_move = ("MoveL", [-535.0000610351562, 79.98582458496092, 416, -90, -90, 180])
+            post_move = ("MoveCart", p91)
+        elif lua_name == "vertical.lua":
+            pre_move = ("MoveL", p90)
+
+
+        
+        for cmd in extra_commands:
+            send_command(cmd)
+
+        if pre_move:
+            threading.Thread(target=self._move_robot, args=pre_move).start() #self._move_robot(*pre_move)
+        
+        status = self.profiler.start_acquisition()
+        if not status.is_ok():
+            show_error(status)
+            return False
+
+        if self.is_software_trigger:
+            status = self.profiler.trigger_software()
             if not status.is_ok():
                 show_error(status)
                 return False
 
-            if self.is_software_trigger:
-                status = self.profiler.trigger_software()
-                
-            if not status.is_ok():
-                show_error(status)
-                return False
-            h2_alt = [-535.0000610351562, 79.98582458496092, 516.0106811523437, -90, -90, 180]
-            robot.MoveL(h2_alt, 0, 0, vel=100)
-            # Profil veri toplama işlemi
-            while True:
-                mutex.acquire()
-                if self.callback.profile_batch.is_empty():
-                    mutex.release()
-                    sleep(0.5)
-                else:
-                    mutex.release()
-                    break
-            status = self.profiler.stop_acquisition()
 
-            p_91 = [-424.9966430664062, 49.99317169189453, 573.0062866210938, -89.99864196777342, -0.00046733912313356996, 90.00043487548828]
-            ret = robot.MoveCart(p_91, 0, 0, vel=100)
-            if not status.is_ok():
-                show_error(status)
-            self.profile_batch.append(self.callback.profile_batch)    
+        self._wait_for_profile_data()
+
+        status = self.profiler.stop_acquisition()
+        if not status.is_ok():
+            show_error(status)
+
+        # if pre_post_move:
+        #     self._move_robot(*pre_post_move,vel_cart=100,vel_l=100)
+        #     pre_post_move=None
+
+        if post_move:
+            self._move_robot(*post_move)
+
+        self.profile_batch.append(self.callback.profile_batch)
         return True
 
+
+
+    def _move_robot(self, move_type: str, coordinates: list,vel_cart=54,vel_l = 54):
+        if move_type == "MoveCart":
+            robot.MoveCart(coordinates, 0, 0, vel = vel_cart)
+        elif move_type == "MoveL":
+            robot.MoveL(coordinates, 0, 0, vel= vel_l)
+        elif move_type == "MoveJ":
+            robot.MoveJ(coordinates, 0, 0, vel=100)
+        else:
+            raise ValueError(f"Unsupported move type: {move_type}")
+
+
+    def _wait_for_profile_data(self):
+        while True:
+            with mutex:
+                empty = self.callback.profile_batch.is_empty()
+            if empty:
+                sleep(0.5)
+            else:
+                break
 
 
     def save_depth_and_intensity(self, depth_file_name, intensity_file_name):
@@ -378,11 +304,13 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         cv2.imwrite(intensity_file_name,
                     self.profile_batch.get_intensity_image().data())
 
-    def main(self, lua_name):
+    def main(self, lua_name, scan_line_count=4000):
         start_time = time.time()
         if not find_and_connect(self.profiler):
             return -1
-        self.set_parameters()
+        end_time = time.time()-start_time
+        print(f"Connection Time: {end_time}")
+        self.set_parameters(scan_line_count)
 
         self.profile_batch = ProfileBatch(self.data_width)
 
@@ -395,9 +323,12 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
         points = save_point_cloud(profile_batch=self.profile_batch, user_set=self.user_set, save_csv=False, save_ply=False, save_np=True)
 
+        start_time = time.time()
         self.profiler.disconnect()
 
-        end_time = time.time()
+        end_time = time.time()-start_time
+        print(f"Disconnection Time: {end_time}")
+
         return points
 
 
