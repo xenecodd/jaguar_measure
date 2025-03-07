@@ -187,10 +187,6 @@ def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_
         print("Sol veya sağ bölge için yeterli nokta yok.")
         return 0, 0
 
-
-
-
-
 def filter_and_visualize_projection_with_ply(points):
     # X ekseninde ortadaki bölgeyi seç
     median = np.median(points[:, 0])

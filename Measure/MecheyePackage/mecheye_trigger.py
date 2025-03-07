@@ -28,9 +28,9 @@ class CustomAcquisitionCallback(AcquisitionCallbackBase):
 
 
 class TriggerWithExternalDeviceAndFixedRate(object):
-    def __init__(self):
+    def __init__(self,vel_mul):
         self.profiler = Profiler()
-
+        self.vel_mul = vel_mul
     def set_timed_exposure(self, exposure_time: int):
         # Set the exposure mode to timed
         show_error(self.user_set.set_enum_value(
@@ -279,11 +279,11 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
     def _move_robot(self, move_type: str, coordinates: list,vel_cart=54,vel_l = 54):
         if move_type == "MoveCart":
-            robot.MoveCart(coordinates, 0, 0, vel = vel_cart)
+            robot.MoveCart(coordinates, 0, 0, vel=self.vel_mul* vel_cart)
         elif move_type == "MoveL":
-            robot.MoveL(coordinates, 0, 0, vel= vel_l)
+            robot.MoveL(coordinates, 0, 0, vel=self.vel_mul* vel_l)
         elif move_type == "MoveJ":
-            robot.MoveJ(coordinates, 0, 0, vel=100)
+            robot.MoveJ(coordinates, 0, 0, vel=self.vel_mul*100)
         else:
             raise ValueError(f"Unsupported move type: {move_type}")
 

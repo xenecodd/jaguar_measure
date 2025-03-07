@@ -15,19 +15,7 @@ class CircleFitter:
 
         self.pcd = point
         self.commonp = None
-        self.datum = self.get_datum()  # Initialize datum
-
-
-    # def max_y_strip(self):
-    #     """
-    #     Şerit içindeki noktaların minimum ve maksimum Y koordinatlarını döndürür.
-    #     """
-    #     points = self.pcd
-    #     x_center = (np.min(points[:, 0]) + np.max(points[:, 0])) / 2  # Y eksenindeki orta nokta
-    #     strip_points = points[np.abs(points[:, 0] - x_center) < 5]  # Şeritteki noktaları seç
-    #     if len(strip_points) == 0:  
-    #         raise ValueError("Şerit içinde nokta bulunamadı.")
-    #     return (np.max(strip_points[:, 1])+self.min_old)
+        self.datum = self.get_datum()
 
     def get_B(self, strip_width=20):
         points = self.pcd
