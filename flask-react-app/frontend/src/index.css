@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Global styles can be added as Tailwind utility classes or custom classes */
+body {
+  @apply bg-gray-50 text-gray-900 font-sans;
+}
+
+/* Optional: Custom scrollbar */
+::-webkit-scrollbar {
+  @apply w-2 bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-jaguar-blue rounded-full;
+}
