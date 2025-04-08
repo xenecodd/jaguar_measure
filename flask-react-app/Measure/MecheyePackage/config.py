@@ -7,15 +7,11 @@ config = SimpleNamespace(
     put_back=False,
     drop_object = True,
     vel_mul=1.0,
-    range_=100,
+    range_=2,
     file_path="/home/eypan/Documents/JaguarInterface/flask-react-app/Measure/MecheyePackage/point_index.txt",
     save_point_clouds=False,
-    save_to_db=False,
-    ignored_points = [
-        4, 5, 6, 7, 24, 25, 26, 27,
-        34, 35, 36, 37, 44, 45, 46, 47,
-        62, 63, 64, 65, 66, 67, 68, 69
-    ],
+    save_to_db=True,
+    ignored_points = [4],
     same_object = False,
     same_place_index = None,
     # Tolerans ayarları: (hedef, tolerans)
@@ -46,7 +42,7 @@ config = SimpleNamespace(
         "p_91": [-335, 100, 350, -90.00, -0.0005, 90.00],
         "notOK": [-621, 325, 511, 117, -83, -148]
     },
-    
+
     # Veritabanı ayarları
     db_config={
         "host": "192.168.1.180",

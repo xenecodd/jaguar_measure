@@ -6,7 +6,6 @@ import open3d as o3d
 import pandas as pd
 import mysql.connector
 import matplotlib
-from tkinter.messagebox import showerror
 from openpyxl.styles import PatternFill
 from robot_control import send_command
 from Measure.Scripts import *
@@ -17,16 +16,13 @@ import sys
 import json
 
 # Backend yapılandırması: Agg mod, non-interaktif; TkAgg ise interaktif.
-USE_AGG = True
-if USE_AGG:
+if config.use_agg:
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    # Agg modda GUI gösterimleri kapatılıyor
     plt.show = lambda: None
 else:
     matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
-
 
 class JaguarScanner:
     """
@@ -37,27 +33,25 @@ class JaguarScanner:
       - Robotun pick (parça alma) ve put-back (parça geri koyma) işlemlerini yönetir.
       - Thread'li hesaplama ile performansı artırır.
     """
-    def __init__(self, vel_mul: float, use_agg: bool = USE_AGG, put_back: bool = True):
+    def __init__(self, vel_mul: float=1, use_agg: bool = config.use_agg, put_back: bool = False):
         """
         JaguarScanner örneğini başlatır.
         
         Args:
             vel_mul (float): Hız çarpanı.
             use_agg (bool, optional): Agg mod kullanımı. Varsayılan True.
-            put_back (bool, optional): Parçanın geri konulup konulmayacağı. False ise trash noktasına yönlendirilir.
+            put_back (bool, optional): Parçanın geri konulup konulacağı. False ise trash noktasına yönlendirilir.
         """
         self.config = config
-        
         self.mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul)
         self.pcd = o3d.geometry.PointCloud()
         self.results = []
         self.excel_threads = []
-        self.points = left_of_robot_points + left_small + back_points + right_of_robot_points + right_small
-        
-        self.current_di0_value = (0, 0)  # Initialize with default value
+        self.points = left_of_robot_points + left_small #+ back_points + right_of_robot_points + right_small
+        self.pick_point = 1
+        self.current_di0_value = (0, 0)  # Varsayılan değerle başlat
         self.di0_thread = threading.Thread(target=self.read_di0_updates, daemon=True)
         self.di0_thread.start()
-        
         self.tolerances = {
             "Feature1 (102.1)": (102.1, 2.0),
             "Feature2 (25mm/2)": (12.5, 0.5),
@@ -78,19 +72,32 @@ class JaguarScanner:
             "Feature17 (2C)": (0.0, 2.0)
         }
 
+    def read_di0_updates(self):
+        """
+        DI0 sinyallerini sürekli olarak stdin'den okur ve current_di0_value değerini günceller.
+        Bu method bir thread içinde çalışır.
+        """
+        for line in sys.stdin:
+            # print("")  # Log okunurluğu için boş satır
+            try:
+                # JSON formatına uygun olması için tekli tırnak işaretlerini çiftli tırnak işaretleriyle değiştir
+                clean_line = line.strip().replace("'", '"')
+                # print(f"Processing line: {clean_line}")
+                data = json.loads(clean_line)
+                if 'DI0' in data:
+                    # JSON dizisini tuple'a çevir
+                    di0_array = data['DI0']
+                    self.current_di0_value = (di0_array[0], di0_array[1])
+                    self.mech_eye.current_di0_value = self.current_di0_value
+                    # print(f"Received DI0 update: {self.current_di0_value}")
+            except json.JSONDecodeError as e:
+                print(f"Error parsing input: {line}")
+                print(f"JSON error: {str(e)}")
+            except Exception as e:
+                print(f"Error processing input: {e}")
+
     @staticmethod
     def rotate_point_cloud(points: np.ndarray, angle_degrees: float, axis: str) -> np.ndarray:
-        """
-        Nokta bulutunu belirtilen eksende döndürür.
-        
-        Args:
-            points (np.ndarray): Nokta bulutu.
-            angle_degrees (float): Döndürme açısı (derece cinsinden).
-            axis (str): Döndürme ekseni ('x', 'y' veya 'z').
-        
-        Returns:
-            np.ndarray: Döndürülmüş nokta bulutu.
-        """
         angle_radians = np.radians(angle_degrees)
         if axis == "z":
             rotation_matrix = np.array([
@@ -116,15 +123,6 @@ class JaguarScanner:
 
     @staticmethod
     def to_origin(points: np.ndarray) -> np.ndarray:
-        """
-        Nokta bulutunu orijine taşır.
-        
-        Args:
-            points (np.ndarray): Nokta bulutu.
-            
-        Returns:
-            np.ndarray: Orijine taşınmış nokta bulutu.
-        """
         min_x, min_y = np.min(points[:, 0]), np.min(points[:, 1])
         points[:, 0] -= min_x
         points[:, 1] -= min_y
@@ -132,80 +130,24 @@ class JaguarScanner:
 
     @staticmethod
     def remove_gripper_points(points: np.ndarray) -> np.ndarray:
-        """
-        Gripper bölgesindeki noktaları filtreler.
-        
-        Args:
-            points (np.ndarray): Nokta bulutu.
-            
-        Returns:
-            np.ndarray: Filtrelenmiş nokta bulutu.
-        """
         min_x = np.min(points[:, 0])
         y_candidates = points[:, 1][points[:, 0] < min_x + 23]
         y_min, y_max = np.min(y_candidates), np.max(y_candidates)
         return points[(points[:, 1] < y_min) | (points[:, 1] > y_max)]
-     
-    # Function to continuously read DI0 updates from stdin
-    def read_di0_updates(self):
-        global current_di0_value  # Make this a global variable in your scan.py
-        
-        for line in sys.stdin:
-            print("")  # Add an empty line for logging clarity
-            try:
-                # Strip whitespace and replace single quotes with double quotes for proper JSON
-                clean_line = line.strip().replace("'", '"')
-                print(f"Processing line: {clean_line}")
-                
-                data = json.loads(clean_line)
-                if 'DI0' in data:
-                    # Convert the JSON array back to a tuple if needed
-                    di0_array = data['DI0']
-                    self.current_di0_value = (di0_array[0], di0_array[1])
-                    self.mech_eye.current_di0_value = self.current_di0_value
-                    print(f"Received DI0 update: {self.current_di0_value}")
-            except json.JSONDecodeError as e:
-                print(f"Error parsing input: {line}")
-                print(f"JSON error: {str(e)}")
-            except Exception as e:
-                print(f"Error processing input: {e}")
-    
+
     def get_next_valid_index(self, current_index: int, ignored: list, total_points: int) -> int:
-        """
-        Geçerli indeksten sonraki, ignored listesinde olmayan geçerli indeksi döndürür.
-        
-        Args:
-            current_index (int): Şu anki indeks.
-            ignored (list): Yoksayılan indeksler.
-            total_points (int): Toplam nokta sayısı.
-            
-        Returns:
-            int: Geçerli sonraki indeks.
-        """
         next_index = (current_index + 1) % total_points
         while ignored and next_index in ignored:
             next_index = (next_index + 1) % total_points
         return next_index
 
     def read_current_point_index(self) -> int:
-        """
-        Nokta indeksini dosyadan okur.
-        
-        Returns:
-            int: Okunan indeks; dosya yoksa 0.
-        """
         if os.path.exists(self.config.file_path):
             with open(self.config.file_path, 'r') as file:
                 return int(file.read().strip())
         return 0
 
     def write_current_point_index(self, index: int):
-        """
-        Nokta indeksini dosyaya yazar.
-        
-        Args:
-            index (int): Yazılacak indeks.
-        """
         with open(self.config.file_path, 'w') as file:
             file.write(str(index))
 
@@ -218,8 +160,7 @@ class JaguarScanner:
             soft_point: Soft nokta konumu.
             use_back_transit (bool): Back transit kullanılacak mı.
         """
-        transit_vel = 80  # Varsayılan transit hızı
-
+        transit_vel = 80
         # Özel durum: Belirli noktalarda ekstra transit hareketleri
         if point == right_of_robot_points[0]:
             transit_vel = 50
@@ -245,39 +186,43 @@ class JaguarScanner:
         robot.WaitMs(1000)
         robot.MoveL(point["p_up"], 0, 0, vel=self.config.vel_mul * transit_vel)
         print("PICK OBJECT", self.current_di0_value)
+        
+        # DI0 değerine göre parça alma işleminin başarıyla tamamlanıp tamamlanmadığını kontrol et
         if not self.current_di0_value[1]:
             print("Parça başarıyla kavrandı.")
             robot.Mode(0)
         else:
+            # Parça kavrama hatası durumunda
             robot.SetDO(7, 0)
             print("Parça kavurma hatası.")
             robot.Mode(1)
-            current_index = self.read_current_point_index()
-            self.write_current_point_index(current_index + 1)
-            current_index += 1
             
+            # Yeni parça alma girişimi için indeksi güncelle
+            current_index = self.read_current_point_index()
+            current_index = self.get_next_valid_index(current_index, self.config.ignored_points, len(self.points))
+            self.write_current_point_index(current_index)
+            
+            # Yeni parça alma işlemi için hazırlan
             point = self.points[current_index]
             if current_index < len(left_of_robot_points + left_small + back_points):
-                soft_point, self.trash = p90, p90_trash
+                soft_point = p90
             else:
-                soft_point, self.trash = p91, p91_trash
-
+                soft_point = p91
+                
             total_left_back_points = len(left_of_robot_points + left_small + back_points)
-
             use_back_transit = current_index >= len(left_of_robot_points + left_small) and current_index < total_left_back_points
-
+            
             if isinstance(self.config.same_place_index, int):
                 point = self.points[self.config.same_place_index]
             else:
                 point = self.points[current_index]
-
+                
             self.pick_point = point
             self.pick_soft_point = soft_point
             self.pick_use_back_transit = use_back_transit
-
             self.pick_object(point, soft_point, use_back_transit)
-            
-
+            return
+        
         # Geri dönüş transit hareketleri
         if point in right_of_robot_points and point["p_up"][0] > 400:
             transit_vel = 50
@@ -290,30 +235,9 @@ class JaguarScanner:
         robot.MoveCart(soft_point, 0, 0, vel=self.config.vel_mul * transit_vel)
 
     def calculate_tolerance_distance(self, value: float, target: float, tolerance: float) -> float:
-        """
-        Ölçülen değer ile hedef arasındaki farkı hesaplar.
-        
-        Args:
-            value (float): Ölçülen değer.
-            target (float): Hedef değer.
-            tolerance (float): Tolerans.
-            
-        Returns:
-            float: Mutlak fark.
-        """
         return np.abs(value - target)
 
     def get_gradient_color(self, distance: float, tolerance: float) -> str:
-        """
-        Mesafe farkına göre gradient renk kodu oluşturur.
-        
-        Args:
-            distance (float): Ölçülen mesafe farkı.
-            tolerance (float): Tolerans.
-            
-        Returns:
-            str: Hex formatında renk kodu.
-        """
         if distance > tolerance:
             return "FF0000"
         ratio = distance / tolerance
@@ -323,12 +247,6 @@ class JaguarScanner:
         return f"{red:02X}{green:02X}{blue:02X}"
 
     def smol_calc(self, small_data: np.ndarray):
-        """
-        Small verilerini işler.
-        
-        Args:
-            small_data (np.ndarray): Small tarama verisi.
-        """
         small = self.rotate_point_cloud(small_data, -90, "z")
         small = small[small[:, 2] > np.min(small[:, 2]) + 37]
         small = small[small[:, 0] < np.min(small[:, 0]) + 50]
@@ -336,7 +254,7 @@ class JaguarScanner:
 
         if self.config.save_point_clouds:
             self.pcd.points = o3d.utility.Vector3dVector(small)
-            o3d.io.write_point_cloud("/home/eypan/Documents/down_jaguar/jaguar_measure/small.ply", self.pcd)
+            o3d.io.write_point_cloud("/home/eypan/Documents/JaguarInterface/flask-react-app/small.ply", self.pcd)
 
         circle_fitter = CircleFitter(small)
         _, z_center_small, radius_small = circle_fitter.fit_circles_and_plot(
@@ -349,21 +267,14 @@ class JaguarScanner:
         self.z_center_small = z_center_small
 
     def hor_calc(self, horizontal_data: np.ndarray, horizontal2_data: np.ndarray):
-        """
-        Horizontal verilerini işler.
-        
-        Args:
-            horizontal_data (np.ndarray): İlk horizontal tarama verisi.
-            horizontal2_data (np.ndarray): İkinci horizontal tarama verisi.
-        """
         horizontal2_data[:, 2] -= 70
         horizontal2_data[:, 0] -= 50
 
         if self.config.save_point_clouds:
             self.pcd.points = o3d.utility.Vector3dVector(horizontal2_data)
-            o3d.io.write_point_cloud("/home/eypan/Documents/down_jaguar/jaguar_measure/horizontal2.ply", self.pcd)
+            o3d.io.write_point_cloud("/home/eypan/Documents/JaguarInterface/flask-react-app/horizontal2.ply", self.pcd)
             self.pcd.points = o3d.utility.Vector3dVector(horizontal_data)
-            o3d.io.write_point_cloud("/home/eypan/Documents/down_jaguar/jaguar_measure/horizontal_pre.ply", self.pcd)
+            o3d.io.write_point_cloud("/home/eypan/Documents/JaguarInterface/flask-react-app/horizontal_pre.ply", self.pcd)
 
         diff = np.abs(np.max(horizontal_data[:, 0]) - np.min(horizontal2_data[:, 0]))
         datum_horizontal = np.max(horizontal_data[:, 0]) - diff
@@ -377,7 +288,7 @@ class JaguarScanner:
 
         if self.config.save_point_clouds:
             self.pcd.points = o3d.utility.Vector3dVector(horizontal)
-            o3d.io.write_point_cloud("/home/eypan/Documents/down_jaguar/jaguar_measure/horizontal_post.ply", self.pcd)
+            o3d.io.write_point_cloud("/home/eypan/Documents/JaguarInterface/flask-react-app/horizontal_post.ply", self.pcd)
 
         self.circle_fitter = CircleFitter(horizontal)
         _, circle2 = self.circle_fitter.fit_circles_and_plot()
@@ -403,7 +314,8 @@ class JaguarScanner:
         if self.config.save_point_clouds:
             pcd = o3d.geometry.PointCloud()
             pcd.points = o3d.utility.Vector3dVector(vertical)
-            o3d.io.write_point_cloud("/home/eypan/Documents/down_jaguar/jaguar_measure/vertical.ply", pcd)
+            o3d.io.write_point_cloud("/home/eypan/Documents/JaguarInterface/flask-react-app/vertical.ply", pcd)
+        
         vertical_copy = self.to_origin(vertical.copy())
         l_17_2, ok_17_2 = horn_diff(vertical_copy)
         l_23_4, ok_23_4 = horn_diff(vertical_copy, 240, 280)
@@ -411,42 +323,7 @@ class JaguarScanner:
         current_index = self.get_next_valid_index(self.read_current_point_index(), self.config.ignored_points, len(self.points))
         self.write_current_point_index(current_index)
         
-        if hasattr(self, "pick_point"):
-            if self.config.put_back:
-                point = self.pick_point
-                soft_point = self.pick_soft_point
-                use_back_transit = self.pick_use_back_transit
-                transit_vel = 80  # Varsayılan transit hızı
-
-                robot.MoveCart(soft_point, 0, 0, vel=self.config.vel_mul * 100)
-                if point in right_of_robot_points and point["p_up"][0] > 400:
-                    robot.MoveCart(right_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
-                elif use_back_transit or (point["p_up"][0] > 400 and (point in left_of_robot_points)):
-                    transit_vel = 50
-                    robot.MoveCart(back_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
-                
-                robot.MoveCart(point["p_up"], 0, 0, vel=self.config.vel_mul * transit_vel)
-                robot.MoveL(point["p"], 0, 0, vel=self.config.vel_mul * 50)
-                robot.WaitMs(500)
-                robot.SetDO(7, 0)  # Parçayı bırakma sinyali
-                robot.WaitMs(500)
-                robot.MoveL(point["p_up"], 0, 0, vel=self.config.vel_mul * transit_vel)
-                
-                if point in right_of_robot_points and point["p_up"][0] > 400:
-                    robot.MoveCart(right_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
-                elif use_back_transit or (point["p_up"][0] > 400 and (point in left_of_robot_points)):
-                    transit_vel = 50
-                    robot.MoveCart(back_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
-            else:
-                robot.MoveCart(self.trash, 0, 0, vel=self.config.vel_mul * 80)
-                robot.SetDO(7, 0)
-        elif self.config.drop_object:
-            robot.MoveCart(self.trash, 0, 0, vel=self.config.vel_mul * 80)
-            robot.SetDO(7, 0)
-
-        if self.cycle == self.config.range_ - 1:
-            self.write_current_point_index(0)
-
+        # vertical_results hesaplama
         B = self.circle_fitter.get_B()
         b_trans_val = np.max(vertical[:, 1]) - np.max(self.horizontal[:, 2])
         b_vertical = B + b_trans_val
@@ -458,7 +335,7 @@ class JaguarScanner:
         l_88_6 = self.feature_1 - self.feature_2
         l_81_5 = filter_and_visualize_projection_with_ply(self.horizontal)
 
-        return {
+        vertical_results = {
             "l_17_2": l_17_2,
             "l_23_4": l_23_4,
             "l_42": l_42,
@@ -473,43 +350,105 @@ class JaguarScanner:
             "ok_17_2": ok_17_2
         }
 
-    def combine_results(self, vertical_results: dict) -> dict:
-        """
-        Vertical ölçüm sonuçlarını özelliklere göre birleştirir.
+        # current_results hesaplama
+        current_results = self.combine_results(vertical_results)
+
+        if hasattr(self, "pick_point"):
+            if self.config.put_back:
+                point = self.pick_point
+                soft_point = self.pick_soft_point
+                use_back_transit = self.pick_use_back_transit
+                transit_vel = 80
+
+                robot.MoveCart(soft_point, 0, 0, vel=self.config.vel_mul * 100)
+                if point in right_of_robot_points and point["p_up"][0] > 400:
+                    robot.MoveCart(right_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
+                elif use_back_transit or (point["p_up"][0] > 400 and (point in left_of_robot_points)):
+                    transit_vel = 50
+                    robot.MoveCart(back_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
+                
+                robot.MoveCart(point["p_up"], 0, 0, vel=self.config.vel_mul * transit_vel)
+                robot.MoveL(point["p"], 0, 0, vel=self.config.vel_mul * 50)
+                robot.WaitMs(500)
+                robot.SetDO(7, 0)
+                robot.WaitMs(500)
+                robot.MoveL(point["p_up"], 0, 0, vel=self.config.vel_mul * transit_vel)
+                
+                if point in right_of_robot_points and point["p_up"][0] > 400:
+                    robot.MoveCart(right_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
+                elif use_back_transit or (point["p_up"][0] > 400 and (point in left_of_robot_points)):
+                    transit_vel = 50
+                    robot.MoveCart(back_transit_point, 0, 0, vel=self.config.vel_mul * transit_vel)
+            else:
+                if self.config.drop_object:
+                    print("DROP OBJECT", self.check_part_quality(current_results))
+                    drop_point = metal_detector if self.check_part_quality(current_results) else trash
+                    print("DROP POINT", drop_point)
+                    robot.MoveCart(drop_point, 0, 0, vel=self.config.vel_mul * 80)
+                    robot.SetDO(7, 0)
+                else:
+                    print("Parça bırakma ayarı devre dışı.")
         
-        Args:
-            vertical_results (dict): Vertical ölçüm sonuçları.
-            
-        Returns:
-            dict: Birleştirilmiş sonuçlar.
-        """
-        return {
-            "Feature1 (102.1)": vertical_results.get("feature_1") or self.feature_1,
+        if current_index == len(self.points) - 1:
+            self.write_current_point_index(0)   
+
+        return vertical_results
+
+    def check_part_quality(self, results: dict) -> bool:
+        for feature, target_tolerance in self.tolerances.items():
+            target, tolerance = target_tolerance
+            value = results.get(feature, None)
+            if value is None:
+                print(f"Parça kalite kontrolünden geçemedi: {feature} değeri hesaplanamadı")
+                return False
+            if not (target - tolerance <= value <= target + tolerance):
+                print(f"Parça kalite kontrolünden geçemedi: {feature} = {value}, hedef = {target}±{tolerance}")
+                return False
+        print("Parça kalite kontrolünden başarıyla geçti.")
+        return True
+
+    def combine_results(self, vertical_results: dict) -> dict:
+        # Değerleri güvenli bir şekilde almak için yardımcı fonksiyon
+        def safe_get(dict_obj, key, default=None):
+            value = dict_obj.get(key, default)
+            # Eğer bir değer sözlük ise, string temsiline dönüştür
+            if isinstance(value, dict):
+                print(f"Uyarı: {key} için dictionary değeri algılandı: {value}")
+                return str(value)
+            return value
+        
+        results = {
+            "Feature1 (102.1)": safe_get(vertical_results, "feature_1", self.feature_1),
             "Feature2 (25mm/2)": self.feature_2,
             "Feature3 (23.1)": self.feature_3,
             "Feature4 (25mm/2)": self.radius_small,
             "Feature5 (L40)": self.l_40,
-            "Feature6 (L248)": vertical_results.get("l_248"),
-            "Feature7 (L42)": vertical_results.get("l_42"),
-            "Feature8 (L79.73)": vertical_results.get("l_79_73"),
-            "Feature9 (R1-50)": vertical_results.get("r1"),
-            "Feature10 (R2-35)": vertical_results.get("r2"),
-            "Feature11 (3mm)": vertical_results.get("mean_3mm"),
-            "Feature12 (88.6)": vertical_results.get("l_88_6"),
+            "Feature6 (L248)": safe_get(vertical_results, "l_248"),
+            "Feature7 (L42)": safe_get(vertical_results, "l_42"),
+            "Feature8 (L79.73)": safe_get(vertical_results, "l_79_73"),
+            "Feature9 (R1-50)": safe_get(vertical_results, "r1"),
+            "Feature10 (R2-35)": safe_get(vertical_results, "r2"),
+            "Feature11 (3mm)": safe_get(vertical_results, "mean_3mm"),
+            "Feature12 (88.6)": safe_get(vertical_results, "l_88_6"),
             "Feature13 (10.6)": self.feature_3 - self.radius_small,
-            "Feature14 (81.5)": vertical_results.get("l_81_5"),
-            "Feature15 (L23.4)": vertical_results.get("l_23_4"),
-            "Feature16 (L17.2)": vertical_results.get("l_17_2"),
-            "Feature17 (2C)": vertical_results.get("ok_17_2")
+            "Feature14 (81.5)": safe_get(vertical_results, "l_81_5"),
+            "Feature15 (L23.4)": safe_get(vertical_results, "l_23_4"),
+            "Feature16 (L17.2)": safe_get(vertical_results, "l_17_2"),
+            "Feature17 (2C)": safe_get(vertical_results, "ok_17_2")
         }
+        
+        # Tüm değerlerin serileştirilebilir olduğundan emin olalım
+        for key, value in results.items():
+            try:
+                # Test amaçlı json.dumps
+                json.dumps(value)
+            except (TypeError, OverflowError):
+                print(f"Serileştirilemeyen değer bulundu: {key} = {value}")
+                results[key] = str(value)
+        
+        return results
 
     def write_excel_to_db(self, excel_path: str):
-        """
-        Excel dosyasındaki verileri MariaDB'ye yazar.
-        
-        Args:
-            excel_path (str): Excel dosya yolu.
-        """
         df = pd.read_excel(excel_path, sheet_name="ScanResults")
         conn = mysql.connector.connect(
             host="192.168.1.180",
@@ -543,26 +482,48 @@ class JaguarScanner:
         conn.close()
 
     def save_to_excel(self):
-        """
-        Ölçüm sonuçlarını Excel dosyasına kaydeder.
-        """
         rows = []
         for iteration, result in enumerate(self.results, start=1):
-            iteration_ok = 1  # Bu iterasyon için başlangıçta OK=1 kabul ediliyor.
+            iteration_ok = 1
+            
+            # İlk hatanın nedenini görmek için detaylı loglama yapalım
+            # print(f"İterasyon {iteration} sonuçları:")
+            # print(result)
+            
             for feature, value in result.items():
-                rows.append({"Iteration": iteration, "Feature": feature, "Value": value})
-                if feature in self.tolerances:
-                    target, tolerance = self.tolerances[feature]
-                    if not (target - tolerance <= value <= target + tolerance):
-                        iteration_ok = 0  # Tolerans dışı kalan varsa OK=0 yap.
+                # Dictionary değerlerini tespit edip düzgün şekilde dönüştürelim
+                if isinstance(value, dict):
+                    # Dictionary değeri string formatına dönüştürülüyor 
+                    # print(f"Dictionary değeri tespit edildi: {feature} = {value}")
+                    value_str = json.dumps(value)  # JSON string formatına dönüştürme
+                    rows.append({"Iteration": iteration, "Feature": feature, "Value": value_str})
+                else:
+                    try:
+                        # Değerin serileştirilebilir olduğundan emin olalım
+                        rows.append({"Iteration": iteration, "Feature": feature, "Value": value})
+                        
+                        # Tolerans kontrolü
+                        if feature in self.tolerances:
+                            target, tolerance = self.tolerances[feature]
+                            if not (target - tolerance <= value <= target + tolerance):
+                                iteration_ok = 0
+                    except TypeError as e:
+                        # Serileştirilemez değer bulundu
+                        print(f"Serileştirilemez değer: {feature} = {value}, hata: {e}")
+                        rows.append({"Iteration": iteration, "Feature": feature, "Value": str(value)})
+            
             rows.append({"Iteration": iteration, "Feature": "OK", "Value": iteration_ok})
+        
+        # DataFrame oluştur
         results_df = pd.DataFrame(rows)
-        output_file = "/home/eypan/Documents/down_jaguar/jaguar_measure/scan_results.xlsx"
+        output_file = "/home/eypan/Documents/JaguarInterface/flask-react-app/scan_results.xlsx"
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        
         try:
             with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
                 results_df.to_excel(writer, index=False, sheet_name="ScanResults")
                 worksheet = writer.sheets["ScanResults"]
+                
                 for row_index, row in enumerate(results_df.itertuples(index=False), start=2):
                     if row.Feature == "OK":
                         row_fill = PatternFill(start_color="00B050" if row.Value else "FF0000", fill_type="solid")
@@ -571,39 +532,43 @@ class JaguarScanner:
                         iteration = row.Iteration
                         feature = row.Feature
                         value = row.Value
+                        
+                        # Satır arkaplan rengi
                         iteration_color = "FCE4D6" if iteration % 2 == 0 else "D9EAD3"
                         fill = PatternFill(start_color=iteration_color, end_color=iteration_color, fill_type="solid")
                         for col_index in range(1, len(results_df.columns) + 1):
                             worksheet.cell(row=row_index, column=col_index).fill = fill
+                        
+                        # Tolerans kontrolü sadece değer sayısal ise yapılmalı
                         if feature in self.tolerances:
-                            target, tolerance = self.tolerances[feature]
-                            value_cell = worksheet.cell(row=row_index, column=3)
-                            if target - tolerance <= value <= target + tolerance:
-                                value_cell.fill = PatternFill(start_color="00B050", fill_type="solid")
-                            else:
-                                value_cell.fill = PatternFill(start_color="FF0000", fill_type="solid")
-                            distance = self.calculate_tolerance_distance(value, target, tolerance)
-                            gradient_color = self.get_gradient_color(distance, tolerance)
-                            distance_cell = worksheet.cell(row=row_index, column=4)
-                            distance_cell.value = tolerance - distance
-                            distance_cell.fill = PatternFill(start_color=gradient_color, fill_type="solid")
-            if self.config.save_to_db:            
+                            try:
+                                value_num = float(value) if isinstance(value, str) else value
+                                target, tolerance = self.tolerances[feature]
+                                
+                                value_cell = worksheet.cell(row=row_index, column=3)
+                                if target - tolerance <= value_num <= target + tolerance:
+                                    value_cell.fill = PatternFill(start_color="00B050", fill_type="solid")
+                                else:
+                                    value_cell.fill = PatternFill(start_color="FF0000", fill_type="solid")
+                                
+                                distance = self.calculate_tolerance_distance(value_num, target, tolerance)
+                                gradient_color = self.get_gradient_color(distance, tolerance)
+                                distance_cell = worksheet.cell(row=row_index, column=4)
+                                distance_cell.value = tolerance - distance
+                                distance_cell.fill = PatternFill(start_color=gradient_color, fill_type="solid")
+                            except (ValueError, TypeError):
+                                print(f"Sayısal karşılaştırma yapılamadı: {feature} = {value}")
+                                
+            if self.config.save_to_db:
                 self.write_excel_to_db(output_file)
-        except FileNotFoundError:
-            pass
+                
+        except Exception as e:
+            print(f"Excel yazma hatası: {e}")
+            import traceback
+            traceback.print_exc()
 
     def run_scan_cycle(self):
-        """
-        Tarama döngüsünü çalıştırır ve tüm ölçüm işlemlerini yönetir.
-        """
-        ROBOT_POSITIONS = {
-            'scrc': [-450, -130, 470, 82.80, 89.93, -7.30],
-            'h_2': [-375, 100, 545, -90, -90, 180],
-            'p_91': [-335, 100, 350, -90.00, -0.0005, 90.00],
-            'notOK': [-621, 325, 511, 117, -83, -148]
-        }
-        MAX_RETRIES = 2  # Örnek sayı
-
+        ROBOT_POSITIONS = self.config.robot_positions
         for self.cycle in range(self.config.range_):
             start_time = time.time()
             current_results = {}
@@ -612,15 +577,13 @@ class JaguarScanner:
             try:
                 send_command({"cmd": 107, "data": {"content": "ResetAllError()"}})
 
-                # Parça alma işlemi:
                 if self.config.pick:
                     if current_index < len(left_of_robot_points + left_small + back_points):
-                        soft_point, self.trash = p90, p90_trash
+                        soft_point = p90
                     else:
-                        soft_point, self.trash = p91, p91_trash
+                        soft_point = p91
 
                     total_left_back_points = len(left_of_robot_points + left_small + back_points)
-
                     use_back_transit = current_index >= len(left_of_robot_points + left_small) and current_index < total_left_back_points
 
                     if isinstance(self.config.same_place_index, int):
@@ -636,7 +599,6 @@ class JaguarScanner:
 
                 robot.MoveCart(ROBOT_POSITIONS['scrc'], 0, 0, vel=self.config.vel_mul * 100)
 
-                # Small hesaplama:
                 small_data = self.mech_eye.main(lua_name="small.lua", scan_line_count=1500)
                 if self.config.use_agg:
                     thread_small = threading.Thread(target=self.smol_calc, args=(small_data,))
@@ -645,7 +607,6 @@ class JaguarScanner:
                     self.smol_calc(small_data)
                     plt.show()
 
-                # Horizontal hesaplama:
                 horizontal_data = self.mech_eye.main(lua_name="horizontal.lua", scan_line_count=1500)
                 horizontal2_data = self.mech_eye.main(lua_name="horizontal2.lua", scan_line_count=1500)
                 if self.config.use_agg:
@@ -655,7 +616,6 @@ class JaguarScanner:
                     self.hor_calc(horizontal_data, horizontal2_data)
                     plt.show()
 
-                # Vertical tarama:
                 vertical_data = self.mech_eye.main(lua_name="vertical.lua", scan_line_count=2500)
                 plt.show()
 
@@ -677,9 +637,6 @@ class JaguarScanner:
                 else:
                     self.save_to_excel()
 
-
 if __name__ == "__main__":
-    scanner = JaguarScanner(vel_mul=1)  # vel_mul => Hız çarpanı
-    # Parçanın geri konulması istenmiyorsa:
-    # scanner.put_back = False
+    scanner = JaguarScanner()
     scanner.run_scan_cycle()

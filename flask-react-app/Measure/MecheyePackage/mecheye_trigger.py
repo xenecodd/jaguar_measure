@@ -11,7 +11,7 @@ import threading
 import sys
 sys.path.append('/home/eypan/Downloads/fair_api_old/')
 import Robot # type: ignore
-import os
+
 robot = Robot.RPC('192.168.58.2')
 
 mutex = Lock()
@@ -248,7 +248,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
         if pre_move:
             threading.Thread(target=self._move_robot, args=pre_move).start() #self._move_robot(*pre_move)
-        
+            
         status = self.profiler.start_acquisition()
         if not status.is_ok():
             show_error(status)
@@ -309,7 +309,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
                     self.profile_batch.get_intensity_image().data())
 
     def main(self, lua_name, scan_line_count=4000):
-        start_time = time.time()
+        
         if not find_and_connect(self.profiler):
             return -1
         self.set_parameters(scan_line_count)

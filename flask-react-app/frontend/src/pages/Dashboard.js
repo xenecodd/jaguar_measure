@@ -8,7 +8,9 @@ const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [response, setResponse] = useState(null);
-  const [scanActive, setScanActive] = useState(false);
+  const [robotStatus, setRobotStatus] = useState({
+    scan_active: false,
+  });
 
   // Fetch hello message on component mount
   useEffect(() => {
@@ -29,12 +31,28 @@ const Dashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+
+  useEffect(() => {
+    const fetchRobotStatus = async () => {
+      try {
+        const data = await apiService.getRobotStatus();
+        setRobotStatus(data);
+      } catch (error) {
+        console.error('Error fetching robot status:', error);
+      }
+    };
+
+    fetchRobotStatus();
+    const intervalId = setInterval(fetchRobotStatus, INTERVALS.ROBOT_STATUS);
+    
+    return () => clearInterval(intervalId);
+  }, []);
+
   // Start scan function
   const handleStartScan = async () => {
     try {
       const data = await apiService.controlScan('START');
       setResponse(data);
-      setScanActive(true);
     } catch (error) {
       setResponse({ error: 'Scan başlatılırken bir hata oluştu.' });
     }
@@ -45,7 +63,6 @@ const Dashboard = () => {
     try {
       const data = await apiService.controlScan('STOP');
       setResponse(data);
-      setScanActive(false);
     } catch (error) {
       setResponse({ error: 'Scan durdurulurken bir hata oluştu.' });
     }
@@ -64,20 +81,19 @@ const Dashboard = () => {
             <div className="text-gray-600 text-sm md:text-base italic">{message}</div>
           )}
         </div>
-
         <div className="flex flex-col justify-center items-center md:flex-row gap-4 mb-6">
           <Button 
             text="Taramayı Başlat" 
             type="success" 
             onClick={handleStartScan} 
-            disabled={scanActive}
+            disabled={robotStatus.scan_active}
             className="w-full md:w-auto"
           />
           <Button 
             text="Taramayı Durdur" 
             type="danger" 
             onClick={handleStopScan} 
-            disabled={!scanActive}
+            disabled={!robotStatus.scan_active}
             className="w-full md:w-auto"
           />
         </div>

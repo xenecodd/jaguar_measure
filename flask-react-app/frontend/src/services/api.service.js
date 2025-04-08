@@ -52,10 +52,20 @@ export const apiService = {
     }
   },
   
+  // Get scan log
+  getScanLog: async () => {
+    try {
+      const response = await apiClient.get(ENDPOINTS.SCAN_LOG);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  
   // Send air signal
   sendAirSignal: async () => {
     try {
-      const response = await apiClient.post('/api/robot/air');
+      const response = await apiClient.post(ENDPOINTS.AIR);
       return response.data;
     } catch (error) {
       throw error;

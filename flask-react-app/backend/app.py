@@ -12,8 +12,9 @@ from mecheye.profiler import Profiler
 
 # Set up logging
 logging.basicConfig(
-    level=logging.ERROR,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%H:%M:%S',
     handlers=[
         logging.FileHandler("scan_process.log"),
         logging.StreamHandler()
@@ -21,8 +22,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# # Disable logging for /api/robot/status endpoint
-# logging.getLogger('werkzeug').setLevel(logging.ERROR)
+# Disable logging for /api/robot/status endpoint
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 # Load environment variables
 load_dotenv('.env')
@@ -42,7 +43,6 @@ auto_monitor_running = False
 pressed = False
 
 def log_stdout(process, log_prefix="[SCAN]"):
-    """Read and log the stdout of a process"""
     try:
         for line in iter(process.stdout.readline, ''):
             if line:
@@ -56,12 +56,38 @@ def log_stderr(process, log_prefix="[SCAN_ERR]"):
     """Read and log the stderr of a process"""
     try:
         for line in iter(process.stderr.readline, ''):
-            if line:
-                logger.error(f"{log_prefix} {line.strip()}")
-            else:
+            if not line:
                 break
+            # Filter out the specific error message about IP address
+            if "Failed to obtain the IP address" in line:
+                continue
+            logger.error(f"{log_prefix} {line.strip()}")
     except Exception as e:
         logger.error(f"Error logging stderr: {e}")
+
+def safe_get_di(channel, index):
+    """Robotun DI değerini güvenli bir şekilde alır.
+    Eğer GetDI çağrısından dönen tuple'ın ikinci elemanı -1 ise, bu hata GetDI'den gelmektedir.
+    Bu durumda reconnect metodu çağrılarak yeniden bağlanma denemesi yapılır."""
+    while True:
+        try:
+            result = robot.GetDI(channel, index)
+            if isinstance(result, tuple) and result[1] == -1:
+                # Hata mesajı GetDI'den geldiğini tespit ettik
+                logger.error(f"GetDI({channel}, {index}) tarafından -1 değeri döndürüldü. (Kaynak: GetDI çağrısı)")
+                raise Exception("接收机器人状态字节 -1")
+            return result
+        except Exception as e:
+            if "接收机器人状态字节 -1" in str(e):
+                logger.error(f"接收机器人状态字节 -1 hatası alındı: {e}. RPC bağlantısı yeniden kuruluyor...")
+                try:
+                    robot.reconnect()  # Robotun yeniden bağlanmasını deniyoruz.
+                except Exception as recon_e:
+                    logger.error(f"RPC bağlantısı yeniden kurulamadı: {recon_e}")
+                    time.sleep(1)
+                time.sleep(0.5)
+            else:
+                raise e
 
 def run_scan(stop_event):
     """Function that starts scan.py with current DI0 value"""
@@ -106,117 +132,74 @@ def run_scan(stop_event):
         logger.error(f"Error in run_scan: {e}")
         return None, None
 
-def monitor_robot(stop_event, restart_event):
-    """Monitors robot status, stops scan process if necessary"""
-    global scan_process, scan_started
-    
-    # Give the scan process time to start
-    time.sleep(1)
-    
-    logger.info(f"Monitor robot thread started - Current DI8 status: {robot.GetDI(8, 0)}")
-    
-    while not stop_event.is_set():
-        # IMPORTANT: Only check DI8 value, not scan_started here
-        if robot.GetDI(8, 0) != (0, 0):
-            logger.info(f"Stop condition detected: DI8={robot.GetDI(8, 0)}")
-            profiler.stop_acquisition()
-            profiler.disconnect()
-            robot.StopMotion()
-            stop_event.set()  # Send stop signal to subprocess
-            logger.info("Stop signal sent, subprocess will stop!")
-            scan_started = False  # Reset scan_started flag
-            break  # Break the loop
-
-        time.sleep(0.5)  # Check every half second
-    
-    logger.info("Monitor robot waiting for restart signal...")
-    
-    # Ask user if they want to restart
-    start = time.time()
-    while True:
-        current_di9 = robot.GetDI(9, 0)
-        if current_di9 == (0, 1):
-            logger.info(f"Restart signal detected: DI9={current_di9}")
-            restart_event.set()  # Send restart signal
-            break
-        elif time.time() - start > 3:
-            logger.info("Press start button to restart")
-            start = time.time()
-    
-    logger.info("Monitor robot thread exiting")
-
 # Set up automatic restart capability based on DI9
 def auto_restart_monitor():
     global restart_event, stop_event, scan_started, auto_monitor_running
-    
+
     auto_monitor_running = True
     logger.info("Auto-restart monitor started")
-    
+
     while True:
         try:
-            # Check DI9 status
-            current_di9 = robot.GetDI(9, 0)
-            current_di8 = robot.GetDI(8, 0)
-            
-            # Only start a new scan when:
-            # 1. No scan is currently running
-            # 2. DI9 is (0,1) (start button pressed)
-            # 3. DI8 is (0,0) (safe to start)
-            if not scan_started and current_di9 == (0, 1) and current_di8 == (0, 0):
-                logger.info(f"Auto-restart triggered by DI9={current_di9}, DI8={current_di8}")
-                
-                # Create new events
+            # safe_get_di kullanılarak DI9 ve DI8 değerleri alınıyor
+            current_di9 = safe_get_di(9, 0)
+            current_di8 = safe_get_di(8, 0)
+        except Exception as e:
+            logger.error(f"DI değerleri alınırken hata: {e}")
+            time.sleep(1)
+            continue
+
+        # Yeni taramanın başlaması için koşullar kontrol ediliyor:
+        # 1. Tarama zaten çalışmıyor olmalı
+        # 2. DI9 (başlatma butonu) (0,1) olmalı
+        # 3. DI8 (güvenli başlatma) (0,0) olmalı
+        if not scan_started and current_di9 == (0, 1) and current_di8 == (0, 0):
+            logger.info(f"Auto-restart triggered by DI9={current_di9}, DI8={current_di8}")
+
+            # Yeni eventler oluşturuluyor
+            stop_event = multiprocessing.Event()
+            restart_event = multiprocessing.Event()
+
+            # Yeni tarama süreci başlatılıyor
+            scan_process_thread = threading.Thread(target=run_scan, args=(stop_event,))
+            scan_process_thread.start()
+
+            # Yeni monitor thread'i başlatılıyor
+            monitor_thread = threading.Thread(target=monitor_robot, args=(stop_event, restart_event), daemon=True)
+            monitor_thread.start()
+
+            scan_started = True
+            logger.info("Scan started successfully")
+
+            # Sistemin initialize olması için kısa bekleme
+            time.sleep(1)
+
+        # Yeniden başlatma isteği kontrol ediliyor
+        if restart_event and restart_event.is_set() and not scan_started:
+            logger.info("Processing restart event")
+            restart_event.clear()  # Event sıfırlanıyor
+
+            if current_di8 == (0, 0):
+                logger.info("Conditions are safe for restart")
                 stop_event = multiprocessing.Event()
-                restart_event = multiprocessing.Event()
-                
-                # Start new scan process
+
                 scan_process_thread = threading.Thread(target=run_scan, args=(stop_event,))
                 scan_process_thread.start()
-                
-                # Start new monitor thread
+
                 monitor_thread = threading.Thread(target=monitor_robot, args=(stop_event, restart_event), daemon=True)
                 monitor_thread.start()
-                
+
                 scan_started = True
-                logger.info("Scan started successfully")
-                
-                # Give the system time to initialize
-                time.sleep(1)
-            
-            # Check if restart was requested
-            if restart_event and restart_event.is_set() and not scan_started:
-                logger.info("Processing restart event")
-                restart_event.clear()  # Reset event
-                
-                # Check if conditions are safe to restart
-                if current_di8 == (0, 0):
-                    logger.info("Conditions are safe for restart")
-                    # Create new events
-                    stop_event = multiprocessing.Event()
-                    
-                    # Start new scan process
-                    scan_process_thread = threading.Thread(target=run_scan, args=(stop_event,))
-                    scan_process_thread.start()
-                    
-                    # Start new monitor thread
-                    monitor_thread = threading.Thread(target=monitor_robot, args=(stop_event, restart_event), daemon=True)
-                    monitor_thread.start()
-                    
-                    scan_started = True
-                    logger.info("Scan restarted successfully")
-                else:
-                    logger.warning(f"Cannot restart: unsafe conditions DI8={current_di8}")
-            
-            time.sleep(0.5)  # Check every half second
-            
-        except Exception as e:
-            logger.error(f"Error in auto_restart_monitor: {e}")
-            time.sleep(1)  # Wait before retrying
+                logger.info("Scan restarted successfully")
+            else:
+                logger.warning(f"Cannot restart: unsafe conditions DI8={current_di8}")
+
+        time.sleep(0.5)
 
 @app.route('/api/hello', methods=['GET'])
 def hello_world():
     """Simple API endpoint to test if server is running"""
-    return jsonify(message="Hello! Greetings from Flask backend!")
+    return jsonify(message="Bağlantı Kuruldu!")
 
 @app.route('/api/scan', methods=['POST'])
 def scan():
@@ -267,7 +250,7 @@ def scan():
             time.sleep(0.5)  # Give time for process to stop
         
         # Only restart if DI8 is safe
-        if robot.GetDI(8, 0) == (0, 0):
+        if safe_get_di(8, 0) == (0, 0):
             # Create new events
             stop_event = multiprocessing.Event()
             restart_event = multiprocessing.Event()
@@ -287,29 +270,102 @@ def scan():
     
     return jsonify(message="Unknown command"), 400
 
+@app.route('/api/scan/log', methods=['GET'])
+def get_scan_log():
+    try:
+        with open('scan_process.log', 'r') as file:
+            logs = file.readlines()
+        
+        # Filter out unwanted log messages
+        filtered_logs = [
+            log for log in logs 
+            if "Failed to obtain the IP address" not in log
+        ]
+        
+        return jsonify({'logs': filtered_logs}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def monitor_robot(stop_event, restart_event):
+    """Robot durumunu izler, gerekirse tarama sürecini durdurur."""
+    global scan_process, scan_started
+
+    # Tarama sürecinin başlaması için zaman tanı
+    time.sleep(1)
+
+    # safe_get_di kullanılarak DI8 değeri alınır
+    logger.info(f"Monitor robot thread started - Current DI8 status: {safe_get_di(8, 0)}")
+
+    while not stop_event.is_set():
+        try:
+            di8 = safe_get_di(8, 0)
+        except Exception as e:
+            logger.error(f"DI8 alınırken hata: {e}")
+            break
+
+        # DI8'in güvenli değerde olmadığı durumda işlemler yapılıyor
+        if di8 != (0, 0):
+            logger.info(f"Stop condition detected: DI8={di8}")
+            profiler.stop_acquisition()
+            profiler.disconnect()
+            robot.StopMotion()
+            stop_event.set()  # Alt sürece durdurma sinyali gönderiliyor
+            scan_started = False  # scan_started bayrağı sıfırlanıyor
+            break  # Döngüden çıkılıyor
+
+        time.sleep(0.5)  # Her yarım saniyede bir kontrol
+
+    logger.info("Monitor robot waiting for restart signal...")
+
+    # Kullanıcıdan yeniden başlatma sinyali bekleniyor
+    wait_time=5
+    start = time.time()
+    while True:
+        try:
+            current_di9 = safe_get_di(9, 0)
+        except Exception as e:
+            logger.error(f"DI9 alınırken hata: {e}")
+            break
+
+        if current_di9 == (0, 1):
+            logger.info(f"Restart signal detected: DI9={current_di9}")
+            restart_event.set()  # Yeniden başlatma sinyali gönderiliyor
+            break
+        elif time.time() - start > wait_time:
+            logger.info("Press start button to restart")
+            wait_time+=5
+            start = time.time()
+
+    logger.info("Monitor robot thread exiting")
+
 @app.route('/api/robot/status', methods=['GET'])
 def robot_status():
     global scan_started, scan_process
-    """Endpoint to check robot status"""
-    di8_status = robot.GetDI(8, 0)[1]
-    di9_status = robot.GetDI(9, 0)[1]
-    di0_status = robot.GetDI(0, 0)
-    
-    # Check if scan_process exists and is running before sending data
+    """Robot durumunu kontrol eden API endpoint'i"""
+    try:
+        di8_status = safe_get_di(8, 0)[1]
+        di9_status = safe_get_di(9, 0)[1]
+        di0_status = safe_get_di(0, 0)
+    except Exception as e:
+        logger.error(f"Robot status alınırken hata: {e}")
+        return jsonify({
+            "error": "RPC bağlantısı kesildi, yeniden bağlanmaya çalışılıyor."
+        }), 500
+
+    # scan_process varsa ve çalışıyorsa, DI0 verisi gönderilmeye çalışılıyor
     if scan_process is not None and scan_process.poll() is None:
         try:
-            # Use double quotes for valid JSON and ensure proper formatting
             data_to_send = json.dumps({
                 "DI0": [di0_status[0], di0_status[1]]
             }) + "\n"
             scan_process.stdin.write(data_to_send)
             scan_process.stdin.flush()
-            print(f"Sent DI0 value: {di0_status}")
+            # print(f"Sent DI0 value: {di0_status}")
         except BrokenPipeError:
-            print("Pipe broken, subprocess may have closed")
+            logger.error("Pipe broken, subprocess may have closed")
         except Exception as e:
             logger.error(f"Error sending data to subprocess: {e}")
-    
+
     return jsonify({
         "DI8": di8_status,
         "DI9": di9_status,
