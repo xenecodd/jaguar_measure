@@ -1,16 +1,16 @@
 from types import SimpleNamespace
-
+import os
 config = SimpleNamespace(
     # Genel ayarlar
     pick=True,
-    use_agg=True,
+    use_agg=False,
     put_back=False,
     drop_object = True,
     vel_mul=1.0,
     range_=2,
-    file_path="/home/eypan/Documents/JaguarInterface/flask-react-app/Measure/MecheyePackage/point_index.txt",
-    save_point_clouds=False,
-    save_to_db=True,
+    file_path = os.path.join(os.path.dirname(__file__), "point_index.txt"),
+    save_point_clouds=True,
+    save_to_db=False,
     ignored_points = [4],
     same_object = False,
     same_place_index = None,

@@ -11,5 +11,4 @@ __pycache__/
 # STL files
 *.stl
 
-hfull.py
-hfull2.py
+venv

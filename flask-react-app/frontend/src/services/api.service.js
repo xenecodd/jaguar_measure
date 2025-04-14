@@ -42,6 +42,15 @@ export const apiService = {
     }
   },
   
+  getLatestScan: async () => {
+    try {
+      const response = await apiClient.get(ENDPOINTS.LATEST_SCAN);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   // Get robot status
   getRobotStatus: async () => {
     try {

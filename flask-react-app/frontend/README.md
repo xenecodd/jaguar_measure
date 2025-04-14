@@ -1,39 +1,49 @@
 # Jaguar Interface Frontend
 
-Bu proje, Jaguar robot kontrol arayüzünün frontend kısmını içerir. React.js ile geliştirilmiştir.
+This project contains the frontend interface for the Jaguar robot control system, developed using React.js.
 
-## Kurulum
+## IMPORTANT!!!
 
-1. Projeyi klonlayın:
+### Debug Mode Configuration
+
+When running either the frontend or backend in debug mode, communication issues with the robot API may occur. To prevent these issues, ensure Flask's `use_reloader` parameter is set to `False`. Maintaining this configuration is essential for stable communication with the robot API.
+
+Common robot API communication errors are typically related to:
+- Thread management
+- Multiprocessing implementation
+- Debug mode configuration
+
+## Installation
+
+1. Clone the project:
 ```bash
 git clone https://github.com/your-repo/jaguar-interface.git
 ```
 
-2. Frontend dizinine gidin ve bağımlılıkları yükleyin:
+2. Navigate to the frontend directory and install dependencies:
 ```bash
 cd jaguar-interface/frontend
 npm install
 ```
 
-3. Geliştirme sunucusunu başlatın:
+3. Start the development server:
 ```bash
 npm run start
 ```
 
-## Kullanılan Teknolojiler
+## Technologies Used
 
 - React.js
-- Axios (API istekleri için)
-- React Router (Navigasyon için)
+- Axios (for API requests)
+- React Router (for navigation)
 
-## Ana Sayfalar
+## Main Pages
 
-- **Dashboard:** Robotun genel durumunu gösterir
-- **Debug Panel:** Robotun detaylı kontrolünü sağlar
+- **Dashboard:** Displays the robot's general status
+- **Debug Panel:** Provides detailed control of the robot
 
-## API Entegrasyonu
+## API Integration
 
-Frontend, backend ile REST API üzerinden iletişim kurar. API base URL'i:
+The frontend communicates with the backend through REST API. The API base URL is:
 ```javascript
 export const API_BASE_URL = 'http://192.168.43.80:5000';
-```

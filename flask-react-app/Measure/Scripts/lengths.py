@@ -73,7 +73,7 @@ def arm_horn_lengths(points, b_vertical=None):
     
 
     l_248 = b_vertical-np.min(end_length[:,1])
-    print("l_248",l_248)
+    # print("l_248",l_248)
     return l_248
 
 def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_fraction=0.05):
@@ -164,7 +164,7 @@ def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_
     if new_left is not None and new_right is not None:
         center = (new_left + new_right) / 2
         difference = np.abs(median - center)
-        print("feature14", difference)
+        # print("feature14", difference)
         x_difference = new_right - new_left
 
         plt.figure(figsize=(8, 8))
@@ -184,7 +184,7 @@ def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_
 
         return x_difference, difference
     else:
-        print("Sol veya sağ bölge için yeterli nokta yok.")
+        # print("Sol veya sağ bölge için yeterli nokta yok.")
         return 0, 0
 
 def filter_and_visualize_projection_with_ply(points):
@@ -205,9 +205,8 @@ def filter_and_visualize_projection_with_ply(points):
     ]
     
     l_81_5 = np.min(projected_points_2d[:, 1])-np.min(points[:, 1])
-    print("l_81_5:", l_81_5)
-    # l_88_6 = 0
-    # l_81_5 = 0
+    # print("l_81_5:", l_81_5)
+    
     # Görselleştirme
     plt.figure(figsize=(8, 8))
     plt.scatter(points[:, 2], points[:, 1], color='red', s=1, label="All Points (Y-Z Proj.)")

@@ -69,9 +69,9 @@ class CircleFitter:
         ok = distance < 3
 
         # Bilgileri yazdır
-        print(f"Çember Merkezi: ({xc_outer:.2f}, {zc_outer:.2f})")
-        print(f"z_center: {z_center:.2f}, Median: {median:.2f}")
-        print(f"Mesafe: {distance:.2f} mm, Durum: {'OK' if ok else 'HATA'}")
+        # print(f"Çember Merkezi: ({xc_outer:.2f}, {zc_outer:.2f})")
+        # print(f"z_center: {z_center:.2f}, Median: {median:.2f}")
+        # print(f"Mesafe: {distance:.2f} mm, Durum: {'OK' if ok else 'HATA'}")
 
         # Görselleştirme
         plt.figure(figsize=(8, 8))
@@ -121,7 +121,7 @@ class CircleFitter:
         """
         try:
             self.find_second_circle = find_second_circle
-            print(f"B: {self.get_B()}")
+            # print(f"B: {self.get_B()}")
             
             # X-Z düzlemine projekte edilen noktalar
             rotated_pcd = o3d.geometry.PointCloud()
@@ -190,9 +190,9 @@ class CircleFitter:
             plt.axis('equal')
             plt.legend()
 
-            print(f"Çember 1 Merkezi: ({xc_outer:.2f}, {zc_outer:.2f}), Yarıçap: {r_outer:.2f}")
+            # print(f"Çember 1 Merkezi: ({xc_outer:.2f}, {zc_outer:.2f}), Yarıçap: {r_outer:.2f}")
             if find_second_circle:
-                print(f"Çember 2 Merkezi: ({xc_outer_2:.2f}, {zc_outer_2:.2f}), Yarıçap: {r_outer_2:.2f}")
+                # print(f"Çember 2 Merkezi: ({xc_outer_2:.2f}, {zc_outer_2:.2f}), Yarıçap: {r_outer_2:.2f}")
                 return (xc_outer, zc_outer, r_outer), (xc_outer_2, zc_outer_2, r_outer_2)
             else:
                 return (xc_outer, zc_outer, r_outer)

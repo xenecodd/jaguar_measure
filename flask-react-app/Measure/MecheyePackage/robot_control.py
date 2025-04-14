@@ -1,19 +1,6 @@
 import sys
-import time
 import requests
 import logging
-
-# # Log yapılandırması
-# logging.basicConfig(
-#     level=logging.DEBUG,
-#     format="%(asctime)s - %(levelname)s - %(message)s",
-#     handlers=[
-#         logging.StreamHandler(),  # Konsola log yazdır
-#         logging.FileHandler("application.log", mode="a", encoding="utf-8")  # Dosyaya log yazdır
-#     ]
-# )
-
-
 # Global değişkenler
 session = None
 login_cookies = None

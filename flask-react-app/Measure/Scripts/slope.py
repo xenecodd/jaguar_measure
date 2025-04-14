@@ -78,13 +78,13 @@ def slope(pcd, b_vertical=None, y_divisor=0.22, delta_y=0.5, crc_l=57.67):
     result, _ = leastsq(cost_function, guess, args=(y_2d, z_2d))
     yc, zc, r_outer = result
 
-    print(f"Seçilen çemberin merkezi: ({yc:.2f}, {zc:.2f}), Yarıçap: {r_outer:.2f}")
+    # print(f"Seçilen çemberin merkezi: ({yc:.2f}, {zc:.2f}), Yarıçap: {r_outer:.2f}")
 
     if b_vertical:
         b_vertical= - b_vertical
         b_vertical= b_vertical - min_vals[1]
         l79_73 =  yc - b_vertical
-        print("l_79_73",l79_73)
+        # print("l_79_73",l79_73)
     
     # Çember noktalarını oluştur
     theta = np.linspace(0, 2 * np.pi, 100)

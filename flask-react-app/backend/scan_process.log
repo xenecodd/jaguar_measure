@@ -1,13 +1,45 @@
-16:56:18 - INFO - Received scan request: {'message': 'START'}
-16:56:18 - INFO - Auto-restart monitor started
-16:56:22 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
-16:56:22 - INFO - Scan started successfully
-16:56:22 - INFO - Scan process started successfully
-16:56:23 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
-16:56:56 - INFO - Stop condition detected: DI8=(0, 1)
-16:56:56 - INFO - Monitor robot waiting for restart signal...
-16:56:56 - INFO - scan.py was closed
-16:56:56 - ERROR - Error sending data to subprocess: I/O operation on closed file.
-16:57:01 - INFO - Press start button to restart
-16:57:11 - INFO - Press start button to restart
-16:57:26 - INFO - Press start button to restart
+17:41:01 - INFO - Received scan request: {'message': 'START'}
+17:41:01 - INFO - Auto-restart monitor started
+17:41:19 - INFO - Received scan request: {'message': 'START'}
+17:41:19 - INFO - Auto-restart monitor started
+17:41:30 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+17:41:30 - INFO - Scan started successfully
+17:41:30 - INFO - Scan process started successfully
+17:41:31 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+17:43:24 - ERROR - [SCAN_ERR] /usr/lib/python3.10/tkinter/__init__.py:839: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+17:43:24 - ERROR - [SCAN_ERR] func(*args)
+17:43:43 - WARNING - Scan process terminated with code 0
+17:43:43 - INFO - scan.py was closed
+08:14:05 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:05 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:05 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:12 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
+08:19:38 - INFO - Received scan request: {'message': 'START'}
+08:19:38 - INFO - Auto-restart monitor started
+08:19:43 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+08:19:43 - INFO - Scan started successfully
+08:19:43 - INFO - Scan process started successfully
+08:19:44 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+08:20:01 - INFO - Received scan request: {'message': 'STOP'}
+08:20:01 - INFO - scan.py was closed
+08:20:01 - INFO - Monitor robot waiting for restart signal...
+08:20:06 - INFO - Press start button to restart
+08:20:16 - INFO - Press start button to restart
