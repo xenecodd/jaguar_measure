@@ -6,6 +6,7 @@ function ScanTrace() {
     const [cords, setCords] = useState([3,3]);
     const canvasRef = useRef(null);
     const [socket, setSocket] = useState(null);
+    const [vacuum, setVacuum] = useState(1);
 
     // cords güncellendiğinde canvas'a çizim yap
 
@@ -20,8 +21,9 @@ function ScanTrace() {
 
         setSocket(socketConnection);
         socketConnection.on('robot_status', (data) => {
-            setCords([data.tcp_pose[1][0]+500, data.tcp_pose[1][1]+500]);
-          });
+            setCords([data.TCP[1][0]+500, data.TCP[1][1]+500]);
+            setVacuum(data.DI0);
+        });
         
     }, []);
 
@@ -29,11 +31,18 @@ function ScanTrace() {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
 
-        if (cords.length === 2) {
+        if (cords.length === 2 && vacuum === 0) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
             ctx.rect(cords[0], cords[1], 20, 20);
-            ctx.fillStyle = "red";
+            ctx.fillStyle = "yellow";
+            ctx.fill();
+        }
+        else if (vacuum === 1) {
+            ctx.clearRect(10, 10, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.rect(cords[0], cords[1], 20, 20);
+            ctx.fillStyle = "blue";
             ctx.fill();
         }
     }, [cords]);

@@ -297,7 +297,7 @@ class JaguarScanner:
         b_trans_val = np.max(vertical[:, 1]) - np.max(self.horizontal[:, 2])
         b_vertical = B + b_trans_val
         _, _, r1, l_79_73 = slope(vertical, b_vertical)
-        _, _, r2, _ = slope(vertical, y_divisor=0.11, crc_l=27)
+        _, _, r2, _ = slope(vertical, y_divisor=0.11, crc_l=28.5)
         l_42 = np.max(vertical[:, 1]) - b_vertical
         l_248 = arm_horn_lengths(vertical, b_vertical)
         mean_3mm = np.mean([self.dist_3mm_h, self.dist_3mm_s])

@@ -3,15 +3,15 @@ import os
 config = SimpleNamespace(
     # Genel ayarlar
     pick=True,
-    use_agg=False,
+    use_agg=True,
     put_back=False,
     drop_object = True,
     vel_mul=1.0,
-    range_=2,
+    range_=10,
     file_path = os.path.join(os.path.dirname(__file__), "point_index.txt"),
-    save_point_clouds=True,
+    save_point_clouds=False,
     save_to_db=False,
-    ignored_points = [4],
+    ignored_points = [20],
     same_object = False,
     same_place_index = None,
     # Tolerans ayarları: (hedef, tolerans)

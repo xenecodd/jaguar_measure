@@ -1,45 +1,603 @@
-17:41:01 - INFO - Received scan request: {'message': 'START'}
-17:41:01 - INFO - Auto-restart monitor started
-17:41:19 - INFO - Received scan request: {'message': 'START'}
-17:41:19 - INFO - Auto-restart monitor started
-17:41:30 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
-17:41:30 - INFO - Scan started successfully
-17:41:30 - INFO - Scan process started successfully
-17:41:31 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
-17:43:24 - ERROR - [SCAN_ERR] /usr/lib/python3.10/tkinter/__init__.py:839: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
-17:43:24 - ERROR - [SCAN_ERR] func(*args)
-17:43:43 - WARNING - Scan process terminated with code 0
-17:43:43 - INFO - scan.py was closed
-08:14:05 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:05 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:05 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:06 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:07 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:12 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:13 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:14:14 - ERROR - Error getting robot status or emitting: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (2,) + inhomogeneous part.
-08:19:38 - INFO - Received scan request: {'message': 'START'}
-08:19:38 - INFO - Auto-restart monitor started
-08:19:43 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
-08:19:43 - INFO - Scan started successfully
-08:19:43 - INFO - Scan process started successfully
-08:19:44 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
-08:20:01 - INFO - Received scan request: {'message': 'STOP'}
-08:20:01 - INFO - scan.py was closed
-08:20:01 - INFO - Monitor robot waiting for restart signal...
-08:20:06 - INFO - Press start button to restart
-08:20:16 - INFO - Press start button to restart
+15:28:35 - INFO - Received scan request: {'message': 'START'}
+15:28:35 - INFO - Auto-restart monitor started
+15:28:38 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:28:38 - INFO - Scan started successfully
+15:28:38 - INFO - Scan process started successfully
+15:28:39 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:29:13 - WARNING - Scan process terminated with code 0
+15:29:13 - INFO - scan.py was closed
+15:30:43 - INFO - Stop condition detected: DI8=(0, 1)
+15:30:43 - INFO - Monitor robot waiting for restart signal...
+15:30:44 - INFO - Restart signal detected: DI9=(0, 1)
+15:30:44 - INFO - Monitor robot thread exiting
+15:30:44 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:30:44 - INFO - Scan started successfully
+15:30:44 - INFO - Scan process started successfully
+15:30:45 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:31:19 - WARNING - Scan process terminated with code 0
+15:31:19 - INFO - scan.py was closed
+15:32:17 - INFO - Stop condition detected: DI8=(0, 1)
+15:32:17 - INFO - Monitor robot waiting for restart signal...
+15:32:18 - INFO - Restart signal detected: DI9=(0, 1)
+15:32:18 - INFO - Monitor robot thread exiting
+15:32:18 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:32:18 - INFO - Scan started successfully
+15:32:18 - INFO - Scan process started successfully
+15:32:19 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:32:52 - WARNING - Scan process terminated with code 0
+15:32:52 - INFO - scan.py was closed
+15:35:41 - INFO - Stop condition detected: DI8=(0, 1)
+15:35:41 - INFO - Monitor robot waiting for restart signal...
+15:35:43 - INFO - Restart signal detected: DI9=(0, 1)
+15:35:43 - INFO - Monitor robot thread exiting
+15:35:44 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:35:44 - INFO - Scan started successfully
+15:35:44 - INFO - Scan process started successfully
+15:35:45 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:35:55 - INFO - Stop condition detected: DI8=(0, 1)
+15:35:55 - INFO - Monitor robot waiting for restart signal...
+15:35:55 - ERROR - Error sending DI0 data to subprocess: I/O operation on closed file.
+15:35:55 - INFO - scan.py was closed
+15:36:00 - INFO - Press start button to restart
+15:36:10 - INFO - Press start button to restart
+15:36:25 - INFO - Press start button to restart
+15:36:45 - INFO - Press start button to restart
+15:37:10 - INFO - Press start button to restart
+15:37:49 - INFO - Received scan request: {'message': 'START'}
+15:37:49 - INFO - Auto-restart monitor started
+15:37:52 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:37:52 - INFO - Scan started successfully
+15:37:52 - INFO - Scan process started successfully
+15:37:53 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:38:14 - WARNING - Scan process terminated with code 0
+15:38:14 - INFO - scan.py was closed
+15:39:54 - INFO - Stop condition detected: DI8=(0, 1)
+15:39:54 - INFO - Monitor robot waiting for restart signal...
+15:39:54 - INFO - Restart signal detected: DI9=(0, 1)
+15:39:54 - INFO - Monitor robot thread exiting
+15:39:54 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:39:54 - INFO - Scan started successfully
+15:39:54 - INFO - Scan process started successfully
+15:39:55 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:40:00 - INFO - Stop condition detected: DI8=(0, 1)
+15:40:00 - INFO - Monitor robot waiting for restart signal...
+15:40:00 - ERROR - Error sending DI0 data to subprocess: I/O operation on closed file.
+15:40:00 - INFO - scan.py was closed
+15:40:03 - INFO - Restart signal detected: DI9=(0, 1)
+15:40:03 - INFO - Monitor robot thread exiting
+15:40:03 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:40:03 - INFO - Scan started successfully
+15:40:03 - INFO - Scan process started successfully
+15:40:04 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:40:11 - INFO - Stop condition detected: DI8=(0, 1)
+15:40:11 - INFO - Monitor robot waiting for restart signal...
+15:40:11 - INFO - scan.py was closed
+15:40:13 - INFO - Restart signal detected: DI9=(0, 1)
+15:40:13 - INFO - Monitor robot thread exiting
+15:40:13 - INFO - Processing restart event
+15:40:13 - WARNING - Cannot restart: unsafe conditions DI8=(0, 1)
+15:40:13 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:40:13 - INFO - Scan started successfully
+15:40:13 - INFO - Scan process started successfully
+15:40:14 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:40:36 - WARNING - Scan process terminated with code 0
+15:40:36 - INFO - scan.py was closed
+15:40:52 - INFO - Stop condition detected: DI8=(0, 1)
+15:40:52 - INFO - Monitor robot waiting for restart signal...
+15:40:53 - INFO - Restart signal detected: DI9=(0, 1)
+15:40:53 - INFO - Monitor robot thread exiting
+15:40:54 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:40:54 - INFO - Scan started successfully
+15:40:54 - INFO - Scan process started successfully
+15:40:55 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:41:18 - WARNING - Scan process terminated with code 0
+15:41:18 - INFO - scan.py was closed
+15:42:19 - INFO - Stop condition detected: DI8=(0, 1)
+15:42:19 - INFO - Monitor robot waiting for restart signal...
+15:42:20 - INFO - Restart signal detected: DI9=(0, 1)
+15:42:20 - INFO - Monitor robot thread exiting
+15:42:20 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:42:20 - INFO - Scan started successfully
+15:42:20 - INFO - Scan process started successfully
+15:42:21 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:42:42 - WARNING - Scan process terminated with code 0
+15:42:42 - INFO - scan.py was closed
+15:44:45 - INFO - Received scan request: {'message': 'START'}
+15:44:45 - INFO - Auto-restart monitor started
+15:44:47 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:44:47 - INFO - Scan started successfully
+15:44:47 - INFO - Scan process started successfully
+15:44:48 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:45:14 - ERROR - [SCAN_ERR] /usr/lib/python3.10/tkinter/__init__.py:839: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+15:45:14 - ERROR - [SCAN_ERR] func(*args)
+15:47:55 - INFO - Received scan request: {'message': 'START'}
+15:47:55 - INFO - Auto-restart monitor started
+15:47:57 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:47:57 - INFO - Scan started successfully
+15:47:57 - INFO - Scan process started successfully
+15:47:58 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:48:22 - ERROR - [SCAN_ERR] /usr/lib/python3.10/tkinter/__init__.py:839: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+15:48:22 - ERROR - [SCAN_ERR] func(*args)
+15:49:12 - WARNING - Scan process terminated with code 0
+15:49:12 - INFO - scan.py was closed
+15:57:33 - INFO - Received scan request: {'message': 'START'}
+15:57:33 - INFO - Auto-restart monitor started
+15:57:35 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:57:35 - INFO - Scan started successfully
+15:57:35 - INFO - Scan process started successfully
+15:57:36 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:58:02 - ERROR - [SCAN_ERR] /usr/lib/python3.10/tkinter/__init__.py:839: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+15:58:02 - ERROR - [SCAN_ERR] func(*args)
+15:58:36 - WARNING - Scan process terminated with code 0
+15:58:36 - INFO - scan.py was closed
+15:59:11 - INFO - Received scan request: {'message': 'START'}
+15:59:11 - INFO - Auto-restart monitor started
+15:59:13 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+15:59:13 - INFO - Scan started successfully
+15:59:13 - INFO - Scan process started successfully
+15:59:14 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+15:59:37 - ERROR - [SCAN_ERR] /usr/lib/python3.10/tkinter/__init__.py:839: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+15:59:37 - ERROR - [SCAN_ERR] func(*args)
+16:00:15 - WARNING - Scan process terminated with code 0
+16:00:15 - INFO - scan.py was closed
+16:01:55 - INFO - Received scan request: {'message': 'START'}
+16:01:55 - INFO - Auto-restart monitor started
+16:01:57 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:01:57 - INFO - Scan started successfully
+16:01:57 - INFO - Scan process started successfully
+16:01:58 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:02:38 - WARNING - Scan process terminated with code 0
+16:02:38 - INFO - scan.py was closed
+16:03:29 - INFO - Received scan request: {'message': 'START'}
+16:03:29 - INFO - Auto-restart monitor started
+16:03:31 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:03:31 - INFO - Scan process started successfully
+16:03:31 - INFO - Scan started successfully
+16:03:32 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:03:56 - ERROR - GetTCP timed out after 2.0 seconds
+16:03:57 - ERROR - GetDI(8, 0) timed out after 2.0 seconds
+16:04:08 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'CloseRPC'
+16:04:08 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'CloseRPC'
+16:09:14 - INFO - Received scan request: {'message': 'START'}
+16:09:14 - INFO - Auto-restart monitor started
+16:09:17 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:09:17 - INFO - Scan started successfully
+16:09:17 - INFO - Scan process started successfully
+16:09:18 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:09:41 - ERROR - [SCAN_ERR] /usr/lib/python3.10/tkinter/__init__.py:839: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+16:09:41 - ERROR - [SCAN_ERR] func(*args)
+16:11:21 - ERROR - [SCAN_ERR] invalid command name "131433512228224delayed_destroy"
+16:11:21 - ERROR - [SCAN_ERR] while executing
+16:11:21 - ERROR - [SCAN_ERR] "131433512228224delayed_destroy"
+16:11:21 - ERROR - [SCAN_ERR] ("after" script)
+16:11:21 - ERROR - [SCAN_ERR] invalid command name "131433065682112delayed_destroy"
+16:11:21 - ERROR - [SCAN_ERR] while executing
+16:11:21 - ERROR - [SCAN_ERR] "131433065682112delayed_destroy"
+16:11:21 - ERROR - [SCAN_ERR] ("after" script)
+16:11:56 - ERROR - [SCAN_ERR] invalid command name "131433066121920delayed_destroy"
+16:11:56 - ERROR - [SCAN_ERR] while executing
+16:11:56 - ERROR - [SCAN_ERR] "131433066121920delayed_destroy"
+16:11:56 - ERROR - [SCAN_ERR] ("after" script)
+16:12:38 - ERROR - Error logging stdout: 'utf-8' codec can't decode byte 0xe5 in position 0: invalid continuation byte
+16:13:12 - INFO - Received scan request: {'message': 'START'}
+16:13:12 - INFO - Auto-restart monitor started
+16:13:14 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:13:14 - INFO - Scan started successfully
+16:13:14 - INFO - Scan process started successfully
+16:13:15 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:25:07 - INFO - Received scan request: {'message': 'STOP'}
+16:25:07 - ERROR - Error sending DI0 data to subprocess: I/O operation on closed file.
+16:25:07 - INFO - scan.py was closed
+16:25:07 - INFO - Monitor robot waiting for restart signal...
+16:25:07 - INFO - Received scan request: {'message': 'START'}
+16:25:08 - INFO - Restart signal detected: DI9=(0, 1)
+16:25:08 - INFO - Monitor robot thread exiting
+16:25:09 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:25:09 - INFO - Scan started successfully
+16:25:09 - INFO - Scan process started successfully
+16:25:10 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:25:51 - WARNING - Scan process terminated with code 0
+16:25:51 - INFO - scan.py was closed
+16:34:33 - INFO - Received scan request: {'message': 'START'}
+16:34:33 - INFO - Auto-restart monitor started
+16:34:35 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:34:35 - INFO - Scan started successfully
+16:34:35 - INFO - Scan process started successfully
+16:34:36 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:35:18 - WARNING - Scan process terminated with code 0
+16:35:18 - INFO - scan.py was closed
+16:35:45 - INFO - Received scan request: {'message': 'START'}
+16:35:45 - INFO - Auto-restart monitor started
+16:35:47 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:35:47 - INFO - Scan started successfully
+16:35:47 - INFO - Scan process started successfully
+16:35:48 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:37:19 - ERROR - Error logging stdout: 'utf-8' codec can't decode bytes in position 0-1: invalid continuation byte
+16:39:34 - INFO - Received scan request: {'message': 'START'}
+16:39:34 - INFO - Auto-restart monitor started
+16:39:36 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:39:36 - INFO - Scan started successfully
+16:39:36 - INFO - Scan process started successfully
+16:39:37 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:40:36 - ERROR - [SCAN_ERR] /usr/local/lib/python3.10/dist-packages/numpy/_core/fromnumeric.py:3904: RuntimeWarning: Mean of empty slice.
+16:40:36 - ERROR - [SCAN_ERR] return _methods._mean(a, axis=axis, dtype=dtype,
+16:40:36 - ERROR - [SCAN_ERR] /usr/local/lib/python3.10/dist-packages/numpy/_core/_methods.py:147: RuntimeWarning: invalid value encountered in scalar divide
+16:40:36 - ERROR - [SCAN_ERR] ret = ret.dtype.type(ret / rcount)
+16:40:38 - WARNING - Scan process terminated with code 0
+16:40:38 - INFO - scan.py was closed
+16:41:00 - INFO - Received scan request: {'message': 'START'}
+16:41:00 - INFO - Auto-restart monitor started
+16:41:02 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+16:41:02 - INFO - Scan started successfully
+16:41:02 - INFO - Scan process started successfully
+16:41:03 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+16:41:37 - ERROR - Error logging stdout: 'utf-8' codec can't decode byte 0x90 in position 8176: invalid start byte
+2025-04-14 16:43:04,050 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:43:04,052 - INFO - Auto-restart monitor started
+2025-04-14 16:43:07,056 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:43:07,057 - INFO - Scan started successfully
+2025-04-14 16:43:07,058 - INFO - Scan process started successfully
+2025-04-14 16:43:08,058 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:44:02,378 - WARNING - Scan process terminated with code 0
+2025-04-14 16:44:02,378 - INFO - scan.py was closed
+2025-04-14 16:44:31,490 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:44:31,491 - INFO - Auto-restart monitor started
+2025-04-14 16:44:33,994 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:44:33,995 - INFO - Scan started successfully
+2025-04-14 16:44:33,996 - INFO - Scan process started successfully
+2025-04-14 16:44:34,996 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:46:28,006 - ERROR - Error logging stdout: 'utf-8' codec can't decode bytes in position 0-1: invalid continuation byte
+2025-04-14 16:47:29,946 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:47:29,948 - INFO - Auto-restart monitor started
+2025-04-14 16:47:31,951 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:47:31,953 - INFO - Scan started successfully
+2025-04-14 16:47:31,954 - INFO - Scan process started successfully
+2025-04-14 16:47:32,953 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:48:07,337 - WARNING - Scan process terminated with code 0
+2025-04-14 16:48:07,337 - INFO - scan.py was closed
+2025-04-14 16:49:05,174 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:49:05,176 - INFO - Auto-restart monitor started
+2025-04-14 16:49:08,180 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:49:08,182 - INFO - Scan started successfully
+2025-04-14 16:49:08,182 - INFO - Scan process started successfully
+2025-04-14 16:49:09,183 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:50:28,606 - ERROR - Error logging stdout: 'utf-8' codec can't decode bytes in position 0-1: invalid continuation byte
+2025-04-14 16:51:07,704 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:51:07,706 - INFO - Auto-restart monitor started
+2025-04-14 16:51:09,208 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:51:09,209 - INFO - Scan started successfully
+2025-04-14 16:51:09,210 - INFO - Scan process started successfully
+2025-04-14 16:51:10,210 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:52:34,842 - ERROR - Error logging stdout: 'utf-8' codec can't decode bytes in position 0-1: invalid continuation byte
+2025-04-14 16:53:30,295 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:53:30,296 - INFO - Auto-restart monitor started
+2025-04-14 16:53:32,800 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:53:32,801 - INFO - Scan started successfully
+2025-04-14 16:53:32,802 - INFO - Scan process started successfully
+2025-04-14 16:53:33,801 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:53:55,368 - WARNING - Scan process terminated with code 0
+2025-04-14 16:53:55,368 - INFO - scan.py was closed
+2025-04-14 16:57:38,906 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:57:38,907 - INFO - Auto-restart monitor started
+2025-04-14 16:57:40,209 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:57:41,910 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:57:41,912 - INFO - Scan started successfully
+2025-04-14 16:57:41,913 - INFO - Scan process started successfully
+2025-04-14 16:57:42,912 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:58:04,380 - WARNING - Scan process terminated with code 0
+2025-04-14 16:58:04,380 - INFO - scan.py was closed
+2025-04-14 16:58:44,767 - INFO - Received scan request: {'message': 'START'}
+2025-04-14 16:58:44,770 - INFO - Auto-restart monitor started
+2025-04-14 16:58:46,272 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-14 16:58:46,273 - INFO - Scan started successfully
+2025-04-14 16:58:46,274 - INFO - Scan process started successfully
+2025-04-14 16:58:47,273 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-14 16:59:11,531 - ERROR - [SCAN_ERR] Exception in thread Thread-11 (smol_calc):
+2025-04-14 16:59:11,531 - ERROR - [SCAN_ERR] Traceback (most recent call last):
+2025-04-14 16:59:11,531 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+2025-04-14 16:59:11,531 - ERROR - [SCAN_ERR] self.run()
+2025-04-14 16:59:11,531 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/threading.py", line 953, in run
+2025-04-14 16:59:11,531 - ERROR - [SCAN_ERR] self._target(*self._args, **self._kwargs)
+2025-04-14 16:59:11,531 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/scan.py", line 229, in smol_calc
+2025-04-14 16:59:11,532 - ERROR - [SCAN_ERR] _, z_center_small, radius_small = circle_fitter.fit_circles_and_plot(
+2025-04-14 16:59:11,532 - ERROR - [SCAN_ERR] TypeError: cannot unpack non-iterable NoneType object
+2025-04-14 16:59:34,975 - ERROR - [SCAN_ERR] /home/eypan/Documents/down_jaguar/jaguar_measure/Measure/Scripts/lengths.py:170: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`). Consider using `matplotlib.pyplot.close()`.
+2025-04-14 16:59:34,975 - ERROR - [SCAN_ERR] plt.figure(figsize=(8, 8))
+2025-04-14 17:01:28,496 - WARNING - Scan process terminated with code 0
+2025-04-14 17:01:28,496 - INFO - scan.py was closed
+2025-04-15 04:13:31,086 - ERROR - GetTCP timed out after 2.0 seconds
+2025-04-15 04:13:31,161 - ERROR - GetDI(8, 0) timed out after 2.0 seconds
+2025-04-15 04:13:43,722 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'reconnect'
+2025-04-15 04:13:43,722 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'reconnect'
+2025-04-15 04:59:44,349 - ERROR - GetTCP timed out after 2.0 seconds
+2025-04-15 04:59:44,848 - ERROR - GetDI(8, 0) timed out after 2.0 seconds
+2025-04-15 04:59:55,690 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'reconnect'
+2025-04-15 04:59:55,690 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'reconnect'
+2025-04-15 08:05:11,567 - INFO - Received scan request: {'message': 'START'}
+2025-04-15 08:05:11,568 - INFO - Auto-restart monitor started
+2025-04-15 08:05:15,073 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-15 08:05:15,074 - INFO - Scan started successfully
+2025-04-15 08:05:15,075 - INFO - Scan process started successfully
+2025-04-15 08:05:16,075 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-15 08:05:17,322 - ERROR - [SCAN_ERR] Traceback (most recent call last):
+2025-04-15 08:05:17,322 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/scan.py", line 10, in <module>
+2025-04-15 08:05:17,322 - ERROR - [SCAN_ERR] from mecheye_trigger import TriggerWithExternalDeviceAndFixedRate, robot
+2025-04-15 08:05:17,322 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/mecheye_trigger.py", line 13, in <module>
+2025-04-15 08:05:17,322 - ERROR - [SCAN_ERR] from fairino import Robot
+2025-04-15 08:05:17,322 - ERROR - [SCAN_ERR] ModuleNotFoundError: No module named 'fairino'
+2025-04-15 08:05:17,682 - WARNING - Scan process terminated with code 1
+2025-04-15 08:05:17,682 - INFO - scan.py was closed
+2025-04-15 08:33:12,847 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:12,847 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,048 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,048 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,249 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,249 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,450 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,450 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,650 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,651 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,851 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:13,851 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,052 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,052 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,253 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,254 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,454 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,455 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,655 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,656 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,856 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:14,857 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,057 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,058 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,258 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,259 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,459 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,460 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,660 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,661 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,861 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:15,862 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,062 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,063 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,263 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,263 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,464 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,464 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,665 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,665 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,866 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:16,866 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,067 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,068 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,268 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,269 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,469 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,470 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,670 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,671 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,871 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:17,871 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:18,072 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:18,072 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:18,273 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:18,273 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:18,474 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:33:18,474 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,181 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,181 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,383 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,383 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,584 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,584 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,785 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,785 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,986 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 08:43:49,986 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:22,485 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:22,485 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:22,686 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:22,687 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:22,887 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:22,888 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,088 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,089 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,289 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,290 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,490 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,491 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,691 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,692 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,892 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:23,893 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,093 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,094 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,294 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,295 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,495 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,495 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,696 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,696 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,897 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:24,897 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,098 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,098 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,299 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,299 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,500 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,500 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,701 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,701 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,902 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:25,902 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,103 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,104 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,304 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,305 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,505 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,505 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,706 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:20:26,707 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:38,546 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:38,547 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:38,747 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:38,748 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:38,948 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:38,949 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,149 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,149 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,350 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,350 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,551 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,551 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,752 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,752 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,952 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:21:39,953 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:22:59,767 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:22:59,768 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:22:59,969 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:22:59,969 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,169 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,170 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,370 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,371 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,572 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,572 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,773 - ERROR - GetDI(8, 0) failed: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:23:00,773 - ERROR - Error getting robot status or emitting: unsupported operand type(s) for &: '_ctypes.CField' and 'int'
+2025-04-15 09:32:35,243 - INFO - Received scan request: {'message': 'START'}
+2025-04-15 09:32:35,243 - ERROR - Exception on /api/scan [POST]
+Traceback (most recent call last):
+  File "/home/eypan/.local/lib/python3.10/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/eypan/.local/lib/python3.10/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/eypan/.local/lib/python3.10/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/eypan/.local/lib/python3.10/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/eypan/.local/lib/python3.10/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/eypan/Projects/JaguarLast/flask-react-app/backend/app.py", line 780, in scan
+    get_robot().ResetAllError()
+NameError: name 'get_robot' is not defined
+2025-04-15 09:33:14,131 - INFO - Received scan request: {'message': 'START'}
+2025-04-15 09:33:14,133 - INFO - Auto-restart monitor started
+2025-04-15 09:33:17,136 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-15 09:33:17,137 - INFO - Scan started successfully
+2025-04-15 09:33:17,138 - INFO - Scan process started successfully
+2025-04-15 09:33:18,138 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-15 09:34:00,764 - ERROR - [SCAN_ERR] /home/eypan/Documents/down_jaguar/jaguar_measure/Measure/Scripts/big_circle1.py:159: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`). Consider using `matplotlib.pyplot.close()`.
+2025-04-15 09:34:00,764 - ERROR - [SCAN_ERR] plt.figure(figsize=(8, 8))
+2025-04-15 09:34:53,961 - ERROR - GetTCP timed out after 2.0 seconds
+2025-04-15 09:34:54,308 - ERROR - GetDI(8, 0) timed out after 2.0 seconds
+2025-04-15 09:34:59,943 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'reconnect'
+2025-04-15 09:34:59,943 - ERROR - RPC reconnection failed after timeout: 'RPC' object has no attribute 'reconnect'
+2025-04-15 09:35:00,137 - ERROR - [SCAN_ERR] Exception in thread Thread-42 (_move_robot):
+2025-04-15 09:35:00,137 - ERROR - [SCAN_ERR] Traceback (most recent call last):
+2025-04-15 09:35:00,137 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+2025-04-15 09:35:00,137 - ERROR - [SCAN_ERR] self.run()
+2025-04-15 09:35:00,137 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/threading.py", line 953, in run
+2025-04-15 09:35:00,137 - ERROR - [SCAN_ERR] self._target(*self._args, **self._kwargs)
+2025-04-15 09:35:00,138 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/mecheye_trigger.py", line 288, in _move_robot
+2025-04-15 09:35:00,138 - ERROR - [SCAN_ERR] robot.MoveL(coordinates, 0, 0, vel=self.vel_mul* vel_l)
+2025-04-15 09:35:00,138 - ERROR - [SCAN_ERR] File "Robot.py", line 377, in Robot.RPC.log_call.wrapper
+2025-04-15 09:35:00,138 - ERROR - [SCAN_ERR] File "Robot.py", line 157, in Robot.xmlrpc_timeout.wrapper
+2025-04-15 09:35:00,138 - ERROR - [SCAN_ERR] File "Robot.py", line 672, in Robot.RPC.MoveL
+2025-04-15 09:35:00,138 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/xmlrpc/client.py", line 1122, in __call__
+2025-04-15 09:35:00,146 - ERROR - [SCAN_ERR] return self.__send(self.__name, args)
+2025-04-15 09:35:00,147 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/xmlrpc/client.py", line 1464, in __request
+2025-04-15 09:35:00,147 - ERROR - [SCAN_ERR] response = self.__transport.request(
+2025-04-15 09:35:00,147 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/xmlrpc/client.py", line 1166, in request
+2025-04-15 09:35:00,147 - ERROR - [SCAN_ERR] return self.single_request(host, handler, request_body, verbose)
+2025-04-15 09:35:00,147 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/xmlrpc/client.py", line 1178, in single_request
+2025-04-15 09:35:00,147 - ERROR - [SCAN_ERR] http_conn = self.send_request(host, handler, request_body, verbose)
+2025-04-15 09:35:00,147 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/xmlrpc/client.py", line 1284, in send_request
+2025-04-15 09:35:00,148 - ERROR - [SCAN_ERR] connection.putrequest("POST", handler, skip_accept_encoding=True)
+2025-04-15 09:35:00,148 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/http/client.py", line 1120, in putrequest
+2025-04-15 09:35:00,148 - ERROR - [SCAN_ERR] raise CannotSendRequest(self.__state)
+2025-04-15 09:35:00,148 - ERROR - [SCAN_ERR] http.client.CannotSendRequest: Request-sent
+2025-04-15 09:35:03,867 - ERROR - GetTCP timed out after 2.0 seconds
+2025-04-15 09:35:03,947 - ERROR - GetDI(8, 0) timed out after 2.0 seconds
+2025-04-15 09:35:08,906 - ERROR - [SCAN_ERR] Traceback (most recent call last):
+2025-04-15 09:35:08,906 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/scan.py", line 527, in <module>
+2025-04-15 09:35:08,907 - ERROR - [SCAN_ERR] scanner.run_scan_cycle()
+2025-04-15 09:35:08,907 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/scan.py", line 488, in run_scan_cycle
+2025-04-15 09:35:08,907 - ERROR - [SCAN_ERR] small_data = self.mech_eye.main(lua_name="small.lua", scan_line_count=1500)
+2025-04-15 09:35:08,907 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/mecheye_trigger.py", line 319, in main
+2025-04-15 09:35:08,907 - ERROR - [SCAN_ERR] if not self.acquire_profile_data_using_callback(lua_name):
+2025-04-15 09:35:08,907 - ERROR - [SCAN_ERR] File "/home/eypan/Projects/JaguarLast/flask-react-app/Measure/MecheyePackage/mecheye_trigger.py", line 247, in acquire_profile_data_using_callback
+2025-04-15 09:35:08,907 - ERROR - [SCAN_ERR] send_command(cmd)
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "/home/eypan/Documents/down_jaguar/jaguar_measure/Measure/MecheyePackage/robot_control.py", line 65, in send_command
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] response = session.post(set_url, headers=headers, json=cmd_data)
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "/usr/lib/python3/dist-packages/requests/sessions.py", line 592, in post
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] return self.request('POST', url, data=data, json=json, **kwargs)
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "/usr/lib/python3/dist-packages/requests/sessions.py", line 544, in request
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] resp = self.send(prep, **send_kwargs)
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "/usr/lib/python3/dist-packages/requests/sessions.py", line 657, in send
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] r = adapter.send(request, **kwargs)
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "/usr/lib/python3/dist-packages/requests/adapters.py", line 439, in send
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] resp = conn.urlopen(
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 700, in urlopen
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] httplib_response = self._make_request(
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 446, in _make_request
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] six.raise_from(e, None)
+2025-04-15 09:35:08,908 - ERROR - [SCAN_ERR] File "<string>", line 3, in raise_from
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 441, in _make_request
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] httplib_response = conn.getresponse()
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/http/client.py", line 1375, in getresponse
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] response.begin()
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/http/client.py", line 318, in begin
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] version, status, reason = self._read_status()
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/http/client.py", line 279, in _read_status
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] File "/usr/lib/python3.10/socket.py", line 705, in readinto
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] return self._sock.recv_into(b)
+2025-04-15 09:35:08,909 - ERROR - [SCAN_ERR] KeyboardInterrupt
+2025-04-15 09:39:04,586 - INFO - Received scan request: {'message': 'START'}
+2025-04-15 09:39:04,589 - INFO - Auto-restart monitor started
+2025-04-15 09:39:07,593 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-15 09:39:07,594 - INFO - Scan started successfully
+2025-04-15 09:39:07,595 - INFO - Scan process started successfully
+2025-04-15 09:39:08,595 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-15 09:39:52,039 - ERROR - [SCAN_ERR] /home/eypan/Documents/down_jaguar/jaguar_measure/Measure/Scripts/big_circle1.py:159: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`). Consider using `matplotlib.pyplot.close()`.
+2025-04-15 09:39:52,040 - ERROR - [SCAN_ERR] plt.figure(figsize=(8, 8))
+2025-04-15 09:41:51,141 - WARNING - Scan process terminated with code 0
+2025-04-15 09:41:51,141 - INFO - scan.py was closed
+2025-04-15 09:44:18,730 - INFO - Received scan request: {'message': 'START'}
+2025-04-15 09:44:18,731 - INFO - Auto-restart monitor started
+2025-04-15 09:44:21,235 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-15 09:44:21,237 - INFO - Scan started successfully
+2025-04-15 09:44:21,238 - INFO - Scan process started successfully
+2025-04-15 09:44:22,237 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-15 09:45:06,058 - ERROR - [SCAN_ERR] /home/eypan/Documents/down_jaguar/jaguar_measure/Measure/Scripts/big_circle1.py:159: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`). Consider using `matplotlib.pyplot.close()`.
+2025-04-15 09:45:06,058 - ERROR - [SCAN_ERR] plt.figure(figsize=(8, 8))
+2025-04-15 09:46:50,183 - WARNING - Scan process terminated with code 0
+2025-04-15 09:46:50,183 - INFO - scan.py was closed
+2025-04-15 09:48:13,879 - INFO - Received scan request: {'message': 'START'}
+2025-04-15 09:48:13,881 - INFO - Auto-restart monitor started
+2025-04-15 09:48:20,890 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-15 09:48:20,891 - INFO - Scan started successfully
+2025-04-15 09:48:20,892 - INFO - Scan process started successfully
+2025-04-15 09:48:21,892 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-15 09:48:36,528 - INFO - Received scan request: {'message': 'STOP'}
+2025-04-15 09:48:36,629 - ERROR - Error sending DI0 data to subprocess: I/O operation on closed file.
+2025-04-15 09:48:36,656 - INFO - scan.py was closed
+2025-04-15 09:48:36,915 - INFO - Monitor robot waiting for restart signal...
+2025-04-15 09:48:40,970 - INFO - Restart signal detected: DI9=(0, 1)
+2025-04-15 09:48:40,970 - INFO - Monitor robot thread exiting
+2025-04-15 09:48:41,412 - INFO - Auto-restart triggered by DI9=(0, 1), DI8=(0, 0)
+2025-04-15 09:48:41,414 - INFO - Scan started successfully
+2025-04-15 09:48:41,414 - INFO - Scan process started successfully
+2025-04-15 09:48:42,414 - INFO - Monitor robot thread started - Current DI8 status: (0, 0)
+2025-04-15 09:48:46,421 - INFO - Stop condition detected: DI8=(0, 1)
+2025-04-15 09:48:46,423 - INFO - Monitor robot waiting for restart signal...
+2025-04-15 09:48:46,459 - INFO - scan.py was closed
+2025-04-15 09:48:51,423 - INFO - Press start button to restart
+2025-04-15 09:49:01,424 - INFO - Press start button to restart
+2025-04-15 09:49:16,424 - INFO - Press start button to restart
+2025-04-15 09:49:36,424 - INFO - Press start button to restart
+2025-04-15 09:50:01,425 - INFO - Press start button to restart
+2025-04-15 09:50:31,425 - INFO - Press start button to restart

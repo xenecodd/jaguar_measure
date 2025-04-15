@@ -10,7 +10,7 @@ from Measure.MecheyePackage.robot_control import send_command
 import threading
 import sys
 sys.path.append('/home/eypan/Downloads/fair_api_old/')
-import Robot # type: ignore
+import Robot
 
 robot = Robot.RPC('192.168.58.2')
 
@@ -223,10 +223,10 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         p90    = [-335, -350, 450, -90, 0, 90]
         p91    = [-335, 200, 450, -90, 0, 90]
         h1     = [-375, -120, 580, -90, -90, 180]
-        h2     = [-367, 200, 580, -90, -90, 180]
+        h2     = [-390, 200, 580, -90, -90, 180]
         h1_alt = [-425, -120, 510, -90, -90, 180]
-        h2_alt = [-418, 200, 510, -90, -90, 180]
-
+        h2_alt = [-440, 200, 510, -90, -90, 180]
+        
         if lua_name == "small.lua":
             pre_move = ("MoveL", scrc2)
             # pre_post_move = ("MoveL", [-500.0104370117187, 100, 450, 82.15313720703125, 89.94375610351562, -7.949760913848877])

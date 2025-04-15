@@ -22,6 +22,13 @@ from Measure.MecheyePackage.config import config
 
 # Local imports
 from Measure.MecheyePackage.mecheye_trigger import robot
+
+import threading
+# Diğer importlar: time, logger vs.
+
+# Global robot lock tanımı
+robot_lock = threading.Lock()
+
 # Load environment variables
 load_dotenv('.env')
 
@@ -45,9 +52,8 @@ CONFIG = {
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
-    datefmt='%H:%M:%S',
     handlers=[
-        logging.FileHandler(CONFIG['LOG_FILE']),
+        logging.FileHandler(CONFIG['LOG_FILE'], encoding='utf-8', errors='replace'),
         logging.StreamHandler()
     ]
 )
@@ -83,6 +89,7 @@ class RobotState:
     di0_status: Tuple[int, int] = (0, 0)
     di8_status: Tuple[int, int] = (0, 0)
     di9_status: Tuple[int, int] = (0, 0)
+    tcp_status: Tuple[float, float, float, float, float, float] = (0, 0, 0, 0, 0, 0)
     profiler: Profiler = Profiler()
     error_count: int = 0
     last_successful_status: Dict[str, Any] = None
@@ -93,7 +100,8 @@ class RobotState:
             status = {
                 "DI8": self.di8_status[1] if isinstance(self.di8_status, tuple) else 0,
                 "DI9": self.di9_status[1] if isinstance(self.di9_status, tuple) else 0,
-                "DI0": self.di0_status[1] if isinstance(self.di0_status, tuple) else 0,
+                "DI0": self.di0_status[1] if isinstance(self.di0_status, tuple) else 1,
+                "TCP": self.tcp_status,
                 "scan_active": self.scan_started,
                 "monitor_active": self.auto_monitor_running,
                 "timestamp": time.time()
@@ -113,7 +121,7 @@ class RobotState:
                 "timestamp": time.time()
             }
             
-    def update_di_values(self, di0=None, di8=None, di9=None):
+    def update_di_values(self, di0=None, di8=None, di9=None, tcp=None):
         """Update DI values with thread safety"""
         with self._lock:
             if di0 is not None:
@@ -122,6 +130,8 @@ class RobotState:
                 self.di8_status = di8
             if di9 is not None:
                 self.di9_status = di9
+            if tcp is not None:
+                self.tcp_status = tcp
                 
     def set_scan_started(self, started: bool):
         """Thread-safe update of scan_started flag"""
@@ -167,12 +177,13 @@ def safe_get_di(channel, index, max_retries=CONFIG['MAX_RETRIES']):
     retries = 0
     while retries < max_retries:
         try:
-            # Use a thread with timeout to prevent blocking indefinitely
             result_container = []
             
             def _get_di():
                 try:
-                    result = robot.GetDI(channel, index)
+                    # Robot erişimini lock altında gerçekleştiriyoruz.
+                    with robot_lock:
+                        result = robot.GetDI(channel, index)
                     if isinstance(result, tuple) and result[1] == -1:
                         logger.error(f"GetDI({channel}, {index}) returned -1. (Source: GetDI call)")
                         raise Exception("接收机器人状态字节 -1")
@@ -180,22 +191,20 @@ def safe_get_di(channel, index, max_retries=CONFIG['MAX_RETRIES']):
                 except Exception as e:
                     result_container.append(e)
             
-            # Create and start thread
+            # Thread oluşturup başlatılıyor
             di_thread = threading.Thread(target=_get_di)
             di_thread.daemon = True
             di_thread.start()
             
-            # Wait with timeout
+            # Belirlenen süre kadar bekliyoruz
             di_thread.join(CONFIG['ROBOT_TIMEOUT'])
             
-            # Check results
             if di_thread.is_alive():
-                # Thread is still running after timeout
                 logger.error(f"GetDI({channel}, {index}) timed out after {CONFIG['ROBOT_TIMEOUT']} seconds")
                 retries += 1
-                # Try to reconnect
                 try:
-                    robot.reconnect()
+                    with robot_lock:
+                        robot.reconnect()
                 except Exception as recon_e:
                     logger.error(f"RPC reconnection failed after timeout: {recon_e}")
                 time.sleep(0.5)
@@ -216,7 +225,8 @@ def safe_get_di(channel, index, max_retries=CONFIG['MAX_RETRIES']):
             if "接收机器人状态字节 -1" in str(e) and retries < max_retries:
                 logger.error(f"Robot communication error: {e}. Reconnecting RPC... (Attempt {retries}/{max_retries})")
                 try:
-                    robot.reconnect()
+                    with robot_lock:
+                        robot.reconnect()
                 except Exception as recon_e:
                     logger.error(f"RPC reconnection failed: {recon_e}")
                     time.sleep(1)
@@ -224,12 +234,73 @@ def safe_get_di(channel, index, max_retries=CONFIG['MAX_RETRIES']):
             else:
                 if retries >= max_retries:
                     logger.error(f"Max retries reached for GetDI({channel}, {index})")
-                    # Return a default value indicating failure
                     return (-1, -1)
                 raise e
     
-    # If we get here, all retries failed
     return (-1, -1)
+
+def safe_get_tcp(max_retries=CONFIG['MAX_RETRIES']):
+    retries = 0
+    while retries < max_retries:
+        result_container = []
+        try:
+            def _get_tcp():
+                try:
+                    # Robot erişimini lock altında gerçekleştiriyoruz.
+                    with robot_lock:
+                        tcp = robot.GetActualTCPPose()
+                    if isinstance(tcp, tuple) and tcp[1] == -1:
+                        logger.error("GetTCP returned -1. (Source: GetTCP call)")
+                        raise Exception("接收机器人状态字节 -1")
+                    result_container.append(tcp)
+                except Exception as e:
+                    result_container.append(e)
+        
+            tcp_thread = threading.Thread(target=_get_tcp)
+            tcp_thread.daemon = True
+            tcp_thread.start()
+            
+            tcp_thread.join(CONFIG['ROBOT_TIMEOUT'])
+            
+            if tcp_thread.is_alive():
+                logger.error(f"GetTCP timed out after {CONFIG['ROBOT_TIMEOUT']} seconds")
+                retries += 1
+                try:
+                    with robot_lock:
+                        robot.reconnect()
+                except Exception as recon_e:
+                    logger.error(f"RPC reconnection failed after timeout: {recon_e}")
+                time.sleep(0.5)
+                continue
+            
+            if not result_container:
+                logger.error("GetTCP returned no result")
+                retries += 1
+                continue
+                
+            if isinstance(result_container[0], Exception):
+                raise result_container[0]
+                
+            return result_container[0]
+            
+        except Exception as e:
+            retries += 1
+            if "接收机器人状态字节 -1" in str(e) and retries < max_retries:
+                logger.error(f"Robot communication error: {e}. Reconnecting RPC... (Attempt {retries}/{max_retries})")
+                try:
+                    with robot_lock:
+                        robot.reconnect()
+                except Exception as recon_e:
+                    logger.error(f"RPC reconnection failed: {recon_e}")
+                    time.sleep(1)
+                time.sleep(0.5)
+            else:
+                if retries >= max_retries:
+                    logger.error("Max retries reached for GetTCP")
+                    return (-1, -1, -1, -1, -1, -1)
+                raise e
+    
+    return (-1, -1, -1, -1, -1, -1)
 
 def calculate_tolerance_distance(value: float, target: float) -> float:
     """Calculate the absolute distance between a value and its target."""
@@ -581,30 +652,17 @@ def update_robot_status():
             di8 = safe_get_di(8, 0)
             di9 = safe_get_di(9, 0)
             di0 = safe_get_di(0, 0)
-            
-            # Get TCP pose
-            tcp_pose = None
-            try:
-                tcp_pose = robot.GetActualTCPPose()
-                if isinstance(tcp_pose, tuple) and tcp_pose[1] == -1:
-                    logger.error("GetActualTCPPose() returned -1. (Source: GetActualTCPPose call)")
-                    tcp_pose = None
-            except Exception as e:
-                logger.error(f"Error getting TCP pose: {e}")
-            
+            # tcp = safe_get_tcp()
             # Update state
-            state.update_di_values(di0=di0, di8=di8, di9=di9)
+            state.update_di_values(di0=di0, di8=di8, di9=di9, tcp=[0,0,0,0,0,0])
             
             # Store for subprocess
             di_data['di8'] = di8[1] if isinstance(di8, tuple) else 0
             di_data['di9'] = di9[1] if isinstance(di9, tuple) else 0
-            di_data['di0_tuple'] = di0
+            di_data['di0_tuple'] = di0 if isinstance(di0, tuple) else 1
 
             # Create status dictionary with TCP pose
             status = state.get_status()
-            if tcp_pose is not None:
-                # Add TCP pose to status dictionary
-                status["tcp_pose"] = tcp_pose
             
             # Send status to frontend
             with app.app_context():
@@ -847,7 +905,6 @@ def get_scan_log():
         return jsonify({'logs': filtered_logs}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/api/robot/air', methods=['POST'])
 def control_air():
