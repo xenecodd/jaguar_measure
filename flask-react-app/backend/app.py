@@ -8,23 +8,23 @@ import multiprocessing
 import os
 import subprocess
 import threading
+from pathlib import Path
 import time
 import numpy as np
 from dataclasses import dataclass
 from typing import Dict, Optional, Tuple, Any
-from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from mecheye.profiler import Profiler
 from Measure.MecheyePackage.config import config
+import sys
+sys.path.append('/home/eypan/Downloads/fair_api_old/')
+import Robot
 
 # Local imports
 from Measure.MecheyePackage.mecheye_trigger import robot
-
-import threading
-# Diğer importlar: time, logger vs.
 
 # Global robot lock tanımı
 robot_lock = threading.Lock()
@@ -42,6 +42,7 @@ CONFIG = {
     'SCAN_SCRIPT_PATH': os.getenv('SCAN_SCRIPT_PATH', 
         str(Path(__file__).parent.parent / 'Measure' / 'MecheyePackage' / 'scan.py')),
     'LOG_FILE': os.getenv('LOG_FILE', 'scan_process.log'),
+    'SCAN_OUTPUTS': os.getenv('SCAN_OUTPUTS', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'scan_output.json')),
     'MAX_RETRIES': int(os.getenv('MAX_RETRIES', 10)),
     'ROBOT_TIMEOUT': float(os.getenv('ROBOT_TIMEOUT', 2.0)),
     'SOCKET_PING_INTERVAL': int(os.getenv('SOCKET_PING_INTERVAL', 10)),
@@ -59,7 +60,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 # Disable logging for /api/robot/status endpoint
-logging.getLogger('werkzeug').setLevel(logging.WARNING)
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -199,16 +200,16 @@ def safe_get_di(channel, index, max_retries=CONFIG['MAX_RETRIES']):
             # Belirlenen süre kadar bekliyoruz
             di_thread.join(CONFIG['ROBOT_TIMEOUT'])
             
-            if di_thread.is_alive():
-                logger.error(f"GetDI({channel}, {index}) timed out after {CONFIG['ROBOT_TIMEOUT']} seconds")
-                retries += 1
-                try:
-                    with robot_lock:
-                        robot.reconnect()
-                except Exception as recon_e:
-                    logger.error(f"RPC reconnection failed after timeout: {recon_e}")
-                time.sleep(0.5)
-                continue
+            # if di_thread.is_alive():
+            #     logger.error(f"GetDI({channel}, {index}) timed out after {CONFIG['ROBOT_TIMEOUT']} seconds")
+            #     retries += 1
+            #     try:
+            #         with robot_lock:
+            #             Robot.RPC.reconnect()
+            #     except Exception as recon_e:
+            #         logger.error(f"RPC reconnection failed after timeout: {recon_e}")
+            #     time.sleep(0.5)
+            #     continue
             
             if not result_container:
                 logger.error(f"GetDI({channel}, {index}) returned no result")
@@ -226,7 +227,7 @@ def safe_get_di(channel, index, max_retries=CONFIG['MAX_RETRIES']):
                 logger.error(f"Robot communication error: {e}. Reconnecting RPC... (Attempt {retries}/{max_retries})")
                 try:
                     with robot_lock:
-                        robot.reconnect()
+                        Robot.RPC.reconnect()
                 except Exception as recon_e:
                     logger.error(f"RPC reconnection failed: {recon_e}")
                     time.sleep(1)
@@ -267,7 +268,7 @@ def safe_get_tcp(max_retries=CONFIG['MAX_RETRIES']):
                 retries += 1
                 try:
                     with robot_lock:
-                        robot.reconnect()
+                        Robot.RPC.reconnect()
                 except Exception as recon_e:
                     logger.error(f"RPC reconnection failed after timeout: {recon_e}")
                 time.sleep(0.5)
@@ -289,7 +290,7 @@ def safe_get_tcp(max_retries=CONFIG['MAX_RETRIES']):
                 logger.error(f"Robot communication error: {e}. Reconnecting RPC... (Attempt {retries}/{max_retries})")
                 try:
                     with robot_lock:
-                        robot.reconnect()
+                        Robot.RPC.reconnect()
                 except Exception as recon_e:
                     logger.error(f"RPC reconnection failed: {recon_e}")
                     time.sleep(1)
@@ -488,7 +489,7 @@ def log_subprocess_output(process, log_prefix="[SCAN]", error_prefix="[SCAN_ERR]
         try:
             for line in iter(process.stdout.readline, ''):
                 if line:
-                    # logger.info(f"{log_prefix} {line.strip()}")
+                    logger.info(f"{log_prefix} {line.strip()}")
                     pass
                 else:
                     break
@@ -906,6 +907,27 @@ def get_scan_log():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/colors', methods=['GET'])
+def get_colors():
+    try:
+        colors=["gray"]*64
+        # Scan çıktısını satır satır oku
+        scan_outputs = []
+        with open(CONFIG['SCAN_OUTPUTS'], 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.strip() and line.strip() != '{}' and "Error" not in line:
+                    scan_outputs.append(json.loads(line.strip()))
+        # Her bir OK değerine göre rengi belirle
+        for i in scan_outputs:
+            colors[i['Index']]= "green" if i["OK"] == "1" else "red"
+
+        return jsonify({'colors': colors}), 200
+
+    except Exception as e:
+        print(f"Hata oluştu: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/robot/air', methods=['POST'])
 def control_air():
     """API endpoint to control air signal"""
@@ -934,7 +956,7 @@ if __name__ == '__main__':
     state.set_auto_monitor_running(False)
     
     # Start status update thread
-    status_thread = threading.Thread(target=update_robot_status, daemon=False)
+    status_thread = threading.Thread(target=update_robot_status, daemon=True)
     status_thread.start()
     
     # # Start auto-restart monitor
@@ -946,5 +968,6 @@ if __name__ == '__main__':
         app, 
         host=CONFIG['HOST'], 
         port=CONFIG['PORT'], 
-        debug=CONFIG['DEBUG']
+        debug=CONFIG['DEBUG'],
+        allow_unsafe_werkzeug=True
     )

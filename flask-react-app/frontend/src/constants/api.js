@@ -8,7 +8,8 @@ export const ENDPOINTS = {
   ROBOT_STATUS: '/api/robot/status',
   AIR: '/api/robot/air',
   SCAN_LOG: '/api/scan/log',
-  LATEST_SCAN: '/api/scan/latest'
+  LATEST_SCAN: '/api/scan/latest',
+  COLORS: '/api/colors'
 };
 
 // Polling intervals (in milliseconds)

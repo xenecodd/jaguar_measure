@@ -79,5 +79,14 @@ export const apiService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  getColors: async () => {
+    try {
+      const response = await apiClient.get(ENDPOINTS.COLORS);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };

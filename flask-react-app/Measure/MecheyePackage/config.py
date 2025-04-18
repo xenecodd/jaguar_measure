@@ -2,16 +2,16 @@ from types import SimpleNamespace
 import os
 config = SimpleNamespace(
     # Genel ayarlar
-    pick=True,
+    pick=False,
     use_agg=True,
     put_back=False,
-    drop_object = True,
+    drop_object = False,
     vel_mul=1.0,
-    range_=10,
+    range_=1,
     file_path = os.path.join(os.path.dirname(__file__), "point_index.txt"),
-    save_point_clouds=False,
+    save_point_clouds=True,
     save_to_db=False,
-    ignored_points = [20],
+    ignored_points = [],
     same_object = False,
     same_place_index = None,
     # Tolerans ayarları: (hedef, tolerans)

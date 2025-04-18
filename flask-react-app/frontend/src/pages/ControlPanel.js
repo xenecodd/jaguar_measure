@@ -76,43 +76,48 @@ const ControlPanel = () => {
   };
 
   return (
-    <div className="w-full min-h-screen p-4 sm:p-6 md:p-8 lg:p-12 bg-gray-100 flex flex-col">
-      <div className="max-w-7xl mx-auto w-full flex-grow bg-white shadow-sm rounded-lg p-6 sm:p-8">
-        <div className="mb-6 md:mb-8 text-center">
-          <h1 className="text-3xl font-bold leading-tight mt-0 mb-2">
-            Robot Kontrol Paneli
-          </h1>
-          {loading ? (
-            <LoadingSpinner text="Bağlantı kuruluyor..." />
-          ) : (
-            <div className="text-gray-600 text-sm md:text-base italic">{message}</div>
+    <div className="flex flex-col lg:flex-row h-screen">
+      {/* Sol Panel: Kontrol ve Bilgilendirme */}
+      <div className="lg:w-1/2 w-full h-full p-4 sm:p-6 md:p-8 lg:p-12 bg-gray-100 flex flex-col">
+        <div className="mx-auto w-full flex-grow bg-white shadow-sm rounded-lg p-6 sm:p-8">
+          <div className="mb-6 md:mb-8 text-center">
+            <h1 className="text-3xl font-bold mt-0 mb-2">Robot Kontrol Paneli</h1>
+            {loading ? (
+              <LoadingSpinner text="Bağlantı kuruluyor..." />
+            ) : (
+              <div className="text-gray-600 text-sm md:text-base italic">{message}</div>
+            )}
+          </div>
+          
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6">
+            <Button
+              text="Taramayı Başlat"
+              type="success"
+              onClick={handleStartScan}
+              disabled={status.scan_active}
+              className="w-full md:w-auto"
+            />
+            <Button
+              text="Taramayı Durdur"
+              type="danger"
+              onClick={handleStopScan}
+              disabled={!status.scan_active}
+              className="w-full md:w-auto"
+            />
+          </div>
+          
+          {error && (
+            <div className="bg-red-50 p-4 rounded-md border border-red-200">
+              <h3 className="text-lg font-semibold mb-3 text-red-700">Hata</h3>
+              <p className="text-red-700">{error}</p>
+            </div>
           )}
         </div>
-        <div className="flex flex-col justify-center items-center md:flex-row gap-4 mb-6">
-          <Button
-            text="Taramayı Başlat"
-            type="success"
-            onClick={handleStartScan}
-            disabled={status.scan_active}
-            className="w-full md:w-auto"
-          />
-          <Button
-            text="Taramayı Durdur"
-            type="danger"
-            onClick={handleStopScan}
-            disabled={!status.scan_active}
-            className="w-full md:w-auto"
-          />
-        </div>
-        <div>
-          <ScanTrace/>
-        </div>
-        {error && (
-          <div className="bg-red-50 p-4 rounded-md border border-red-200">
-            <h3 className="text-lg font-semibold mb-3 text-red-700">Hata</h3>
-            <p className="text-red-700">{error}</p>
-          </div>
-        )}
+      </div>
+
+      {/* Sağ Panel: Tarama İzleme */}
+      <div className="lg:w-1/2 w-full h-full p-4 sm:p-6 md:p-8 lg:p-12 bg-gray-100 flex flex-col">
+        <ScanTrace />
       </div>
     </div>
   );

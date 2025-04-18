@@ -3,7 +3,7 @@ import ControlPanel from './ControlPanel';
 
 function Home() {
   return (
-    <div className="w-full h-full overflow-auto">
+    <div>
       <ControlPanel />
     </div>
   );

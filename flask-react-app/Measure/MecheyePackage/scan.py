@@ -4,9 +4,8 @@ import time
 import numpy as np
 import open3d as o3d
 import matplotlib
-from openpyxl.styles import PatternFill
 from robot_control import send_command
-from Measure.Scripts import *
+from Scripts import *
 from mecheye_trigger import TriggerWithExternalDeviceAndFixedRate, robot
 from points import *
 from config import config
@@ -69,8 +68,9 @@ class JaguarScanner:
                     # JSON dizisini tuple'a çevir
                     di0_array = data['DI0']
                     self.current_di0_value = (di0_array[0], di0_array[1])
-                    self.mech_eye.current_di0_value = self.current_di0_value
                     # print(f"Received DI0 update: {self.current_di0_value}")
+                else:
+                    self.current_di0_value = (0, 0)
             except json.JSONDecodeError as e:
                 print(f"Error parsing input: {line}")
                 print(f"JSON error: {str(e)}")
@@ -297,7 +297,7 @@ class JaguarScanner:
         b_trans_val = np.max(vertical[:, 1]) - np.max(self.horizontal[:, 2])
         b_vertical = B + b_trans_val
         _, _, r1, l_79_73 = slope(vertical, b_vertical)
-        _, _, r2, _ = slope(vertical, y_divisor=0.11, crc_l=28.5)
+        _, _, r2, _ = slope(vertical, y_divisor=0.11, crc_l=28)
         l_42 = np.max(vertical[:, 1]) - b_vertical
         l_248 = arm_horn_lengths(vertical, b_vertical)
         mean_3mm = np.mean([self.dist_3mm_h, self.dist_3mm_s])
@@ -460,6 +460,7 @@ class JaguarScanner:
             current_results = {}
             current_index = self.read_current_point_index()
             
+            
             try:
                 send_command({"cmd": 107, "data": {"content": "ResetAllError()"}})
 
@@ -509,8 +510,10 @@ class JaguarScanner:
                     thread_small.join()
                     thread_horizontal.join()
 
+                
                 vertical_results = self.process_vertical_measurement(vertical_data)
                 current_results = self.combine_results(vertical_results)
+                current_results["Index"] = self.read_current_point_index()-1
                 current_results["OK"] = "1" if self.check_part_quality(current_results) else "0"
                 if config.save_to_db:
                     self.write_to_db(current_results, iteration=self.read_current_point_index())
