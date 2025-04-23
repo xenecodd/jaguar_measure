@@ -81,7 +81,7 @@ const DebugPanel = () => {
         socketConnection.disconnect();
       }
     };
-  }, []);
+  }, [loading]);
 
   // Refresh logs periodically with exponential backoff on failure
   useEffect(() => {

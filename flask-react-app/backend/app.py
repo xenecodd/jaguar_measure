@@ -18,13 +18,19 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from mecheye.profiler import Profiler
-from Measure.MecheyePackage.config import config
 import sys
 sys.path.append('/home/eypan/Downloads/fair_api_old/')
 import Robot
 
 # Local imports
 from Measure.MecheyePackage.mecheye_trigger import robot
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, "..", "Measure", "MecheyePackage", "config.json")
+config_path = os.path.normpath(config_path)  # Yolun düzgünleşmesini sağlar
+
+with open(config_path, "r") as f:
+    config = json.load(f)
 
 # Global robot lock tanımı
 robot_lock = threading.Lock()
@@ -340,7 +346,7 @@ def make_json_serializable(obj):
     else:
         return obj
 
-def generate_json_data(results, tolerances=config.tolerances):
+def generate_json_data(results, tolerances=config['tolerances']):
     """
     Generates JSON data from scan results, with tolerance checks and color coding.
     
@@ -656,8 +662,6 @@ def update_robot_status():
             # tcp = safe_get_tcp()
             # Update state
             state.update_di_values(di0=di0, di8=di8, di9=di9, tcp=[0,0,0,0,0,0])
-            
-            # Store for subprocess
             di_data['di8'] = di8[1] if isinstance(di8, tuple) else 0
             di_data['di9'] = di9[1] if isinstance(di9, tuple) else 0
             di_data['di0_tuple'] = di0 if isinstance(di0, tuple) else 1
@@ -772,69 +776,85 @@ def scan():
     logger.info(f"Received scan request: {data}")
     
     # Validate request
-    if not data or 'message' not in data:
+    if not data:
         return jsonify(message="Invalid request"), 400
-    
-    # Process based on message type
-    if data['message'] == 'START':
-        # Reset any errors
-        robot.ResetAllError()
+
+    if data.get('ignored_index_list') is not None:
+        ignored_index_list = data['ignored_index_list']
+        print(ignored_index_list)
+        ignored_points_path = os.path.join(base_dir, "..", "Measure", "MecheyePackage", "config.json")
+        ignored_points_path = os.path.normpath(ignored_points_path)
+        # Read the current config
+        with open(ignored_points_path, "r") as f:
+            config_data = json.load(f)
+        # Update only ignored_points
+        config_data["ignored_points"] = ignored_index_list
+        # Save back the entire config
+        with open(ignored_points_path, "w") as f:
+            json.dump(config_data, f, indent=2)
+        return jsonify(message="ignored_points updated"), 200
+       
+    else:
+        # Process based on message type
+        if data['message'] == 'START':
+            # Reset any errors
+            robot.ResetAllError()
+            
+            # Start auto-restart monitor if not already running
+            if not state.auto_monitor_running:
+                auto_thread = threading.Thread(target=auto_restart_monitor, daemon=True)
+                auto_thread.start()
+                
+            # Return appropriate message based on current state
+            if state.scan_started:
+                return jsonify(message="Scanning already in progress"), 200
+            else:
+                return jsonify(message="Scanning system ready, press start button on robot"), 200
         
-        # Start auto-restart monitor if not already running
-        if not state.auto_monitor_running:
-            auto_thread = threading.Thread(target=auto_restart_monitor, daemon=True)
-            auto_thread.start()
-            
-        # Return appropriate message based on current state
-        if state.scan_started:
-            return jsonify(message="Scanning already in progress"), 200
-        else:
-            return jsonify(message="Scanning system ready, press start button on robot"), 200
-    
-    elif data['message'] == 'STOP':
-        if state.scan_started and state.stop_event:
-            state.stop_event.set()
-            state.set_scan_started(False)
-            return jsonify(message="Scanning stopped"), 200
-        else:
-            return jsonify(message="No active scanning process found"), 200
-    
-    elif data['message'] == 'STATUS':
-        status = "RUNNING" if state.scan_started else "STOPPED"
-        return jsonify(message=status)
-    
-    elif data['message'] == 'RESTART':
-        # Force stop any running process
-        if state.scan_started and state.stop_event:
-            state.stop_event.set()
-            state.set_scan_started(False)
-            time.sleep(0.5)  # Give time for process to stop
+        elif data['message'] == 'STOP':
+            if state.scan_started and state.stop_event:
+                state.stop_event.set()
+                state.set_scan_started(False)
+                return jsonify(message="Scanning stopped"), 200
+            else:
+                return jsonify(message="No active scanning process found"), 200
         
-        # Only restart if DI8 is safe
-        if safe_get_di(8, 0) == (0, 0):
-            # Create new events
-            state.stop_event = multiprocessing.Event()
-            state.restart_event = multiprocessing.Event()
+        elif data['message'] == 'STATUS':
+            status = "RUNNING" if state.scan_started else "STOPPED"
+            return jsonify(message=status)
+        
+        elif data['message'] == 'RESTART':
+            # Force stop any running process
+            if state.scan_started and state.stop_event:
+                state.stop_event.set()
+                state.set_scan_started(False)
+                time.sleep(0.5)  # Give time for process to stop
             
-            # Start new scan process
-            scan_process_thread = threading.Thread(
-                target=run_scan, 
-                args=(state.stop_event,)
-            )
-            scan_process_thread.start()
-            
-            # Start new monitor thread
-            state.monitor_thread = threading.Thread(
-                target=monitor_robot, 
-                args=(state.stop_event, state.restart_event), 
-                daemon=True
-            )
-            state.monitor_thread.start()
-            
-            state.set_scan_started(True)
-            return jsonify(message="Scanning restarted"), 200
-        else:
-            return jsonify(message="Cannot restart: unsafe conditions"), 400
+            # Only restart if DI8 is safe
+            if safe_get_di(8, 0) == (0, 0):
+                # Create new events
+                state.stop_event = multiprocessing.Event()
+                state.restart_event = multiprocessing.Event()
+                
+                # Start new scan process
+                scan_process_thread = threading.Thread(
+                    target=run_scan, 
+                    args=(state.stop_event,)
+                )
+                scan_process_thread.start()
+                
+                # Start new monitor thread
+                state.monitor_thread = threading.Thread(
+                    target=monitor_robot, 
+                    args=(state.stop_event, state.restart_event), 
+                    daemon=True
+                )
+                state.monitor_thread.start()
+                
+                state.set_scan_started(True)
+                return jsonify(message="Scanning restarted"), 200
+            else:
+                return jsonify(message="Cannot restart: unsafe conditions"), 400
     
     return jsonify(message="Unknown command"), 400
 
@@ -910,25 +930,27 @@ def get_scan_log():
 @app.route('/api/colors', methods=['GET'])
 def get_colors():
     try:
-        colors=["gray"]*64
-        # Scan çıktısını satır satır oku
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        ignored = set(config.get("ignored_points", []))
+        colors = ["black" if str(i) in ignored else "gray" for i in range(64)]
         scan_outputs = []
         with open(CONFIG['SCAN_OUTPUTS'], 'r', encoding='utf-8') as f:
             for line in f:
-                if line.strip() and line.strip() != '{}' and "Error" not in line:
-                    scan_outputs.append(json.loads(line.strip()))
-        # Her bir OK değerine göre rengi belirle
-        for i in scan_outputs:
-            colors[i['Index']]= "green" if i["OK"] == "1" else "red"
-
+                line = line.strip()
+                if line and line != '{}' and "Error" not in line:
+                    scan_outputs.append(json.loads(line))
+        for o in scan_outputs:
+            idx = o.get("Index")
+            if idx is not None and str(idx) not in ignored:
+                colors[idx] = "green" if o.get("OK") == "1" else "red"
         return jsonify({'colors': colors}), 200
-
     except Exception as e:
-        print(f"Hata oluştu: {e}")
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.exception("Error in get_colors")
+        return jsonify({'error': 'Server error'}), 500
 
 
-@app.route('/api/robot/air', methods=['POST'])
+@app.route('/api/robot/air', methods=['GET'])
 def control_air():
     """API endpoint to control air signal"""
     try:

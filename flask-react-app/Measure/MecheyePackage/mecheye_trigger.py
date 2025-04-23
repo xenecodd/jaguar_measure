@@ -220,8 +220,8 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         pre_post_move = None
         
         scrc2 = [-450, 130, 470, 82.80, 89.93, -7.30]
-        p90    = [-335, -370, 450, -90, 0, 90]
-        p91    = [-335, 220, 450, -90, 0, 90]
+        p90    = [-335, -400, 450, -90, 0, 90]
+        p91    = [-335, 250, 450, -90, 0, 90]
         h1     = [-375, -120, 580, -90, -90, 180]
         h2     = [-375, 200, 580, -90, -90, 180]
         h1_alt = [-425, -120, 510, -90, -90, 180]
@@ -240,8 +240,6 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             post_move = ("MoveCart", p91)
         elif lua_name == "vertical.lua":
             pre_move = ("MoveL", p90)
-
-
         
         for cmd in extra_commands:
             send_command(cmd)
@@ -280,8 +278,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
 
     def _move_robot(self, move_type: str, coordinates: list,vel_cart=54,vel_l = 54):
-        # if not self.current_di0_value:
-        #     os._exit(0)
+        
         if move_type == "MoveCart":
             robot.MoveCart(coordinates, 0, 0, vel=self.vel_mul* vel_cart)
         elif move_type == "MoveL":
@@ -291,7 +288,6 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         else:
             raise ValueError(f"Unsupported move type: {move_type}")
 
-
     def _wait_for_profile_data(self):
         while True:
             with mutex:
@@ -300,7 +296,6 @@ class TriggerWithExternalDeviceAndFixedRate(object):
                 sleep(0.5)
             else:
                 break
-
 
     def save_depth_and_intensity(self, depth_file_name, intensity_file_name):
         cv2.imwrite(depth_file_name,

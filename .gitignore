@@ -57,7 +57,9 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-Measure/*.dat
-Measure/*.bin
-Measure/*.csv
-Measure/*.xlsx
+*.dat
+*.bin
+*.csv
+*.xlsx
+*.ply
+

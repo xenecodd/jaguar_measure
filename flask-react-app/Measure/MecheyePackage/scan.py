@@ -8,15 +8,18 @@ from robot_control import send_command
 from Scripts import *
 from mecheye_trigger import TriggerWithExternalDeviceAndFixedRate, robot
 from points import *
-from config import config
 import sys
 import json
 import mysql.connector
 from typing import Dict
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, 'config.json')
+with open(config_path, "r") as f:
+    config = json.load(f)
 
 # Backend yapılandırması: Agg mod, non-interaktif; TkAgg ise interaktif.
-if config.use_agg:
+if config["use_agg"]:
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     plt.show = lambda: None
@@ -33,7 +36,7 @@ class JaguarScanner:
       - Robotun pick (parça alma) ve put-back (parça geri koyma) işlemlerini yönetir.
       - Thread'li hesaplama ile performansı artırır.
     """
-    def __init__(self, vel_mul: float=1, use_agg: bool = config.use_agg, put_back: bool = False):
+    def __init__(self, vel_mul: float=1, use_agg: bool = config["use_agg"], put_back: bool = False):
         """
         JaguarScanner örneğini başlatır.
         
@@ -123,13 +126,15 @@ class JaguarScanner:
         return next_index
 
     def read_current_point_index(self) -> int:
-        if os.path.exists(config.file_path):
-            with open(config.file_path, 'r') as file:
+        file_path = os.path.join(base_dir, "point_index.txt")
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as file:
                 return int(file.read().strip())
         return 0
 
     def write_current_point_index(self, index: int):
-        with open(config.file_path, 'w') as file:
+        file_path = os.path.join(base_dir, "point_index.txt")
+        with open(file_path, 'w') as file:
             file.write(str(index))
 
     def pick_object(self, point: dict, soft_point, use_back_transit: bool):
@@ -145,27 +150,27 @@ class JaguarScanner:
         # Özel durum: Belirli noktalarda ekstra transit hareketleri
         if point == right_of_robot_points[0]:
             transit_vel = 50
-            robot.MoveCart(p90, 0, 0, vel=config.vel_mul * transit_vel)
+            robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * transit_vel)
         elif point == left_of_robot_points[0]:
             transit_vel = 50
-            robot.MoveCart(p91, 0, 0, vel=config.vel_mul * transit_vel)
+            robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * transit_vel)
 
-        robot.MoveCart(soft_point, 0, 0, vel=config.vel_mul * 100)
+        robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 100)
         # Transit hareketleri
         if point in right_of_robot_points and point["p_up"][0] > 400:
             transit_vel = 50
-            robot.MoveCart(right_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+            robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         elif use_back_transit or (point["p_up"][0] > 400 and point in left_of_robot_points):
             transit_vel = 50
-            robot.MoveCart(back_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+            robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         
         # Parça alma hareketleri
-        robot.MoveCart(point["p_up"], 0, 0, vel=config.vel_mul * transit_vel)
-        robot.MoveL(point["p"], 0, 0, vel=config.vel_mul * 50)
+        robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+        robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
         robot.WaitMs(1000)
         robot.SetDO(7, 1)  # Parçayı kavrama sinyali
         robot.WaitMs(1000)
-        robot.MoveL(point["p_up"], 0, 0, vel=config.vel_mul * transit_vel)
+        robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
         print("PICK OBJECT", self.current_di0_value)
         
         # DI0 değerine göre parça alma işleminin başarıyla tamamlanıp tamamlanmadığını kontrol et
@@ -180,7 +185,7 @@ class JaguarScanner:
             
             # Yeni parça alma girişimi için indeksi güncelle
             current_index = self.read_current_point_index()
-            current_index = self.get_next_valid_index(current_index, config.ignored_points, len(self.points))
+            current_index = self.get_next_valid_index(current_index, config["ignored_points"], len(self.points))
             self.write_current_point_index(current_index)
             
             # Yeni parça alma işlemi için hazırlan
@@ -193,8 +198,8 @@ class JaguarScanner:
             total_left_back_points = len(left_of_robot_points + left_small + back_points)
             use_back_transit = current_index >= len(left_of_robot_points + left_small) and current_index < total_left_back_points
             
-            if isinstance(config.same_place_index, int):
-                point = self.points[config.same_place_index]
+            if isinstance(config["same_place_index"], int):
+                point = self.points[config["same_place_index"]]
             else:
                 point = self.points[current_index]
                 
@@ -207,13 +212,13 @@ class JaguarScanner:
         # Geri dönüş transit hareketleri
         if point in right_of_robot_points and point["p_up"][0] > 400:
             transit_vel = 50
-            robot.MoveCart(right_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+            robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         elif use_back_transit or (point["p_up"][0] > 400 and (point in left_of_robot_points)):
             transit_vel = 50
-            robot.MoveCart(back_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+            robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         
         # Son hareket: Soft point'e git
-        robot.MoveCart(soft_point, 0, 0, vel=config.vel_mul * transit_vel)
+        robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * transit_vel)
 
     def smol_calc(self, small_data: np.ndarray):
         small = self.rotate_point_cloud(small_data, -90, "z")
@@ -221,7 +226,7 @@ class JaguarScanner:
         small = small[small[:, 0] < np.min(small[:, 0]) + 50]
         small = self.to_origin(small)
 
-        if config.save_point_clouds:
+        if config["save_point_clouds"]:
             self.pcd.points = o3d.utility.Vector3dVector(small)
             o3d.io.write_point_cloud(os.path.join(os.path.dirname(__file__), "Scan_Outputs", "small.ply"), self.pcd)
 
@@ -239,7 +244,7 @@ class JaguarScanner:
         horizontal2_data[:, 2] -= 70
         horizontal2_data[:, 0] -= 50
 
-        if config.save_point_clouds:
+        if config["save_point_clouds"]:
             self.pcd.points = o3d.utility.Vector3dVector(horizontal2_data)
             o3d.io.write_point_cloud(os.path.join(os.path.dirname(__file__), "Scan_Outputs", "horizontal2.ply"), self.pcd)
             self.pcd.points = o3d.utility.Vector3dVector(horizontal_data)
@@ -255,7 +260,7 @@ class JaguarScanner:
         horizontal = self.to_origin(horizontal)
         self.horizontal = horizontal
 
-        if config.save_point_clouds:
+        if config["save_point_clouds"]:
             self.pcd.points = o3d.utility.Vector3dVector(horizontal)
             o3d.io.write_point_cloud(os.path.join(os.path.dirname(__file__), "Scan_Outputs", "horizontal_post.ply"), self.pcd)
 
@@ -280,7 +285,7 @@ class JaguarScanner:
         vertical = self.remove_gripper_points(vertical_data)
         vertical = self.rotate_point_cloud(vertical, 180, "z")
 
-        if config.save_point_clouds:
+        if config["save_point_clouds"]:
             pcd = o3d.geometry.PointCloud()
             pcd.points = o3d.utility.Vector3dVector(vertical)
             o3d.io.write_point_cloud(os.path.join(os.path.dirname(__file__), "Scan_Outputs", "vertical.ply"), pcd)
@@ -289,7 +294,7 @@ class JaguarScanner:
         l_17_2, ok_17_2 = horn_diff(vertical_copy)
         l_23_4, ok_23_4 = horn_diff(vertical_copy, 240, 280)
 
-        current_index = self.get_next_valid_index(self.read_current_point_index(), config.ignored_points, len(self.points))
+        current_index = self.get_next_valid_index(self.read_current_point_index(), config["ignored_points"], len(self.points))
         self.write_current_point_index(current_index)
         
         # vertical_results hesaplama
@@ -323,37 +328,37 @@ class JaguarScanner:
         current_results = self.combine_results(vertical_results)
 
         if hasattr(self, "pick_point"):
-            if config.put_back:
+            if config["put_back"]:
                 point = self.pick_point
                 soft_point = self.pick_soft_point
                 use_back_transit = self.pick_use_back_transit
                 transit_vel = 80
 
-                robot.MoveCart(soft_point, 0, 0, vel=config.vel_mul * 100)
+                robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 100)
                 if point in right_of_robot_points and point["p_up"][0] > 400:
-                    robot.MoveCart(right_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+                    robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
                 elif use_back_transit or (point["p_up"][0] > 400 and (point in left_of_robot_points)):
                     transit_vel = 50
-                    robot.MoveCart(back_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+                    robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
                 
-                robot.MoveCart(point["p_up"], 0, 0, vel=config.vel_mul * transit_vel)
-                robot.MoveL(point["p"], 0, 0, vel=config.vel_mul * 50)
+                robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+                robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
                 robot.WaitMs(500)
                 robot.SetDO(7, 0)
                 robot.WaitMs(500)
-                robot.MoveL(point["p_up"], 0, 0, vel=config.vel_mul * transit_vel)
+                robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
                 
                 if point in right_of_robot_points and point["p_up"][0] > 400:
-                    robot.MoveCart(right_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+                    robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
                 elif use_back_transit or (point["p_up"][0] > 400 and (point in left_of_robot_points)):
                     transit_vel = 50
-                    robot.MoveCart(back_transit_point, 0, 0, vel=config.vel_mul * transit_vel)
+                    robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
             else:
-                if config.drop_object:
+                if config["drop_object"]:
                     print("DROP OBJECT", self.check_part_quality(current_results))
                     drop_point = metal_detector if self.check_part_quality(current_results) else trash
                     print("DROP POINT", drop_point)
-                    robot.MoveCart(drop_point, 0, 0, vel=config.vel_mul * 80)
+                    robot.MoveCart(drop_point, 0, 0, vel=config["vel_mul"] * 80)
                     robot.SetDO(7, 0)
                 else:
                     print("Parça bırakma ayarı devre dışı.")
@@ -364,7 +369,7 @@ class JaguarScanner:
         return vertical_results
 
     def check_part_quality(self, results: dict) -> bool:
-        for feature, target_tolerance in config.tolerances.items():
+        for feature, target_tolerance in config["tolerances"].items():
             target, tolerance = target_tolerance
             value = results.get(feature, None)
             if value is None:
@@ -454,8 +459,8 @@ class JaguarScanner:
         return results
 
     def run_scan_cycle(self):
-        ROBOT_POSITIONS = config.robot_positions
-        for self.cycle in range(config.range_):
+        ROBOT_POSITIONS = config["robot_positions"]
+        for self.cycle in range(config["range_"]):
             start_time = time.time()
             current_results = {}
             current_index = self.read_current_point_index()
@@ -464,7 +469,7 @@ class JaguarScanner:
             try:
                 send_command({"cmd": 107, "data": {"content": "ResetAllError()"}})
 
-                if config.pick:
+                if config["pick"]:
                     if current_index < len(left_of_robot_points + left_small + back_points):
                         soft_point = p90
                     else:
@@ -473,8 +478,8 @@ class JaguarScanner:
                     total_left_back_points = len(left_of_robot_points + left_small + back_points)
                     use_back_transit = current_index >= len(left_of_robot_points + left_small) and current_index < total_left_back_points
 
-                    if isinstance(config.same_place_index, int):
-                        point = self.points[config.same_place_index]
+                    if isinstance(config["same_place_index"], int):
+                        point = self.points[config["same_place_index"]]
                     else:
                         point = self.points[current_index]
 
@@ -484,10 +489,10 @@ class JaguarScanner:
 
                     self.pick_object(point, soft_point, use_back_transit)
 
-                robot.MoveCart(ROBOT_POSITIONS['scrc'], 0, 0, vel=config.vel_mul * 100)
+                robot.MoveCart(ROBOT_POSITIONS['scrc'], 0, 0, vel=config["vel_mul"] * 100)
 
                 small_data = self.mech_eye.main(lua_name="small.lua", scan_line_count=1500)
-                if config.use_agg:
+                if config["use_agg"]:
                     thread_small = threading.Thread(target=self.smol_calc, args=(small_data,))
                     thread_small.start()
                 else:
@@ -496,17 +501,17 @@ class JaguarScanner:
 
                 horizontal_data = self.mech_eye.main(lua_name="horizontal.lua", scan_line_count=1500)
                 horizontal2_data = self.mech_eye.main(lua_name="horizontal2.lua", scan_line_count=1500)
-                if config.use_agg:
+                if config["use_agg"]:
                     thread_horizontal = threading.Thread(target=self.hor_calc, args=(horizontal_data, horizontal2_data))
                     thread_horizontal.start()
                 else:
                     self.hor_calc(horizontal_data, horizontal2_data)
                     plt.show()
 
-                vertical_data = self.mech_eye.main(lua_name="vertical.lua", scan_line_count=2500)
+                vertical_data = self.mech_eye.main(lua_name="vertical.lua", scan_line_count=4000)
                 plt.show()
 
-                if config.use_agg:
+                if config["use_agg"]:
                     thread_small.join()
                     thread_horizontal.join()
 
@@ -515,7 +520,7 @@ class JaguarScanner:
                 current_results = self.combine_results(vertical_results)
                 current_results["Index"] = self.read_current_point_index()-1
                 current_results["OK"] = "1" if self.check_part_quality(current_results) else "0"
-                if config.save_to_db:
+                if config["save_to_db"]:
                     self.write_to_db(current_results, iteration=self.read_current_point_index())
                 current_results["Processing Time (s)"] = time.time() - start_time
                 

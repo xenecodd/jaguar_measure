@@ -60,9 +60,9 @@ def arm_horn_lengths(points, b_vertical=None):
     if filtered_points.size == 0 or filtered_points2.size == 0 or filtered_points3.size == 0:
         print("Uyarı: Filtrelenmiş nokta bulutlarından biri boş!")
 
-    save_filtered_point_cloud(filtered_points, "filtered_points.ply")
-    save_filtered_point_cloud(filtered_points2, "filtered_points2.ply")
-    save_filtered_point_cloud(filtered_points3, "filtered_points3.ply")
+    # save_filtered_point_cloud(filtered_points, "filtered_points.ply")
+    # save_filtered_point_cloud(filtered_points2, "filtered_points2.ply")
+    # save_filtered_point_cloud(filtered_points3, "filtered_points3.ply")
 
     l_248 = b_vertical - np.min(points[:, 1])
     return l_248

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api.service';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ScanTrace = () => {
   const [rectangles, setRectangles] = useState([]);
+  const [ignoredPointsInput, setIgnoredPointsInput] = useState([]);
 
-  // Initialize the grid with 64 gray rectangles (8x8)
+  // 64 adet gri renkli (8x8) başlangıç kutusunu oluştur
   useEffect(() => {
     const initialRectangles = Array.from({ length: 64 }, (_, i) => ({
       id: String(i),
@@ -12,16 +15,14 @@ const ScanTrace = () => {
       y: Math.floor(i / 8) * 50,
       fill: 'gray',
     }));
-
     setRectangles(initialRectangles);
   }, []);
 
-  // Fetch colors from API and update rectangles
+  // API'den renk bilgisini periyodik olarak al ve güncelle
   useEffect(() => {
     const fetchColors = async () => {
       try {
         const data = await apiService.getColors();
-
         setRectangles((prevRects) =>
           prevRects.map((rect, idx) => ({
             ...rect,
@@ -34,34 +35,49 @@ const ScanTrace = () => {
     };
 
     fetchColors();
-
     const interval = setInterval(fetchColors, 200);
     return () => clearInterval(interval);
   }, []);
 
+  // Tıklanan kutu rengini değiştir
   const handleRectClick = (id) => {
     setRectangles((prevRects) =>
       prevRects.map((rect) =>
         rect.id === id
-          ? { ...rect, fill: rect.fill === 'blue' ? 'red' : 'blue' }
+          ? { ...rect, fill: rect.fill === 'gray' ? 'black' : 'gray' }
           : rect
       )
     );
   };
 
+  // Ignored points listesini güncelle ve API'ye gönder
+  const handleSendIgnoredPoints = async (action) => {
+    try {
+      const newPoints = ignoredPointsInput.includes(action)
+        ? ignoredPointsInput.filter((index) => index !== action)
+        : [...ignoredPointsInput, action];
+
+      setIgnoredPointsInput(newPoints);
+      handleRectClick(action);
+
+      const response = await apiService.controlScan({ ignored_index_list: newPoints });
+      toast(response);
+    } catch (error) {
+      toast(error);
+    }
+  };
+
   return (
-    <div className="w-full p-4 bg-white rounded-lg shadow">
-      <h3 className="text-lg font-semibold mb-4">Tarama İzleme</h3>
-      {/* Sabit piksel boyutları yerine responsive sınıflar kullanıldı */}
-      <div className="grid grid-cols-8 gap-1 w-full h-80">
+    <div className="bg-white shadow rounded-lg p-6">
+      <h3 className="text-2xl font-bold text-gray-800 mb-6">Tarama İzleme</h3>
+      {/* Responsive grid yapısı */}
+      <div className="grid grid-cols-8 gap-2 w-full h-80">
         {rectangles.map((rect) => (
           <div
             key={rect.id}
-            onClick={() => handleRectClick(rect.id)}
-            className="flex items-center justify-center cursor-pointer transition-colors duration-200 text-white font-bold text-sm hover:text-red-600 rounded"
-            style={{
-              backgroundColor: rect.fill,
-            }}
+            onClick={() => handleSendIgnoredPoints(rect.id)}
+            className="flex items-center justify-center cursor-pointer transition-colors duration-200 text-white font-semibold text-sm hover:scale-105 rounded"
+            style={{ backgroundColor: rect.fill }}
           >
             {rect.id}
           </div>

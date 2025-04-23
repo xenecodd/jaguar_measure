@@ -3,6 +3,13 @@ import open3d as o3d
 import matplotlib.pyplot as plt
 from scipy.optimize import leastsq
 from Scripts import edges
+import os
+
+def read_current_point_index() -> int:
+    if os.path.exists(config["file_path"]):
+        with open(config["file_path"], 'r') as file:
+            return int(file.read().strip())
+    return 0
 
 # Çember fitting için yardımcı fonksiyonlar
 def calc_radius(xc, yc, x, y):
@@ -18,7 +25,7 @@ def initial_guess(x, y):
     r = np.mean(np.sqrt((x - xc)**2 + (y - yc)**2))
     return [xc, yc, r]
 
-def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=55.67):
+def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=57.67):
     """
     Nokta bulutu üzerinde kaydırma, filtreleme ve çember fitting işlemleri yapar.
 
@@ -72,7 +79,6 @@ def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=55.67):
     scale= edges.get_scale()
     y_2d, z_2d = projected_points_2d[:, 1] / scale, projected_points_2d[:, 0] / scale
     
-    
     # Başlangıç tahmini ve fitting işlemi
     guess = initial_guess(y_2d, z_2d)
     result, _ = leastsq(cost_function, guess, args=(y_2d, z_2d))
@@ -105,12 +111,19 @@ def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=55.67):
 
     # Open3D ile 3D görselleştirme
     filtered_pcd = o3d.geometry.PointCloud()
-    filtered_pcd.points = o3d.utility.Vector3dVector(points)
+    filtered_pcd.points = o3d.utility.Vector3dVector(filtered_points)
     filtered_pcd.paint_uniform_color([0, 0, 1])  # Mavi renk
+    filtered_pcd2 = o3d.geometry.PointCloud()
+    filtered_pcd2.points = o3d.utility.Vector3dVector(points)
+    filtered_pcd2.paint_uniform_color([1, 0, 0])  # Kırmızı renk
 
-    # Filtrelenmiş noktaları kaydetme
-    filtered_pcd_path = "/home/eypan/Projects/JaguarWorks/jaguar_measure/flask-react-app/Measure/MecheyePackage/filtered_points.ply"
-    o3d.io.write_point_cloud(filtered_pcd_path, filtered_pcd)
-    print(f"Filtrelenmiş noktalar kaydedildi: {filtered_pcd_path}")
-
+    # # Filtrelenmiş noktaları kaydetme
+    # index = read_current_point_index()
+    # if b_vertical:
+    #     slope_name = f"r1_50_{index}"
+    #     o3d.io.write_point_cloud(f"/home/eypan/Projects/JaguarWorks/jaguar_measure/flask-react-app/Measure/MecheyePackage/Slope_outputs/all_points_{index}.ply", filtered_pcd2)
+    # else:
+    #     slope_name = f"r2_35_{index}"
+    # o3d.io.write_point_cloud(f"/home/eypan/Projects/JaguarWorks/jaguar_measure/flask-react-app/Measure/MecheyePackage/Slope_outputs/{slope_name}.ply", filtered_pcd)
+    
     return yc, zc, r_outer, l79_73

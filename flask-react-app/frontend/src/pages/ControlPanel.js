@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/api.service';
-import { INTERVALS } from '../constants/api';
+import { INTERVALS, API_BASE_URL } from '../constants/api';
 import Button from '../components/Button';
 import LoadingSpinner from '../components/LoadingSpinner';
 import io from 'socket.io-client';
-import { API_BASE_URL } from '../constants/api';
 import ScanTrace from '../components/ScanTrace';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ControlPanel = () => {
-  const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState({});
 
-  // Fetch hello message on component mount
+  // API'den 'hello' mesajını ve socket üzerinden durumu al
   useEffect(() => {
     const fetchMessage = async () => {
       try {
@@ -32,64 +32,64 @@ const ControlPanel = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // Socket bağlantısını başlat ve dinle
   useEffect(() => {
-    // Initialize socket connection
     const socketConnection = io(API_BASE_URL);
 
-    // Socket event handlers
     socketConnection.on('robot_status', (data) => {
       setStatus(data);
       setLoading(false);
     });
 
     socketConnection.on('connect_error', (err) => {
-      setError(`WebSocket bağlantı hatası: ${err.message}`);
+      toast(`WebSocket bağlantı hatası: ${err.message}`);
       setLoading(false);
     });
 
-    // Cleanup function
     return () => {
-      if (socketConnection) {
-        socketConnection.disconnect();
-      }
+      if (socketConnection) socketConnection.disconnect();
     };
   }, []);
 
-  // Start scan function
+  // Taramayı başlat
   const handleStartScan = async () => {
     try {
-      await apiService.controlScan('START');
-      setStatus({ ...status, scan_active: true });
+      await apiService.controlScan({ message: 'START' });
+      setStatus((prev) => ({ ...prev, scan_active: true }));
     } catch (error) {
-      setError('Scan başlatılırken bir hata oluştu.');
+      toast('Scan başlatılırken bir hata oluştu.');
     }
   };
 
-  // Stop scan function
+  // Taramayı durdur
   const handleStopScan = async () => {
     try {
-      await apiService.controlScan('STOP');
-      setStatus({ ...status, scan_active: false });
+      await apiService.controlScan({ message: 'STOP' });
+      setStatus((prev) => ({ ...prev, scan_active: false }));
     } catch (error) {
-      setError('Scan durdurulurken bir hata oluştu.');
+      toast('Scan durdurulurken bir hata oluştu.');
     }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen">
+    <div className="min-h-screen bg-gray-200 flex flex-col lg:flex-row">
       {/* Sol Panel: Kontrol ve Bilgilendirme */}
-      <div className="lg:w-1/2 w-full h-full p-4 sm:p-6 md:p-8 lg:p-12 bg-gray-100 flex flex-col">
-        <div className="mx-auto w-full flex-grow bg-white shadow-sm rounded-lg p-6 sm:p-8">
-          <div className="mb-6 md:mb-8 text-center">
-            <h1 className="text-3xl font-bold mt-0 mb-2">Robot Kontrol Paneli</h1>
+      <div className="lg:w-2/5 w-full h-full p-20 flex flex-col bg-gray-100">
+        <div className="max-w-xl mx-auto bg-white rounded-lg shadow-lg p-8 flex flex-col flex-grow">
+          <header className="mb-8 text-center">
+            <h1 className="text-3xl font-extrabold text-blue-800">
+              Robot Kontrol Paneli
+            </h1>
             {loading ? (
               <LoadingSpinner text="Bağlantı kuruluyor..." />
             ) : (
-              <div className="text-gray-600 text-sm md:text-base italic">{message}</div>
+              <p className="mt-4 text-gray-600 italic text-base">
+                {message}
+              </p>
             )}
-          </div>
-          
-          <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6">
+          </header>
+
+          <div className="flex flex-col md:flex-row justify-around items-center gap-4 mt-auto">
             <Button
               text="Taramayı Başlat"
               type="success"
@@ -105,19 +105,14 @@ const ControlPanel = () => {
               className="w-full md:w-auto"
             />
           </div>
-          
-          {error && (
-            <div className="bg-red-50 p-4 rounded-md border border-red-200">
-              <h3 className="text-lg font-semibold mb-3 text-red-700">Hata</h3>
-              <p className="text-red-700">{error}</p>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Sağ Panel: Tarama İzleme */}
-      <div className="lg:w-1/2 w-full h-full p-4 sm:p-6 md:p-8 lg:p-12 bg-gray-100 flex flex-col">
-        <ScanTrace />
+      <div className="lg:w-3/5 w-full h-full p-6 flex items-center justify-center bg-gray-100">
+        <div className="max-w-4xl w-full">
+          <ScanTrace />
+        </div>
       </div>
     </div>
   );

@@ -34,8 +34,9 @@ export const apiService = {
   // Start or stop scan
   controlScan: async (action) => {
     try {
-      const message = action.toUpperCase() === 'START' ? 'START' : 'STOP';
-      const response = await apiClient.post(ENDPOINTS.SCAN, { message });
+      const message = action.message;
+      const ignored_index_list = action.ignored_index_list ? action.ignored_index_list : null;
+      const response = await apiClient.post(ENDPOINTS.SCAN, { message,ignored_index_list });
       return response.data;
     } catch (error) {
       throw error;
@@ -74,7 +75,7 @@ export const apiService = {
   // Send air signal
   sendAirSignal: async () => {
     try {
-      const response = await apiClient.post(ENDPOINTS.AIR);
+      const response = await apiClient.get(ENDPOINTS.AIR);
       return response.data;
     } catch (error) {
       throw error;
