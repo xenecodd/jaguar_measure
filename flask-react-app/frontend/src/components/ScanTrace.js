@@ -68,22 +68,26 @@ const ScanTrace = () => {
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6">Tarama İzleme</h3>
+    <div className="bg-slate-800 shadow-xl rounded-2xl ">
+
       {/* Responsive grid yapısı */}
       <div className="grid grid-cols-8 gap-2 w-full h-80">
         {rectangles.map((rect) => (
           <div
             key={rect.id}
             onClick={() => handleSendIgnoredPoints(rect.id)}
-            className="flex items-center justify-center cursor-pointer transition-colors duration-200 text-white font-semibold text-sm hover:scale-105 rounded"
-            style={{ backgroundColor: rect.fill }}
+            className="flex items-center justify-center cursor-pointer transition-transform duration-200 transform hover:scale-105 text-white font-semibold text-sm rounded-xl shadow-md"
+            style={{
+              backgroundColor: rect.fill,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            }}
           >
             {rect.id}
           </div>
         ))}
       </div>
     </div>
+
   );
 };
 

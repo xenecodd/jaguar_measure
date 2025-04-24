@@ -72,49 +72,55 @@ const ControlPanel = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-200 flex flex-col lg:flex-row">
-      {/* Sol Panel: Kontrol ve Bilgilendirme */}
-      <div className="lg:w-2/5 w-full h-full p-20 flex flex-col bg-gray-100">
-        <div className="max-w-xl mx-auto bg-white rounded-lg shadow-lg p-8 flex flex-col flex-grow">
-          <header className="mb-8 text-center">
-            <h1 className="text-3xl font-extrabold text-blue-800">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">
+      {/* Sol Panel */}
+      <div className="lg:w-[35%] w-full h-1/2 p-2 lg:p-10 flex flex-col rounded-2xl bg-slate-800 border-r border-slate-700">
+        <div className="flex flex-col bg-slate-700 rounded-2xl shadow-xl p-8 lg:p-10 h-full">
+          <header className="mb-8">
+            <h1 className="text-3xl lg:text-4xl font-bold text-indigo-400 text-center">
               Robot Kontrol Paneli
             </h1>
             {loading ? (
-              <LoadingSpinner text="Bağlantı kuruluyor..." />
+              <div className="mt-4 flex justify-center">
+                <LoadingSpinner text="Bağlantı kuruluyor..." />
+              </div>
             ) : (
-              <p className="mt-4 text-gray-600 italic text-base">
-                {message}
-              </p>
+              <p className="mt-4 text-slate-300 italic text-sm text-center">{message}</p>
             )}
           </header>
 
-          <div className="flex flex-col md:flex-row justify-around items-center gap-4 mt-auto">
+          {/* Butonlar yukarı alındı ve hizalandı */}
+          <div className="flex flex-col gap-4 mt-4">
             <Button
               text="Taramayı Başlat"
               type="success"
               onClick={handleStartScan}
               disabled={status.scan_active}
-              className="w-full md:w-auto"
+              className="w-full px-6 py-3 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow-md"
             />
             <Button
               text="Taramayı Durdur"
               type="danger"
               onClick={handleStopScan}
               disabled={!status.scan_active}
-              className="w-full md:w-auto"
+              className="w-full px-6 py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold shadow-md"
             />
           </div>
         </div>
       </div>
 
-      {/* Sağ Panel: Tarama İzleme */}
-      <div className="lg:w-3/5 w-full h-full p-6 flex items-center justify-center bg-gray-100">
-        <div className="max-w-4xl w-full">
-          <ScanTrace />
+      {/* Sağ Panel */}
+      <div className="lg:w-[65%] w-full h-1/2 p-1 bg-slate-900 flex items-center justify-center">
+        <div className="w-full h-full bg-slate-800 rounded-2xl shadow-2xl p-6 flex flex-col">
+          <h3 className="text-2xl font-bold text-indigo-300 mb-4">Tarama İzleme</h3>
+          <div className="overflow-auto">
+            <ScanTrace />
+          </div>
         </div>
       </div>
     </div>
+
+
   );
 };
 

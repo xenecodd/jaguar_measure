@@ -692,3 +692,75 @@ NameError: name 'current_app' is not defined
 2025-04-23 14:08:05,956 - INFO - Received scan request: {'ignored_index_list': []}
 2025-04-23 14:08:11,630 - INFO - Received scan request: {'ignored_index_list': ['24']}
 2025-04-23 14:08:12,201 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 16:04:14,999 - INFO - Received scan request: {'ignored_index_list': ['47']}
+2025-04-23 16:04:15,591 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 16:04:16,792 - INFO - Received scan request: {'ignored_index_list': ['47']}
+2025-04-23 16:04:17,475 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:13:26,654 - INFO - Received scan request: {'ignored_index_list': ['12']}
+2025-04-23 17:13:27,068 - INFO - Received scan request: {'ignored_index_list': ['12', '13']}
+2025-04-23 17:13:27,735 - INFO - Received scan request: {'ignored_index_list': ['12']}
+2025-04-23 17:13:28,042 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:14:30,944 - INFO - Received scan request: {'ignored_index_list': ['3']}
+2025-04-23 17:14:31,508 - INFO - Received scan request: {'ignored_index_list': ['3', '2']}
+2025-04-23 17:14:31,962 - INFO - Received scan request: {'ignored_index_list': ['2']}
+2025-04-23 17:14:32,276 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:14:32,748 - INFO - Received scan request: {'ignored_index_list': ['4']}
+2025-04-23 17:14:33,030 - INFO - Received scan request: {'ignored_index_list': ['4', '12']}
+2025-04-23 17:14:33,352 - INFO - Received scan request: {'ignored_index_list': ['4', '12', '11']}
+2025-04-23 17:14:33,871 - INFO - Received scan request: {'ignored_index_list': ['12', '11']}
+2025-04-23 17:14:34,790 - INFO - Received scan request: {'ignored_index_list': ['11']}
+2025-04-23 17:14:35,089 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:15:43,833 - INFO - Received scan request: {'ignored_index_list': ['8']}
+2025-04-23 17:15:44,428 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:15:44,924 - INFO - Received scan request: {'ignored_index_list': ['9']}
+2025-04-23 17:15:45,237 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:18:33,541 - INFO - Received scan request: {'ignored_index_list': ['4']}
+2025-04-23 17:18:34,291 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:21:32,079 - INFO - Received scan request: {'ignored_index_list': ['19']}
+2025-04-23 17:21:32,533 - INFO - Received scan request: {'ignored_index_list': ['19', '11']}
+2025-04-23 17:21:32,925 - INFO - Received scan request: {'ignored_index_list': ['19']}
+2025-04-23 17:21:33,633 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:21:35,868 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None}
+2025-04-23 17:21:35,869 - INFO - Auto-restart monitor started
+2025-04-23 17:22:40,281 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None}
+2025-04-23 17:22:49,524 - INFO - Received scan request: {'ignored_index_list': ['55']}
+2025-04-23 17:22:50,435 - INFO - Received scan request: {'ignored_index_list': ['55', '47']}
+2025-04-23 17:22:51,187 - INFO - Received scan request: {'ignored_index_list': ['55']}
+2025-04-23 17:22:51,770 - INFO - Received scan request: {'ignored_index_list': ['55', '39']}
+2025-04-23 17:22:52,327 - INFO - Received scan request: {'ignored_index_list': ['39']}
+2025-04-23 17:22:52,760 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:38:29,336 - INFO - Received scan request: {'ignored_index_list': ['54']}
+2025-04-23 17:38:29,846 - INFO - Received scan request: {'ignored_index_list': ['54', '51']}
+2025-04-23 17:38:30,121 - INFO - Received scan request: {'ignored_index_list': ['54']}
+2025-04-23 17:38:30,287 - INFO - Received scan request: {'ignored_index_list': ['54', '51']}
+2025-04-23 17:38:31,564 - INFO - Received scan request: {'ignored_index_list': ['54']}
+2025-04-23 17:38:32,511 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:39:08,734 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None}
+2025-04-23 17:39:09,661 - INFO - Received scan request: {'ignored_index_list': ['24']}
+2025-04-23 17:39:09,974 - INFO - Received scan request: {'ignored_index_list': ['24', '16']}
+2025-04-23 17:39:10,299 - INFO - Received scan request: {'ignored_index_list': ['24', '16', '8']}
+2025-04-23 17:39:10,621 - INFO - Received scan request: {'ignored_index_list': ['24', '16']}
+2025-04-23 17:39:10,982 - INFO - Received scan request: {'ignored_index_list': ['24']}
+2025-04-23 17:39:11,794 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:44:32,202 - INFO - Received scan request: {'ignored_index_list': ['0']}
+2025-04-23 17:44:32,583 - INFO - Received scan request: {'ignored_index_list': ['0', '2']}
+2025-04-23 17:44:32,929 - INFO - Received scan request: {'ignored_index_list': ['2']}
+2025-04-23 17:44:33,252 - INFO - Received scan request: {'ignored_index_list': ['2', '1']}
+2025-04-23 17:44:33,543 - INFO - Received scan request: {'ignored_index_list': ['2']}
+2025-04-23 17:44:33,818 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-23 17:44:34,078 - INFO - Received scan request: {'ignored_index_list': ['1']}
+2025-04-23 17:44:34,487 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-24 09:20:11,617 - INFO - Received scan request: {'ignored_index_list': ['9']}
+2025-04-24 09:20:12,154 - INFO - Received scan request: {'ignored_index_list': ['9', '10']}
+2025-04-24 09:20:12,529 - INFO - Received scan request: {'ignored_index_list': ['10']}
+2025-04-24 09:20:12,902 - INFO - Received scan request: {'ignored_index_list': ['10', '17']}
+2025-04-24 09:20:13,650 - INFO - Received scan request: {'ignored_index_list': ['17']}
+2025-04-24 09:20:14,030 - INFO - Received scan request: {'ignored_index_list': []}
+2025-04-24 09:20:14,651 - INFO - Received scan request: {'ignored_index_list': ['26']}
+2025-04-24 09:20:15,048 - INFO - Received scan request: {'ignored_index_list': ['26', '50']}
+2025-04-24 09:20:15,365 - INFO - Received scan request: {'ignored_index_list': ['26', '50', '58']}
+2025-04-24 09:20:15,923 - INFO - Received scan request: {'ignored_index_list': ['26', '58']}
+2025-04-24 09:20:16,352 - INFO - Received scan request: {'ignored_index_list': ['26', '58', '42']}
+2025-04-24 09:20:17,260 - INFO - Received scan request: {'ignored_index_list': ['58', '42']}
+2025-04-24 09:20:17,673 - INFO - Received scan request: {'ignored_index_list': ['58']}
+2025-04-24 09:20:18,124 - INFO - Received scan request: {'ignored_index_list': []}

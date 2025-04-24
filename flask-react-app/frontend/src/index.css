@@ -19,5 +19,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-jaguar-blue rounded-full;
+  @apply bg-white rounded-full;
 }
