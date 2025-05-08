@@ -28,7 +28,7 @@ moves = {
     }
 }
 
-vel_mul = 0.5
+vel_mul = 0.8
 
 def send_move(move_type, coords, vel_mul):
     """Verilen hareket tipine göre robot hareket komutunu kilit altına alarak gönderir."""

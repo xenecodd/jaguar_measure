@@ -2,6 +2,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import { apiService } from "../services/api.service";
 import StatusCard from "./StatusCard";
 import FeatureChart from "./FeatureChart";
+import FileDownload from 'js-file-download';
+import Button from "../components/Button";
 
 const DebugDashboard = () => {
     const [latestScan, setLatestScan] = useState(null);
@@ -11,6 +13,16 @@ const DebugDashboard = () => {
     const [selectedFeature, setSelectedFeature] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [filterStatus, setFilterStatus] = useState("all"); // 'all', 'pass', 'fail'
+    const [showResults, setShowResults] = useState(false);
+    const [selectedFile, setSelectedFile] = useState("scan_output.json");
+    const [availableFiles, setAvailableFiles] = useState([
+        { name: "scan_output.json", label: "Main Scan Output" },
+        { name: "firstpart_scan.json", label: "First Part Scan" },
+        { name: "3dprinter_scans.json", label: "3D Printer Scans" },
+        { name: "first64.json", label: "First 64" },
+        { name: "sec64.json", label: "Second 64" },
+        { name: "last16.json", label: "Last 16" }
+    ]);
 
     // Extract feature list for dropdown
     const featureList = useMemo(() => {
@@ -23,53 +35,54 @@ const DebugDashboard = () => {
     }, [latestScan]);
 
     useEffect(() => {
-        const fetchLatestScan = async () => {
-            try {
-                setLoading(true);
-                const data = await apiService.getLatestScan();
-                // Convert status.ok to boolean explicitly for each scan result
-                const correctedData = {
-                    ...data,
-                    scan_results: data?.scan_results?.map(iteration => ({
-                        ...iteration,
-                        features: iteration?.features?.map(feature => ({
-                            ...feature,
-                            tolerance_check: {
-                                ...feature.tolerance_check,
-                                within_tolerance:
-                                    feature.tolerance_check?.within_tolerance === true ||
-                                    feature.tolerance_check?.within_tolerance === "true"
-                            }
-                        })) || [],
-                        status: {
-                            ...iteration.status,
-                            ok:
-                                iteration.status?.ok === true ||
-                                iteration.status?.ok === "true"
-                        }
-                    })) || []
-                };
-
-                setLatestScan(correctedData);
-
-                // Initialize all iterations as collapsed except the first one
-                if (correctedData && correctedData.scan_results) {
-                    const initialExpandState = {};
-                    correctedData.scan_results.forEach((iteration, index) => {
-                        initialExpandState[index] = index === 0; // Only first iteration expanded by default
-                    });
-                    setExpandedIterations(initialExpandState);
-                }
-
-                setLoading(false);
-            } catch (error) {
-                console.error('Latest scan could not be retrieved:', error);
-                setError('Failed to load scan data. Please try again later.');
-                setLoading(false);
-            }
-        };
         fetchLatestScan();
-    }, []);
+    }, [selectedFile]); // Re-fetch when selected file changes
+
+    const fetchLatestScan = async () => {
+        try {
+            setLoading(true);
+            const data = await apiService.getLatestScan(selectedFile);
+            // Convert status.ok to boolean explicitly for each scan result
+            const correctedData = {
+                ...data,
+                scan_results: data?.scan_results?.map(iteration => ({
+                    ...iteration,
+                    features: iteration?.features?.map(feature => ({
+                        ...feature,
+                        tolerance_check: {
+                            ...feature.tolerance_check,
+                            within_tolerance:
+                                feature.tolerance_check?.within_tolerance === true ||
+                                feature.tolerance_check?.within_tolerance === "true"
+                        }
+                    })) || [],
+                    status: {
+                        ...iteration.status,
+                        ok:
+                            iteration.status?.ok === true ||
+                            iteration.status?.ok === "true"
+                    }
+                })) || []
+            };
+
+            setLatestScan(correctedData);
+
+            // Initialize all iterations as collapsed except the first one
+            if (correctedData && correctedData.scan_results) {
+                const initialExpandState = {};
+                correctedData.scan_results.forEach((iteration, index) => {
+                    initialExpandState[index] = index === 0; // Only first iteration expanded by default
+                });
+                setExpandedIterations(initialExpandState);
+            }
+
+            setLoading(false);
+        } catch (error) {
+            console.error('Latest scan could not be retrieved:', error);
+            setError('Failed to load scan data. Please try again later.');
+            setLoading(false);
+        }
+    };
 
     // Filter iterations based on search query and status filter
     const filteredIterations = useMemo(() => {
@@ -118,6 +131,12 @@ const DebugDashboard = () => {
     }, [latestScan, searchQuery, filterStatus]);
 
 
+    const downloadExcel = () => {
+        apiService.downloadExcel(selectedFile).then((res) => {
+          FileDownload(res.data, `${selectedFile || 'data'}.xlsx`);
+        });
+      };
+
     const toggleIteration = (index) => {
         setExpandedIterations(prev => ({
             ...prev,
@@ -139,10 +158,6 @@ const DebugDashboard = () => {
             allCollapsed[index] = false;
         });
         setExpandedIterations(allCollapsed);
-    };
-
-    const filterFailedOnly = () => {
-        setFilterStatus("fail");
     };
 
     // Calculate statistics for dashboard summary
@@ -327,7 +342,7 @@ const DebugDashboard = () => {
                                     {Object.entries(stats.failureReasons)
                                         .sort(([_, countA], [__, countB]) => countB - countA)
                                         .map(([reason, count], idx) => {
-                                            const percentage = (count / stats.failed * 100).toFixed(1);
+                                            const percentage = (count / stats.total * 100).toFixed(1);
                                             return (
                                                 <tr key={idx} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                                                     <td className="py-2 px-3 text-red-700">{reason}</td>
@@ -357,6 +372,27 @@ const DebugDashboard = () => {
     const renderControlPanel = () => {
         return (
             <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border">
+                {/* File selector added here */}
+                <div className="mb-4">
+                    <label htmlFor="fileSelector" className="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
+                    <select
+                        id="fileSelector"
+                        className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        value={selectedFile}
+                        onChange={(e) => setSelectedFile(e.target.value)}
+                    >
+                        {availableFiles.map((file, index) => (
+                            <option key={index} value={file.name}>{file.label}</option>
+                        ))}
+                    </select>
+                    <Button
+                        text="Download Excel"
+                        type="secondary"
+                        className="text-xs mt-2 px-2 py-1"
+                        onClick={downloadExcel}
+                    ></Button>
+                </div>
+                
                 <div className="flex flex-col md:flex-row gap-4 mb-4">
                     <div className="flex-grow">
                         <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
@@ -427,7 +463,7 @@ const DebugDashboard = () => {
                         Collapse All
                     </button>
                     <button
-                        onClick={filterFailedOnly}
+                        onClick={() => setFilterStatus('fail')}
                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm flex items-center"
                     >
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -783,120 +819,102 @@ const DebugDashboard = () => {
     };
 
     return (
-        <div className="relative w-screen mx-auto p-4 md:p-6">
-            {/* Büyük ekranlarda sabit kolonun yerini ayarlamak için yer tutucu */}
-            <div className="hidden lg:block lg:w-1/2"></div>
-
-            {/* Dashboard - Mobilde relative, büyük ekranlarda fixed */}
-            <div className="relative lg:fixed top-0 lg:left-0 bg-white shadow-md rounded-lg p-4 md:p-6 mb-8 lg:mb-0 lg:w-1/2 h-screen overflow-y-auto">
-                <div className="mt-16 flex flex-col md:flex-row justify-between items-center mb-6">
-                    <h1 className="text-xl md:text-2xl font-bold text-blue-800">
-                        <span className="flex items-center">
-                            <svg
-                                className="w-6 h-6 mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                                ></path>
-                            </svg>
-                            Scan Results Dashboard
-                        </span>
-                    </h1>
-                </div>
-                {/* Enhanced Summary section */}
-                {renderEnhancedSummary()}
-
-                {/* Control panel with search and filters */}
-                {renderControlPanel()}
-
-                {/* Feature Chart section */}
-                <div id="feature-chart-section">
-                    {selectedFeature && (
-                        <FeatureChart
-                            data={latestScan.scan_results}
-                            selectedFeature={selectedFeature}
-                        />
-                    )}
-                </div>
+        <div className="min-h-screen flex flex-col lg:flex-row">
+          {/* Dashboard Section */}
+          <div
+            className={`w-full ${
+              showResults ? 'lg:w-1/2' : 'lg:w-full'
+            } bg-white shadow-md rounded-lg p-4 md:p-6 overflow-y-auto lg:h-screen lg:sticky lg:top-20`}
+          >
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+              <h1 className="text-xl md:text-2xl font-bold text-blue-800">
+                <span className="flex items-center">
+                  <svg
+                    className="w-6 h-6 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    ></path>
+                  </svg>
+                  Scan Results Dashboard
+                </span>
+              </h1>
+              <button
+                onClick={() => setShowResults((prev) => !prev)}
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                {showResults ? 'Hide Results' : 'Show Results'}
+              </button>
             </div>
-
-            {/* İkinci sütun - Results */}
-            <div className="w-full lg:ml-[50%] lg:w-1/2">
-                {/* Results count indicator */}
-                <div className="mb-4 bg-white p-3 rounded-lg shadow-sm border flex justify-between items-center">
-                    <span className="text-gray-700">
-                        Showing {filteredIterations.length} of {latestScan.scan_results.length} iterations
-                        {searchQuery && (
-                            <span className="ml-2 text-gray-500">
-                                filtered by "{searchQuery}"
-                            </span>
-                        )}
-                        {filterStatus !== "all" && (
-                            <span className="ml-2 text-gray-500">
-                                showing {filterStatus === "pass" ? "passed" : "failed"} iterations only
-                            </span>
-                        )}
-                    </span>
-                    {(searchQuery || filterStatus !== "all") && (
-                        <button
-                            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                            onClick={() => {
-                                setSearchQuery("");
-                                setFilterStatus("all");
-                            }}
-                        >
-                            Clear Filters
-                        </button>
-                    )}
-                </div>
-
-                {/* Individual iteration sections */}
-                <div className="flex flex-col gap-4">
-                    {filteredIterations.length > 0 ? (
-                        filteredIterations.map((iteration, idx) => (
-                            <div key={idx} className="w-full">
-                                {renderIteration(iteration, idx)}
-                            </div>
-                        ))
-                    ) : (
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-                            <div className="text-gray-400 mb-2">
-                                <svg
-                                    className="w-12 h-12 mx-auto"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    ></path>
-                                </svg>
-                            </div>
-                            <p className="text-gray-600 text-lg">
-                                No results match your filters
-                            </p>
-                            <p className="text-gray-500 mt-1">
-                                Try adjusting your search criteria
-                            </p>
-                        </div>
-                    )}
-                </div>
+      
+            {renderEnhancedSummary()}
+            {renderControlPanel()}
+      
+            <div id="feature-chart-section">
+              {selectedFeature && (
+                <FeatureChart
+                  data={latestScan.scan_results}
+                  selectedFeature={selectedFeature}
+                />
+              )}
             </div>
+          </div>
+      
+          {/* Results Section */}
+          {showResults && (
+            <div className="w-full lg:w-1/2 bg-white p-4 md:p-6 overflow-y-auto lg:h-screen">
+              <div className="mb-4 bg-white p-3 rounded-lg shadow-sm border flex justify-between items-center">
+                <span className="text-gray-700">
+                  Showing {filteredIterations.length} of{' '}
+                  {latestScan.scan_results.length} iterations
+                </span>
+              </div>
+      
+              <div className="flex flex-col gap-4">
+                {filteredIterations.length > 0 ? (
+                  filteredIterations.map((iteration, idx) => (
+                    <div key={idx} className="w-full">
+                      {renderIteration(iteration, idx)}
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                    <div className="text-gray-400 mb-2">
+                      <svg
+                        className="w-12 h-12 mx-auto"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <p className="text-gray-600 text-lg">
+                      No results match your filters
+                    </p>
+                    <p className="text-gray-500 mt-1">
+                      Try adjusting your search criteria
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-    );
-
-
-};
+      );
+    };
 
 export default DebugDashboard;

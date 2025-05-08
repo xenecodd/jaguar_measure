@@ -9,7 +9,9 @@ export const ENDPOINTS = {
   AIR: '/api/robot/air',
   SCAN_LOG: '/api/scan/log',
   LATEST_SCAN: '/api/scan/latest',
-  COLORS: '/api/colors'
+  COLORS: '/api/scan/colors',
+  DOWNLOAD_EXCEL: '/api/scan/download-excel',
+  CONFIG: '/api/scan/config'
 };
 
 // Polling intervals (in milliseconds)

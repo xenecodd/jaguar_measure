@@ -1,11 +1,14 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { apiService } from '../services/api.service';
 import { API_BASE_URL } from '../constants/api';
 import StatusCard from '../components/StatusCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import io from 'socket.io-client';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import Config from '../components/Config';
 /**
  * DebugPanel - Component for monitoring and controlling robot systems
  * Displays real-time robot status and logs through WebSocket connection
@@ -17,9 +20,6 @@ const DebugPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [airSignalSent, setAirSignalSent] = useState(false);
-  const [socket, setSocket] = useState(null);
-  const logContainerRef = useRef(null);
-  const loadingTimeoutRef = useRef(null);
 
   // Connect to WebSocket and fetch logs
   useEffect(() => {
@@ -29,11 +29,9 @@ const DebugPanel = () => {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000
     });
-    
-    setSocket(socketConnection);
 
     // Set timeout to exit loading state if no connection
-    loadingTimeoutRef.current = setTimeout(() => {
+    const loadingTimeout = setTimeout(() => {
       if (loading) {
         setLoading(false);
         setError("Connection timeout - server may be unavailable");
@@ -47,7 +45,7 @@ const DebugPanel = () => {
     });
 
     socketConnection.on('robot_status', (data) => {
-      clearTimeout(loadingTimeoutRef.current);
+      clearTimeout(loadingTimeout);
       setStatus(data);
       setLoading(false);
       setError(null);
@@ -58,11 +56,11 @@ const DebugPanel = () => {
       try {
         const response = await Promise.race([
           apiService.getScanLog(),
-          new Promise((_, reject) => 
+          new Promise((_, reject) =>
             setTimeout(() => reject(new Error("Fetch timeout")), 5000)
           )
         ]);
-        
+
         // Handle different response formats
         const logs = response?.logs || response?.data?.logs || [];
         setScanLog(logs);
@@ -71,12 +69,12 @@ const DebugPanel = () => {
         // Don't set error state here to avoid UI changes if socket is working
       }
     };
-    
+
     fetchScanLog();
 
     // Cleanup function
     return () => {
-      clearTimeout(loadingTimeoutRef.current);
+      clearTimeout(loadingTimeout);
       if (socketConnection) {
         socketConnection.disconnect();
       }
@@ -88,26 +86,26 @@ const DebugPanel = () => {
     let retryDelay = 5000; // Start with 5 seconds
     let maxDelay = 30000;  // Max delay of 30 seconds
     let consecutiveErrors = 0;
-    
+
     const fetchLogsWithBackoff = async () => {
       try {
         const response = await Promise.race([
           apiService.getScanLog(),
-          new Promise((_, reject) => 
+          new Promise((_, reject) =>
             setTimeout(() => reject(new Error("Fetch timeout")), 5000)
           )
         ]);
-        
+
         const logs = response?.logs || response?.data?.logs || [];
         setScanLog(logs);
-        
+
         // Reset on success
         consecutiveErrors = 0;
         retryDelay = 5000;
       } catch (err) {
         console.error("Error refreshing logs:", err);
         consecutiveErrors++;
-        
+
         // Implement exponential backoff
         if (consecutiveErrors > 1) {
           retryDelay = Math.min(retryDelay * 1.5, maxDelay);
@@ -123,7 +121,7 @@ const DebugPanel = () => {
 
   // Auto-scroll log container when new logs arrive
   useEffect(() => {
-    const container = logContainerRef.current;
+    const container = document.getElementById('log-container');
     if (container) {
       container.scrollTop = container.scrollHeight;
     }
@@ -132,25 +130,26 @@ const DebugPanel = () => {
   // Handle air signal button press with debounce
   const handleAirSignal = useCallback(async () => {
     if (airSignalSent) return; // Prevent multiple clicks
-    
+
     try {
       setAirSignalSent(true);
-      
+
       // Add timeout to prevent hanging on API call
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error("Air signal timeout")), 3000);
       });
-      
+
       await Promise.race([
         apiService.sendAirSignal(),
         timeoutPromise
       ]);
-      
+
       // Reset button after delay
+      toast.success("Air signal sent successfully");
       setTimeout(() => setAirSignalSent(false), 1500);
     } catch (error) {
       console.error("Air signal error:", error);
-      alert(`Error sending air signal: ${error.message || "Unknown error"}`);
+      toast.error(`Error sending air signal: ${error.message || "Unknown error"}`);
       setAirSignalSent(false);
     }
   }, [airSignalSent]);
@@ -166,10 +165,9 @@ const DebugPanel = () => {
   const checkServerHealth = async () => {
     try {
       await apiService.healthCheck();
-      setError(null);
       return true;
     } catch (err) {
-      setError("Server communication error. Please check your connection.");
+      toast.error("Server communication error. Please check your connection.");
       return false;
     }
   };
@@ -177,14 +175,13 @@ const DebugPanel = () => {
   // Handle manual refresh button
   const handleRefresh = async () => {
     const isHealthy = await checkServerHealth();
-    
+
     if (isHealthy) {
       try {
         const response = await apiService.getScanLog();
         setScanLog(response?.logs || response?.data?.logs || []);
       } catch (err) {
-        console.error("Error refreshing logs", err);
-        setError("Failed to refresh logs. Please try again.");
+        toast.error("Error refreshing logs: " + err.message);
       }
     }
   };
@@ -200,8 +197,8 @@ const DebugPanel = () => {
       <div className="bg-red-50 p-6 rounded-lg text-center">
         <h2 className="text-xl font-bold text-red-600 mb-4">Hata</h2>
         <p className="text-red-500">{error}</p>
-        <Button 
-          text="Yeniden Dene" 
+        <Button
+          text="Yeniden Dene"
           onClick={() => window.location.reload()}
           type="primary"
           className="mt-4"
@@ -212,22 +209,19 @@ const DebugPanel = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+      />
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-jaguar-blue">Robot Debug Panel</h1>
         <div className="text-sm text-gray-500">
-          {socket?.connected ? 
-            <span className="flex items-center">
-              <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Connected
-            </span> : 
-            <span className="flex items-center">
-              <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-              Disconnected
-            </span>
-          }
+          <span className="flex items-center">
+            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+            Connected
+          </span>
         </div>
       </div>
-
       {/* Status Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <StatusCard title="Stop(DI8)" value={status.DI8} />
@@ -243,7 +237,7 @@ const DebugPanel = () => {
           text={airSignalSent ? "Signal Sent" : "Send Air Signal"}
           onClick={handleAirSignal}
           type={airSignalSent ? 'success' : 'primary'}
-          disabled={airSignalSent || !socket?.connected}
+          disabled={airSignalSent}
         />
       </div>
 
@@ -256,13 +250,12 @@ const DebugPanel = () => {
             onClick={handleRefresh}
             type="secondary"
             className="text-xs px-2 py-1"
-            disabled={!socket?.connected}
           />
         </div>
         <div className="max-h-64 overflow-y-auto">
           {scanLog.length > 0 ? (
             <pre
-              ref={logContainerRef}
+              id="log-container"
               className="text-xs text-gray-800 max-h-64 overflow-y-auto"
             >
               {scanLog.map((log, index) => (
@@ -278,6 +271,9 @@ const DebugPanel = () => {
             <p className="text-gray-500">No logs available</p>
           )}
         </div>
+      </div>
+      <div className="mt-6">
+        <Config />
       </div>
     </div>
   );

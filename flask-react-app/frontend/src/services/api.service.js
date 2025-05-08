@@ -37,15 +37,17 @@ export const apiService = {
       const message = action.message;
       const ignored_index_list = action.ignored_index_list ? action.ignored_index_list : null;
       const response = await apiClient.post(ENDPOINTS.SCAN, { message,ignored_index_list });
-      return response.data;
+      return response;
     } catch (error) {
       throw error;
     }
   },
   
-  getLatestScan: async () => {
+  getLatestScan: async (fileName = 'scan_output.json') => {
     try {
-      const response = await apiClient.get(ENDPOINTS.LATEST_SCAN);
+      const response = await apiClient.get(ENDPOINTS.LATEST_SCAN, {
+        params: { file: fileName }
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -85,6 +87,42 @@ export const apiService = {
   getColors: async () => {
     try {
       const response = await apiClient.get(ENDPOINTS.COLORS);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  downloadExcel: async (fileName = 'scan_output.json') => {
+    try {
+      const response = await apiClient.get(ENDPOINTS.DOWNLOAD_EXCEL, { responseType: 'blob', params: { file: fileName } });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  GetConfig: async () => {
+    try {
+      const response = await apiClient.get(ENDPOINTS.CONFIG); 
+      return response.data;
+    } catch (error) {
+      console.error("getConfig error:", error);
+      throw error;
+    }
+  },
+
+  SetConfig: async (config) => {
+    try {
+      const response = await apiClient.post(
+        ENDPOINTS.CONFIG,
+        config,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
       return response.data;
     } catch (error) {
       throw error;

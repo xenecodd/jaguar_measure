@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api.service';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const ScanTrace = () => {
   const [rectangles, setRectangles] = useState([]);
@@ -30,7 +31,8 @@ const ScanTrace = () => {
           }))
         );
       } catch (error) {
-        console.error('Renkler alınırken hata oluştu:', error);
+        console.log('Renkler alınırken hata oluştu:', error);
+        setTimeout(fetchColors, 5000);
       }
     };
 
@@ -53,25 +55,37 @@ const ScanTrace = () => {
   // Ignored points listesini güncelle ve API'ye gönder
   const handleSendIgnoredPoints = async (action) => {
     try {
-      const newPoints = ignoredPointsInput.includes(action)
-        ? ignoredPointsInput.filter((index) => index !== action)
-        : [...ignoredPointsInput, action];
-
+      const numericAction = parseInt(action, 10);
+      const newPoints = ignoredPointsInput.includes(numericAction)
+        ? ignoredPointsInput.filter((index) => index !== numericAction)
+        : [...ignoredPointsInput, numericAction];
+  
       setIgnoredPointsInput(newPoints);
       handleRectClick(action);
-
-      const response = await apiService.controlScan({ ignored_index_list: newPoints });
-      toast(response);
+  
+      await apiService.controlScan({ ignored_index_list: newPoints });
+      toast.success("Ignored points updated successfully");
     } catch (error) {
-      toast(error);
+      toast.error(error);
     }
   };
 
   return (
     <div className="bg-slate-800 shadow-xl rounded-2xl ">
-
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        newestOnTop={true}
+        closeOnClick={true}
+        pauseOnHover={true}
+        theme="dark"
+        style={{
+          zIndex: 9999,
+        }}
+        closeButton={false}
+      />
       {/* Responsive grid yapısı */}
-      <div className="grid grid-cols-8 gap-2 w-full h-80">
+      <div className="grid grid-cols-10 gap-2 w-full h-80">
         {rectangles.map((rect) => (
           <div
             key={rect.id}

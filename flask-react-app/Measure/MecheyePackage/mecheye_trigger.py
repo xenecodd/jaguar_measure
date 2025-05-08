@@ -245,7 +245,9 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             send_command(cmd)
 
         if pre_move:
+            print(f"Before pre move {lua_name}:", robot.GetActualTCPPose()[1])
             threading.Thread(target=self._move_robot, args=pre_move).start() #self._move_robot(*pre_move)
+            
             
         status = self.profiler.start_acquisition()
         if not status.is_ok():
@@ -270,8 +272,9 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         #     pre_post_move=None
 
         if post_move:
+            print(f"Before post move: {lua_name}", robot.GetActualTCPPose()[1])
             self._move_robot(*post_move)
-
+        
         self.profile_batch.append(self.callback.profile_batch)
         return True
 

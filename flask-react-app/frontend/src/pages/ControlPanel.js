@@ -34,7 +34,11 @@ const ControlPanel = () => {
 
   // Socket bağlantısını başlat ve dinle
   useEffect(() => {
-    const socketConnection = io(API_BASE_URL);
+    const socketConnection = io(API_BASE_URL, {
+      timeout: 5000,       // Connection timeout
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
+    });
 
     socketConnection.on('robot_status', (data) => {
       setStatus(data);
@@ -54,10 +58,13 @@ const ControlPanel = () => {
   // Taramayı başlat
   const handleStartScan = async () => {
     try {
-      await apiService.controlScan({ message: 'START' });
+      const response = await apiService.controlScan({ message: 'START' });
+      if (response.status === 200) {
+        toast.success(response.data.message);
+      }
       setStatus((prev) => ({ ...prev, scan_active: true }));
     } catch (error) {
-      toast('Scan başlatılırken bir hata oluştu.');
+      toast.error(error.message);
     }
   };
 
@@ -66,8 +73,9 @@ const ControlPanel = () => {
     try {
       await apiService.controlScan({ message: 'STOP' });
       setStatus((prev) => ({ ...prev, scan_active: false }));
+      toast.success('Scan durdurıldı.');
     } catch (error) {
-      toast('Scan durdurulurken bir hata oluştu.');
+      toast.error('Scan durdurulurken bir hata oluştu.');
     }
   };
 

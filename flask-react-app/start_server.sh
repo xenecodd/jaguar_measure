@@ -17,7 +17,7 @@ export PYTHONPATH=$PYTHONPATH:$PROJECT_ROOT
 
 # Backend'i başlat (arka plan) ve PID'yi al
 cd backend
-python3 app.py &
+python3 run.py &
 FLASK_PID=$!
 
 # Ctrl+C algılandığında Flask'ı öldür
