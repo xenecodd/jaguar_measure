@@ -4,12 +4,12 @@ import time
 import json
 import numpy as np
 import logging
-from backend.models.robot_state import state
-from backend.config import Config
+from models.robot_state import state
+from config import Config
 from services.robot_service import safe_get_di
 import multiprocessing
-from backend.config import Config
-from Measure.MecheyePackage.mecheye_trigger import robot
+from config import Config
+from MecheyePackage.mecheye_trigger import robot
 from openpyxl.styles import PatternFill
 import os
 import pandas as pd

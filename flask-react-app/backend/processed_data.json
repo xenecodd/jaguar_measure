@@ -10,7 +10,7 @@
                     "background_color": "D9EAD3",
                     "tolerance_check": {
                         "target": 102.1,
-                        "tolerance": 2.0,
+                        "tolerance": 2,
                         "distance": 1.4322636646009812,
                         "tolerance_remaining": 0.5677363353990188,
                         "within_tolerance": true,
@@ -69,7 +69,7 @@
                     "value": 39.70960998535156,
                     "background_color": "D9EAD3",
                     "tolerance_check": {
-                        "target": 40.0,
+                        "target": 40,
                         "tolerance": 1,
                         "distance": 0.2903900146484375,
                         "tolerance_remaining": 0.7096099853515625,
@@ -84,8 +84,8 @@
                     "value": 248.76171875,
                     "background_color": "D9EAD3",
                     "tolerance_check": {
-                        "target": 248.0,
-                        "tolerance": 2.0,
+                        "target": 248,
+                        "tolerance": 2,
                         "distance": 0.76171875,
                         "tolerance_remaining": 1.23828125,
                         "within_tolerance": true,
@@ -99,7 +99,7 @@
                     "value": 42.171875,
                     "background_color": "D9EAD3",
                     "tolerance_check": {
-                        "target": 42.0,
+                        "target": 42,
                         "tolerance": 1.5,
                         "distance": 0.171875,
                         "tolerance_remaining": 1.328125,
@@ -160,7 +160,7 @@
                     "background_color": "D9EAD3",
                     "tolerance_check": {
                         "target": 0,
-                        "tolerance": 3.0,
+                        "tolerance": 3,
                         "distance": 1.143275701984442,
                         "tolerance_remaining": 1.856724298015558,
                         "within_tolerance": true,
@@ -190,7 +190,7 @@
                     "background_color": "D9EAD3",
                     "tolerance_check": {
                         "target": 10.6,
-                        "tolerance": 1.0,
+                        "tolerance": 1,
                         "distance": 0.9917864563729193,
                         "tolerance_remaining": 0.00821354362708071,
                         "within_tolerance": true,
@@ -220,7 +220,7 @@
                     "background_color": "D9EAD3",
                     "tolerance_check": {
                         "target": 23.4,
-                        "tolerance": 1.0,
+                        "tolerance": 1,
                         "distance": 0.09425429894180581,
                         "tolerance_remaining": 0.9057457010581942,
                         "within_tolerance": true,
@@ -235,7 +235,7 @@
                     "background_color": "D9EAD3",
                     "tolerance_check": {
                         "target": 17.2,
-                        "tolerance": 1.0,
+                        "tolerance": 1,
                         "distance": 1.321313496158698,
                         "tolerance_remaining": -0.3213134961586981,
                         "within_tolerance": false,
@@ -249,8 +249,8 @@
                     "value": 0.13052196478626144,
                     "background_color": "D9EAD3",
                     "tolerance_check": {
-                        "target": 0.0,
-                        "tolerance": 2.0,
+                        "target": 0,
+                        "tolerance": 2,
                         "distance": 0.13052196478626144,
                         "tolerance_remaining": 1.8694780352137386,
                         "within_tolerance": true,

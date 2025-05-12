@@ -1,4 +1,14 @@
-Flask==2.3.3
-Flask-SocketIO==5.3.6
-python-socketio==5.9.0
-python-engineio==4.7.1
+# Backend
+flask
+flask_cors
+flask_socketio
+python-dotenv
+pandas
+numpy
+openpyxl
+requests
+open3d
+matplotlib
+scipy
+opencv-python
+mysql-connector-python

@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  flask-backend:
+    build:
+      context: ./backend
+      dockerfile: .devcontainer/Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - app-network
+
+  react-frontend:
+    build:
+      context: ./frontend
+      dockerfile: .devcontainer/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

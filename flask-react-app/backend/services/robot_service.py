@@ -2,7 +2,10 @@ import threading
 import time
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from Measure.MecheyePackage.mecheye_trigger import robot
+from MecheyePackage.mecheye_trigger import robot
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'MecheyePackage' / 'fair_api'))
 import Robot
 
 logger = logging.getLogger(__name__)

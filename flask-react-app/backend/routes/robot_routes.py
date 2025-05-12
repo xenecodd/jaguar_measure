@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
-from backend.models.robot_state import state
-from Measure.MecheyePackage.mecheye_trigger import robot
+from models.robot_state import state
+from MecheyePackage.mecheye_trigger import robot
 
 robot_bp = Blueprint('robot', __name__, url_prefix='/api/robot')
 

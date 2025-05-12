@@ -2,19 +2,20 @@ from flask import Blueprint, jsonify, request, send_file
 import os
 import json
 
-from mecheye import Path
+from pathlib import Path
 import logging
-from backend.models.robot_state import state
-from backend.services.scan_service import generate_json_data
-from backend.config import BASE_DIR, Config
+from models.robot_state import state
+from services.scan_service import generate_json_data
+from config import BASE_DIR, Config
 import threading
 import multiprocessing
 import time
-from backend.services.scan_service import run_scan, auto_restart_monitor
-from Measure.MecheyePackage.mecheye_trigger import robot
-import pandas as pd
-import io
-from backend.services.scan_service import save_to_excel
+from services.scan_service import run_scan, auto_restart_monitor
+from MecheyePackage.mecheye_trigger import robot
+from services.scan_service import save_to_excel
+from services.robot_service import safe_get_di
+from services.scan_service import monitor_robot
+
 
 scan_bp = Blueprint('scan', __name__, url_prefix='/api/scan')
 
@@ -44,7 +45,7 @@ def scan():
     if data.get('ignored_index_list') is not None:
         ignored_index_list = data['ignored_index_list']
         print(ignored_index_list)
-        ignored_points_path = os.path.join(BASE_DIR, "..", "Measure", "MecheyePackage", "config.json")
+        ignored_points_path = os.path.join(BASE_DIR, "..", "MecheyePackage", "config.json")
         ignored_points_path = os.path.normpath(ignored_points_path)
         # Read the current config
         with open(ignored_points_path, "r") as f:

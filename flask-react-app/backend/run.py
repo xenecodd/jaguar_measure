@@ -1,7 +1,5 @@
-from flask import Flask
-from flask_socketio import SocketIO
 from config import Config
-from backend import create_app
+from __init__ import create_app
 
 app, socketio = create_app()
 

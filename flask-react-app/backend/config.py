@@ -18,5 +18,5 @@ class Config:
     SOCKET_PING_INTERVAL = int(os.getenv("SOCKET_PING_INTERVAL", 1))
     SOCKET_PING_TIMEOUT = int(os.getenv("SOCKET_PING_TIMEOUT", 5))
     # SCAN_SCRIPT_PATH; ölçülecek dosyanın yolu:
-    SCAN_SCRIPT_PATH = str(BASE_DIR.parent / "Measure" / "MecheyePackage" / "scan.py")
-    CONFIG_PATH = str(BASE_DIR.parent / "Measure" / "MecheyePackage" / "config.json")
+    SCAN_SCRIPT_PATH = str(BASE_DIR.parent /"backend" / "MecheyePackage" / "scan.py")
+    CONFIG_PATH = str(BASE_DIR.parent /"backend" / "MecheyePackage" / "config.json")

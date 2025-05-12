@@ -1,0 +1,17 @@
+{
+    "name": "Flask Backend",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "forwardPorts": [5000],
+    "portsAttributes": {
+        "5000": {
+            "label": "Flask App",
+            "onAutoForward": "notify"
+        }
+    },
+    "containerEnv": {
+        "FLASK_ENV": "development"
+    }
+}

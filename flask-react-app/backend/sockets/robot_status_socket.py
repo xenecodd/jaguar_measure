@@ -4,8 +4,8 @@ import time
 import logging
 import threading
 
-from backend.models.robot_state import state
-from backend.services.robot_service import safe_get_di  
+from models.robot_state import state
+from services.robot_service import safe_get_di  
 
 logger = logging.getLogger(__name__)
 
