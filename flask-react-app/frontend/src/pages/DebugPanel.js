@@ -82,42 +82,42 @@ const DebugPanel = () => {
   }, [loading]);
 
   // Refresh logs periodically with exponential backoff on failure
-  useEffect(() => {
-    let retryDelay = 5000; // Start with 5 seconds
-    let maxDelay = 30000;  // Max delay of 30 seconds
-    let consecutiveErrors = 0;
+  // useEffect(() => {
+  //   let retryDelay = 5000; // Start with 5 seconds
+  //   let maxDelay = 30000;  // Max delay of 30 seconds
+  //   let consecutiveErrors = 0;
 
-    const fetchLogsWithBackoff = async () => {
-      try {
-        const response = await Promise.race([
-          apiService.getScanLog(),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Fetch timeout")), 5000)
-          )
-        ]);
+  //   const fetchLogsWithBackoff = async () => {
+  //     try {
+  //       const response = await Promise.race([
+  //         apiService.getScanLog(),
+  //         new Promise((_, reject) =>
+  //           setTimeout(() => reject(new Error("Fetch timeout")), 5000)
+  //         )
+  //       ]);
 
-        const logs = response?.logs || response?.data?.logs || [];
-        setScanLog(logs);
+  //       const logs = response?.logs || response?.data?.logs || [];
+  //       setScanLog(logs);
 
-        // Reset on success
-        consecutiveErrors = 0;
-        retryDelay = 5000;
-      } catch (err) {
-        console.error("Error refreshing logs:", err);
-        consecutiveErrors++;
+  //       // Reset on success
+  //       consecutiveErrors = 0;
+  //       retryDelay = 5000;
+  //     } catch (err) {
+  //       console.error("Error refreshing logs:", err);
+  //       consecutiveErrors++;
 
-        // Implement exponential backoff
-        if (consecutiveErrors > 1) {
-          retryDelay = Math.min(retryDelay * 1.5, maxDelay);
-        }
-      }
-    };
+  //       // Implement exponential backoff
+  //       if (consecutiveErrors > 1) {
+  //         retryDelay = Math.min(retryDelay * 1.5, maxDelay);
+  //       }
+  //     }
+  //   };
 
-    // Set up interval with current delay
-    const logInterval = setInterval(fetchLogsWithBackoff, retryDelay);
+  //   // Set up interval with current delay
+  //   const logInterval = setInterval(fetchLogsWithBackoff, retryDelay);
 
-    return () => clearInterval(logInterval);
-  }, []);
+  //   return () => clearInterval(logInterval);
+  // }, []);
 
   // Auto-scroll log container when new logs arrive
   useEffect(() => {
@@ -164,7 +164,7 @@ const DebugPanel = () => {
   // Health check function for server connectivity
   const checkServerHealth = async () => {
     try {
-      await apiService.healthCheck();
+      await apiService.getHelloMessage();
       return true;
     } catch (err) {
       toast.error("Server communication error. Please check your connection.");
@@ -180,6 +180,7 @@ const DebugPanel = () => {
       try {
         const response = await apiService.getScanLog();
         setScanLog(response?.logs || response?.data?.logs || []);
+        toast.success("Logs refreshed successfully");
       } catch (err) {
         toast.error("Error refreshing logs: " + err.message);
       }

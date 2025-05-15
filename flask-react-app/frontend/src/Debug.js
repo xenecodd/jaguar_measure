@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.43.80:5000';
-
+const API_BASE_URL = `http://${DEVICE_IP}:${PORT}`;
+console.log('API_BASE_URL:', API_BASE_URL);
 function Debug() {
   const [robotStatus, setRobotStatus] = useState(null);
   const [loading, setLoading] = useState(true);

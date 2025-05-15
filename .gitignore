@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+!/backend/MecheyePackage/fair_api/*
 .Python
 build/
 develop-eggs/
@@ -19,47 +20,67 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
-# Virtual Environment
+MANIFEST
+.env
 venv/
-env/
 ENV/
+
+# Node/React
+node_modules/
+/frontend/node_modules
+/frontend/.pnp
+/frontend/.pnp.js
+/frontend/coverage
+/frontend/build
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
-.DS_Store
-
-# Flask
-instance/
-.env
-.config
-
-# React
-/node_modules
-/build
-/dist
-coverage/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+.project
+.classpath
+.settings/
 
 # Project specific
-*.dat
-*.bin
-*.csv
-*.xlsx
+/backend/scan_process.log
+/backend/processed_data.json
+/backend/excel/*.xlsx
+/backend/jsons/*.json
+!/backend/jsons/scan_output.json
+/backend/MecheyePackage/Scan_Outputs/
 *.ply
 
+# Database
+*.sqlite3
+*.db
+
+# Logs and temp files
+*.log
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+tmp/
+temp/
+
+# System
+.DS_Store
+Thumbs.db

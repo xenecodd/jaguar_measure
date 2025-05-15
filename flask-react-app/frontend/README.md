@@ -46,4 +46,4 @@ npm run start
 
 The frontend communicates with the backend through REST API. The API base URL is:
 ```javascript
-export const API_BASE_URL = 'http://192.168.43.80:5000';
+export const API_BASE_URL = `http://${DEVICE_IP}:${PORT}`;

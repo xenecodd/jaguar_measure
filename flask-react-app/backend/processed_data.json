@@ -5,119 +5,44 @@
             "background_color": "D9EAD3",
             "features": [
                 {
+                    "name": "Error",
+                    "value": "EOF when reading a line",
+                    "background_color": "D9EAD3"
+                }
+            ],
+            "status": {
+                "ok": true,
+                "color": "00B050"
+            }
+        },
+        {
+            "iteration": 2,
+            "background_color": "FCE4D6",
+            "features": [
+                {
                     "name": "Feature1 (102.1)",
-                    "value": 100.66773633539901,
-                    "background_color": "D9EAD3",
+                    "value": 100.54878708450526,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 102.1,
                         "tolerance": 2,
-                        "distance": 1.4322636646009812,
-                        "tolerance_remaining": 0.5677363353990188,
+                        "distance": 1.5512129154947303,
+                        "tolerance_remaining": 0.4487870845052697,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "B64800"
+                        "gradient_color": "C53900"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature2 (25mm/2)",
-                    "value": 12.588059774039833,
-                    "background_color": "D9EAD3",
+                    "value": 12.561105635967026,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 12.5,
                         "tolerance": 0.5,
-                        "distance": 0.08805977403983256,
-                        "tolerance_remaining": 0.41194022596016744,
-                        "within_tolerance": true,
-                        "color": "00B050",
-                        "gradient_color": "2CD200"
-                    },
-                    "value_color": "00B050"
-                },
-                {
-                    "name": "Feature3 (23.1)",
-                    "value": 22.30215892923427,
-                    "background_color": "D9EAD3",
-                    "tolerance_check": {
-                        "target": 23.1,
-                        "tolerance": 1,
-                        "distance": 0.7978410707657311,
-                        "tolerance_remaining": 0.20215892923426892,
-                        "within_tolerance": true,
-                        "color": "00B050",
-                        "gradient_color": "CB3300"
-                    },
-                    "value_color": "00B050"
-                },
-                {
-                    "name": "Feature4 (25mm/2)",
-                    "value": 12.69394538560719,
-                    "background_color": "D9EAD3",
-                    "tolerance_check": {
-                        "target": 12.5,
-                        "tolerance": 0.5,
-                        "distance": 0.19394538560719,
-                        "tolerance_remaining": 0.30605461439281,
-                        "within_tolerance": true,
-                        "color": "00B050",
-                        "gradient_color": "629C00"
-                    },
-                    "value_color": "00B050"
-                },
-                {
-                    "name": "Feature5 (L40)",
-                    "value": 39.70960998535156,
-                    "background_color": "D9EAD3",
-                    "tolerance_check": {
-                        "target": 40,
-                        "tolerance": 1,
-                        "distance": 0.2903900146484375,
-                        "tolerance_remaining": 0.7096099853515625,
-                        "within_tolerance": true,
-                        "color": "00B050",
-                        "gradient_color": "4AB400"
-                    },
-                    "value_color": "00B050"
-                },
-                {
-                    "name": "Feature6 (L248)",
-                    "value": 248.76171875,
-                    "background_color": "D9EAD3",
-                    "tolerance_check": {
-                        "target": 248,
-                        "tolerance": 2,
-                        "distance": 0.76171875,
-                        "tolerance_remaining": 1.23828125,
-                        "within_tolerance": true,
-                        "color": "00B050",
-                        "gradient_color": "619D00"
-                    },
-                    "value_color": "00B050"
-                },
-                {
-                    "name": "Feature7 (L42)",
-                    "value": 42.171875,
-                    "background_color": "D9EAD3",
-                    "tolerance_check": {
-                        "target": 42,
-                        "tolerance": 1.5,
-                        "distance": 0.171875,
-                        "tolerance_remaining": 1.328125,
-                        "within_tolerance": true,
-                        "color": "00B050",
-                        "gradient_color": "1DE100"
-                    },
-                    "value_color": "00B050"
-                },
-                {
-                    "name": "Feature8 (L79.73)",
-                    "value": 79.54559106199754,
-                    "background_color": "D9EAD3",
-                    "tolerance_check": {
-                        "target": 79.73,
-                        "tolerance": 1.5,
-                        "distance": 0.18440893800246272,
-                        "tolerance_remaining": 1.3155910619975373,
+                        "distance": 0.06110563596702612,
+                        "tolerance_remaining": 0.4388943640329739,
                         "within_tolerance": true,
                         "color": "00B050",
                         "gradient_color": "1FDF00"
@@ -125,169 +50,256 @@
                     "value_color": "00B050"
                 },
                 {
+                    "name": "Feature3 (23.1)",
+                    "value": 22.696042630632224,
+                    "background_color": "FCE4D6",
+                    "tolerance_check": {
+                        "target": 23.1,
+                        "tolerance": 1,
+                        "distance": 0.4039573693677774,
+                        "tolerance_remaining": 0.5960426306322226,
+                        "within_tolerance": true,
+                        "color": "00B050",
+                        "gradient_color": "679700"
+                    },
+                    "value_color": "00B050"
+                },
+                {
+                    "name": "Feature4 (25mm/2)",
+                    "value": 12.699968588849845,
+                    "background_color": "FCE4D6",
+                    "tolerance_check": {
+                        "target": 12.5,
+                        "tolerance": 0.5,
+                        "distance": 0.19996858884984547,
+                        "tolerance_remaining": 0.3000314111501545,
+                        "within_tolerance": true,
+                        "color": "00B050",
+                        "gradient_color": "659900"
+                    },
+                    "value_color": "00B050"
+                },
+                {
+                    "name": "Feature5 (L40)",
+                    "value": 39.912200927734375,
+                    "background_color": "FCE4D6",
+                    "tolerance_check": {
+                        "target": 40,
+                        "tolerance": 1,
+                        "distance": 0.087799072265625,
+                        "tolerance_remaining": 0.912200927734375,
+                        "within_tolerance": true,
+                        "color": "00B050",
+                        "gradient_color": "16E800"
+                    },
+                    "value_color": "00B050"
+                },
+                {
+                    "name": "Feature6 (L248)",
+                    "value": 249.2353057861328,
+                    "background_color": "FCE4D6",
+                    "tolerance_check": {
+                        "target": 248,
+                        "tolerance": 2,
+                        "distance": 1.2353057861328125,
+                        "tolerance_remaining": 0.7646942138671875,
+                        "within_tolerance": true,
+                        "color": "00B050",
+                        "gradient_color": "9D6100"
+                    },
+                    "value_color": "00B050"
+                },
+                {
+                    "name": "Feature7 (L42)",
+                    "value": 42.103515625,
+                    "background_color": "FCE4D6",
+                    "tolerance_check": {
+                        "target": 42,
+                        "tolerance": 1.5,
+                        "distance": 0.103515625,
+                        "tolerance_remaining": 1.396484375,
+                        "within_tolerance": true,
+                        "color": "00B050",
+                        "gradient_color": "11ED00"
+                    },
+                    "value_color": "00B050"
+                },
+                {
+                    "name": "Feature8 (L79.73)",
+                    "value": 79.24594379003075,
+                    "background_color": "FCE4D6",
+                    "tolerance_check": {
+                        "target": 79.73,
+                        "tolerance": 1.5,
+                        "distance": 0.48405620996925336,
+                        "tolerance_remaining": 1.0159437900307466,
+                        "within_tolerance": true,
+                        "color": "00B050",
+                        "gradient_color": "52AC00"
+                    },
+                    "value_color": "00B050"
+                },
+                {
                     "name": "Feature9 (R1-50)",
-                    "value": 49.497946238183545,
-                    "background_color": "D9EAD3",
+                    "value": 49.701166288191885,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 50,
                         "tolerance": 1.5,
-                        "distance": 0.5020537618164553,
-                        "tolerance_remaining": 0.9979462381835447,
+                        "distance": 0.2988337118081148,
+                        "tolerance_remaining": 1.2011662881918852,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "55A900"
+                        "gradient_color": "32CC00"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature10 (R2-35)",
-                    "value": 34.75579190880343,
-                    "background_color": "D9EAD3",
+                    "value": 34.92447822445772,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 35,
                         "tolerance": 1.5,
-                        "distance": 0.24420809119656894,
-                        "tolerance_remaining": 1.255791908803431,
+                        "distance": 0.07552177554227768,
+                        "tolerance_remaining": 1.4244782244577223,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "29D500"
+                        "gradient_color": "0CF200"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature11 (3mm)",
-                    "value": 1.143275701984442,
-                    "background_color": "D9EAD3",
+                    "value": 1.2850515180324482,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 0,
                         "tolerance": 3,
-                        "distance": 1.143275701984442,
-                        "tolerance_remaining": 1.856724298015558,
+                        "distance": 1.2850515180324482,
+                        "tolerance_remaining": 1.7149484819675518,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "619D00"
+                        "gradient_color": "6D9100"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature12 (88.6)",
-                    "value": 88.07967656135918,
-                    "background_color": "D9EAD3",
+                    "value": 87.98768144853824,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 88.6,
                         "tolerance": 1.5,
-                        "distance": 0.5203234386408155,
-                        "tolerance_remaining": 0.9796765613591845,
+                        "distance": 0.6123185514617546,
+                        "tolerance_remaining": 0.8876814485382454,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "58A600"
+                        "gradient_color": "689600"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature13 (10.6)",
-                    "value": 9.60821354362708,
-                    "background_color": "D9EAD3",
+                    "value": 9.996074041782379,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 10.6,
                         "tolerance": 1,
-                        "distance": 0.9917864563729193,
-                        "tolerance_remaining": 0.00821354362708071,
+                        "distance": 0.6039259582176211,
+                        "tolerance_remaining": 0.3960740417823789,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "FC0200"
+                        "gradient_color": "9A6400"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature14 (81.5)",
-                    "value": 80.99499893188477,
-                    "background_color": "D9EAD3",
+                    "value": 80.40749740600586,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 81.5,
                         "tolerance": 1.5,
-                        "distance": 0.5050010681152344,
-                        "tolerance_remaining": 0.9949989318847656,
+                        "distance": 1.0925025939941406,
+                        "tolerance_remaining": 0.4074974060058594,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "55A900"
+                        "gradient_color": "B94500"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature15 (L23.4)",
-                    "value": 23.494254298941804,
-                    "background_color": "D9EAD3",
+                    "value": 23.348328081232495,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 23.4,
                         "tolerance": 1,
-                        "distance": 0.09425429894180581,
-                        "tolerance_remaining": 0.9057457010581942,
+                        "distance": 0.051671918767503655,
+                        "tolerance_remaining": 0.9483280812324963,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "18E600"
+                        "gradient_color": "0DF100"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Feature16 (L17.2)",
-                    "value": 18.521313496158697,
-                    "background_color": "D9EAD3",
+                    "value": 18.162093942054433,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 17.2,
                         "tolerance": 1,
-                        "distance": 1.321313496158698,
-                        "tolerance_remaining": -0.3213134961586981,
-                        "within_tolerance": false,
-                        "color": "FF0000",
-                        "gradient_color": "FF0000"
+                        "distance": 0.9620939420544339,
+                        "tolerance_remaining": 0.03790605794556612,
+                        "within_tolerance": true,
+                        "color": "00B050",
+                        "gradient_color": "F50900"
                     },
-                    "value_color": "FF0000"
+                    "value_color": "00B050"
                 },
                 {
                     "name": "Feature17 (2C)",
-                    "value": 0.13052196478626144,
-                    "background_color": "D9EAD3",
+                    "value": 0.2636766497907992,
+                    "background_color": "FCE4D6",
                     "tolerance_check": {
                         "target": 0,
                         "tolerance": 2,
-                        "distance": 0.13052196478626144,
-                        "tolerance_remaining": 1.8694780352137386,
+                        "distance": 0.2636766497907992,
+                        "tolerance_remaining": 1.7363233502092008,
                         "within_tolerance": true,
                         "color": "00B050",
-                        "gradient_color": "10EE00"
+                        "gradient_color": "21DD00"
                     },
                     "value_color": "00B050"
                 },
                 {
                     "name": "Index",
-                    "value": 0,
-                    "background_color": "D9EAD3"
+                    "value": 3,
+                    "background_color": "FCE4D6"
                 },
                 {
                     "name": "OK",
-                    "value": "0",
-                    "background_color": "D9EAD3"
+                    "value": "1",
+                    "background_color": "FCE4D6"
                 },
                 {
                     "name": "Processing Time (s)",
-                    "value": 33.41180467605591,
-                    "background_color": "D9EAD3"
+                    "value": 27.003262519836426,
+                    "background_color": "FCE4D6"
                 }
             ],
             "status": {
-                "ok": false,
-                "color": "FF0000",
-                "failure_reasons": [
-                    "Feature16 (L17.2) out of tolerance"
-                ]
+                "ok": true,
+                "color": "00B050"
             }
         }
     ],
     "summary": {
-        "total_iterations": 1,
-        "passed_iterations": 0,
-        "pass_rate": 0.0,
-        "color": "FF0000"
+        "total_iterations": 2,
+        "passed_iterations": 2,
+        "pass_rate": 1.0,
+        "color": "00B050"
     }
 }

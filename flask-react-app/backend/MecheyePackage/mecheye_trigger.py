@@ -9,8 +9,7 @@ from multiprocessing import Lock
 import threading
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parent.parent / 'MecheyePackage' / 'fair_api'))
-import Robot
+from fair_api import Robot
 
 robot = Robot.RPC('192.168.58.2')
 

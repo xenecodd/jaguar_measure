@@ -1,6 +1,12 @@
 // API configuration constants
-export const API_BASE_URL = 'http://192.168.43.80:5000';
+const DEVICE_IP = process.env.REACT_APP_DEVICE_IP
+const PORT = process.env.REACT_APP_PORT
+if (!DEVICE_IP || !PORT) {
+  throw new Error('Environment variables REACT_APP_DEVICE_IP and REACT_APP_PORT must be set');
+}
 
+export const API_BASE_URL = `http://${DEVICE_IP}:${PORT}`;
+console.log('API_BASE_URL:', API_BASE_URL);
 // API endpoints
 export const ENDPOINTS = {
   HELLO: '/api/hello',
@@ -18,5 +24,5 @@ export const ENDPOINTS = {
 export const INTERVALS = {
   HELLO_MESSAGE: 5000,
   ROBOT_STATUS: 100,
-  SCAN_LOG: 100
+  SCAN_LOG: 5000
 };

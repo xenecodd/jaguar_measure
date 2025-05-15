@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 # Disable logging for /api/robot/status endpoint
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
+
 @scan_bp.route('', methods=['POST'])
 def scan():
     """API endpoint to control scanning process"""
@@ -44,8 +45,7 @@ def scan():
 
     if data.get('ignored_index_list') is not None:
         ignored_index_list = data['ignored_index_list']
-        print(ignored_index_list)
-        ignored_points_path = os.path.join(BASE_DIR, "..", "MecheyePackage", "config.json")
+        ignored_points_path = os.path.join(BASE_DIR,"MecheyePackage", "config.json")
         ignored_points_path = os.path.normpath(ignored_points_path)
         # Read the current config
         with open(ignored_points_path, "r") as f:
@@ -118,6 +118,7 @@ def scan():
     
     return jsonify(message="Unknown command"), 400
 
+
 @scan_bp.route('/latest', methods=['GET'])
 def get_latest_scan():
     try:
@@ -140,6 +141,7 @@ def get_latest_scan():
             return jsonify(processed_data), 200
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
+
 
 @scan_bp.route('/download-excel', methods=['GET'])
 def download_excel():
