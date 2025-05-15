@@ -2,8 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-!/backend/MecheyePackage/fair_api/*
 .Python
 build/
 develop-eggs/
