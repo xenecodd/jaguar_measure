@@ -1,28 +1,37 @@
 import threading
 import time
 import logging
-from MecheyePackage.mecheye_trigger import robot
-from fair_api import Robot
+import json
+
+import websocket
+from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
 from MecheyePackage import ws_robot_state
+import Robot
 
 logger = logging.getLogger(__name__)
 robot_lock = threading.Lock()
 
+# Mekanik göz ve robot başlatma
+mech_eye = TriggerWithExternalDeviceAndFixedRate()
+robot = mech_eye.robot
+
+cookies = ws_robot_state.load_cookies("services/cookie.json")  # Using relative path
 ws_url = "ws://192.168.58.2:9998/"
 
 ws = ws_robot_state.start_websocket(
-    ws_url
+    ws_url,
+    cookies
 )
+
 
 def safe_get_di(channel, max_retries=10):
     retries = 0
     while retries < max_retries:
         try:
-            raw_value = ws_robot_state.di_values.get(str(channel)) if ws_robot_state.di_values else (0)
+            raw_value = ws_robot_state.di_values.get(str(channel))
             if raw_value is not None:
                 float_value = float(raw_value)  # önce string'ten float'a
                 int_value = int(round(float_value))  # sonra tam sayıya
-                # logger.error(f"safe_get_di channel: {channel}, raw_value: {raw_value}, int_value: {int_value}")
                 return tuple([0,int_value])
         except Exception as e:
             logger.error(f"safe_get_di error: {e}")

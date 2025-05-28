@@ -35,8 +35,9 @@ export const apiService = {
   controlScan: async (action) => {
     try {
       const message = action.message;
+      const alt_button = action.alt_button || false;
       const ignored_index_list = action.ignored_index_list ? action.ignored_index_list : null;
-      const response = await apiClient.post(ENDPOINTS.SCAN, { message,ignored_index_list });
+      const response = await apiClient.post(ENDPOINTS.SCAN, { message,ignored_index_list,alt_button});
       return response;
     } catch (error) {
       throw error;

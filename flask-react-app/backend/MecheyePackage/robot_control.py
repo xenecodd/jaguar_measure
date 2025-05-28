@@ -18,6 +18,7 @@ def login():
         if login_response.status_code == 200:
             login_cookies = session.cookies.get_dict()
             login_headers = login_response.headers
+            return login_cookies, login_headers
         else:
             logging.error(f"Giriş başarısız: {login_response.status_code}")
             logging.error("Hata mesajı: %s", login_response.text)

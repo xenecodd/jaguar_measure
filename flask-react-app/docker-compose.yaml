@@ -22,7 +22,7 @@ services:
       - ./backend:/backend
     working_dir: /backend
     network_mode: "host"
-
+    
 networks:
   public:
     external: true

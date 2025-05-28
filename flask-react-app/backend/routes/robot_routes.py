@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify
 from models.robot_state import state
-from MecheyePackage.mecheye_trigger import robot
+from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
+
+mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
+robot = mech_eye.robot
 
 robot_bp = Blueprint('robot', __name__, url_prefix='/api/robot')
 

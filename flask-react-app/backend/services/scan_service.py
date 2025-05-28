@@ -9,11 +9,14 @@ from config import Config
 from services.robot_service import safe_get_di
 import multiprocessing
 from config import Config
-from MecheyePackage.mecheye_trigger import robot
 from openpyxl.styles import PatternFill
 import os
 import pandas as pd
 from pathlib import Path
+from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
+
+mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
+robot = mech_eye.robot
 
 logger = logging.getLogger(__name__)
 
@@ -246,7 +249,6 @@ def save_to_excel(results, tolerances=config['tolerances']):
     except FileNotFoundError:
         print(f"Error: Could not find the directory for {output_file}. Check the path and try again.")
 
-
 def log_subprocess_output(process, log_prefix="[SCAN]", error_prefix="[SCAN_ERR]"):
     """
     Log subprocess stdout and stderr in separate threads
@@ -313,17 +315,16 @@ def monitor_robot(stop_event, restart_event):
     # Başlatmadan önce kısa bir bekleme süresi
     time.sleep(1)
     
-    logger.info(f"Monitor robot started - Current DI8: {safe_get_di(8, 0)}")
+    logger.info(f"Monitor robot started - Current DI8: {safe_get_di(98)}")
     
     # DI8 durumunu kontrol et; güvenli değilse scan durduruluyor.
     while not stop_event.is_set():
         try:
-            di8 = safe_get_di(8, 0)
+            di8 = safe_get_di(98)
         except Exception as e:
             logger.error(f"Error reading DI8: {e}")
             break
-
-        if di8 != (0, 0):
+        if di8 == (0, 1):
             logger.info(f"Stop condition met: DI8={di8}")
             state.profiler.stop_acquisition()
             state.profiler.disconnect()
@@ -340,7 +341,7 @@ def monitor_robot(stop_event, restart_event):
     start = time.time()
     while True:
         try:
-            current_di9 = safe_get_di(9, 0)
+            current_di9 = safe_get_di(99)
         except Exception as e:
             logger.error(f"Error reading DI9: {e}")
             break
@@ -370,9 +371,13 @@ def auto_restart_monitor():
         # 3. DI8 (safety button) is (0,0)
         if (not state.scan_started and 
             state.di9_status == (0, 1) and 
-            state.di8_status == (0, 0)):
+            state.di8_status == (0, 0)) or state.alt_button_pressed:
             
-            logger.info(f"Auto-restart triggered by DI9={state.di9_status}, DI8={state.di8_status}")
+            if state.alt_button_pressed:
+                state.alt_button_pressed = False
+                logger.info("Auto-restart triggered by ALT button")
+            else:
+                logger.info(f"Auto-restart triggered by DI9={state.di9_status}, DI8={state.di8_status}")
 
             # Create new events
             state.stop_event = multiprocessing.Event()

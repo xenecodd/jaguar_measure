@@ -11,10 +11,13 @@ import threading
 import multiprocessing
 import time
 from services.scan_service import run_scan, auto_restart_monitor
-from MecheyePackage.mecheye_trigger import robot
 from services.scan_service import save_to_excel
 from services.robot_service import safe_get_di
 from services.scan_service import monitor_robot
+from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
+
+mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
+robot = mech_eye.robot
 
 
 scan_bp = Blueprint('scan', __name__, url_prefix='/api/scan')
@@ -62,7 +65,9 @@ def scan():
         if data['message'] == 'START':
             # Reset any errors
             robot.ResetAllError()
-            
+            print("data:",data)
+            if data['alt_button'] == True:
+                state.alt_button_pressed = True
             # Start auto-restart monitor if not already running
             if not state.auto_monitor_running:
                 auto_thread = threading.Thread(target=auto_restart_monitor, daemon=True)
@@ -83,7 +88,8 @@ def scan():
             status = "RUNNING" if state.scan_started else "STOPPED"
             return jsonify(message=status)
         
-        elif data['message'] == 'RESTART':
+        elif data['message'] == 'RESTART' or data['message'] == 'FORCE_RESTART':
+            logger.error("Received restart command")
             # Force stop any running process
             if state.scan_started and state.stop_event:
                 state.stop_event.set()
@@ -91,7 +97,8 @@ def scan():
                 time.sleep(0.5)  # Give time for process to stop
             
             # Only restart if DI8 is safe
-            if safe_get_di(8, 0) == (0, 0):
+            if safe_get_di(98) == (0, 0) or data["FORCE_RESTART"]:
+                logger.error("Restarting scan process")
                 # Create new events
                 state.stop_event = multiprocessing.Event()
                 state.restart_event = multiprocessing.Event()

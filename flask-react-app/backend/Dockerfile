@@ -23,8 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglfw3-dev \
     libgtk-3-dev \
     libssl-dev \
-    pkg-config\
-    iputils-ping
+    pkg-config
 
 RUN apt-get clean
 
@@ -32,7 +31,7 @@ RUN apt-get clean
 RUN python3 -m pip install --upgrade pip
 
 # Install required Python packages
-RUN python3 -m pip install --no-cache-dir wheel Cython opencv-python opencv-contrib-python MechEyeAPI
+RUN python3 -m pip install --no-cache-dir wheel Cython opencv-python opencv-contrib-python MechEyeAPI websocket-client
 
 # Copy and install Mech-Eye API
 COPY ./MecheyePackage/mecheyeinstall/Mech-Eye_API_2.5.0_amd64.deb /tmp/

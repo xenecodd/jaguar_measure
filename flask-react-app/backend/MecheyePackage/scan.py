@@ -2,32 +2,49 @@ import os
 import threading
 import time
 import numpy as np
+import requests
 import open3d as o3d
 import matplotlib
 from robot_control import send_command
 from Scripts import *
-from mecheye_trigger import TriggerWithExternalDeviceAndFixedRate, robot
+from mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
 from points import *
 import sys
 import json
 import mysql.connector
 import logging
 from typing import Dict
+import socketio
 
 
+
+
+DEVICE_IP = os.environ.get('IP_ADDRESS')
+PORT = os.environ.get('PORT')
+if not DEVICE_IP or not PORT:
+    raise EnvironmentError('Environment variables REACT_APP_DEVICE_IP and REACT_APP_PORT must be set')
+
+API_BASE_URL = f"http://{DEVICE_IP}:{PORT}"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 if not logger.handlers:
     logger.addHandler(handler)
-
+mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
+robot = mech_eye.robot
 def handle_errors(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as e:
             logger.exception(f"Error in '{func.__name__}': {e}")
+            # Eğer hata alırsak, robotu durdur ve hata mesajını yazdır
+            robot.StopMotion()
+            robot.SetDO(7, 0)  # Parçayı bırak
+            mech_eye.profiler.disconnect()
+            logger.error("Robot stopped due to error.")
+            JaguarScanner.send_feedback()
             raise
     return wrapper
 
@@ -47,7 +64,7 @@ else:
 
 class JaguarScanner:
     """
-    JaguarScanner sınıfı; robot kontrolü, tarama ve ölçüm işlemlerini yürüten profesyonel bir uygulamadır.
+    JaguarScanner sınıfı; self.robot kontrolü, tarama ve ölçüm işlemlerini yürüten profesyonel bir uygulamadır.
     
     Özellikler:
       - Ölçüm verilerini toplar, işler ve Excel dosyasına kaydeder.
@@ -64,40 +81,61 @@ class JaguarScanner:
             put_back (bool, optional): Parçanın geri konulup konulacağı. False ise trash noktasına yönlendirilir.
         """
         self.mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul)
+        self.robot = self.mech_eye.robot
         self.pcd = o3d.geometry.PointCloud()
         self.results = []
         self.old_point = None
         self.excel_threads = []
         self.points = left_of_robot_points + left_small + right_of_robot_points + right_small
         self.pick_point = 1
-        self.current_di0_value = (0, 0)  # Varsayılan değerle başlat
+        self.robot_tcp = [[0],[0, 0, 0, 0, 0, 0]]
+        self.sio = socketio.Client()
+        self.current_di0_value = 0
         self.di0_thread = threading.Thread(target=self.read_di0_updates, daemon=True)
         self.di0_thread.start()
-
+    
     def read_di0_updates(self):
-        """
-        DI0 sinyallerini sürekli olarak stdin'den okur ve current_di0_value değerini günceller.
-        Bu method bir thread içinde çalışır.
-        """
-        for line in sys.stdin:
-            # print("")  # Log okunurluğu için boş satır
-            try:
-                # JSON formatına uygun olması için tekli tırnak işaretlerini çiftli tırnak işaretleriyle değiştir
-                clean_line = line.strip().replace("'", '"')
-                # print(f"Processing line: {clean_line}")
-                data = json.loads(clean_line)
-                if 'DI0' in data:
-                    # JSON dizisini tuple'a çevir
-                    di0_array = data['DI0']
-                    self.current_di0_value = (di0_array[0], di0_array[1])
-                    # print(f"Received DI0 update: {self.current_di0_value}")
-                else:
-                    self.current_di0_value = (0, 0)
-            except json.JSONDecodeError as e:
-                print(f"Error parsing input: {line}")
-                print(f"JSON error: {str(e)}")
-            except Exception as e:
-                print(f"Error processing input: {e}")
+        sio = self.sio
+        @sio.event
+        def connect():
+            print("Socket.IO sunucusuna bağlandı!")
+
+        @sio.event
+        def robot_status(data):
+            self.robot_tcp = data.get("TCP", None)
+            self.current_di0_value = data.get("DI0", 0)
+            # logger.error(f"DI0 güncellendi: {self.current_di0_value}")
+            # logger.error(f"Robot TCP: {self.robot_tcp}")
+
+        try:
+            sio.connect('http://localhost:5000')
+            sio.wait()
+        except Exception as e:
+            logger.error(f"Bağlantı hatası: {e}")
+
+    @staticmethod
+    def send_feedback():
+        try:
+            url = f"http://{DEVICE_IP}:{PORT}/api/scan"
+            payload = {"message": "FORCE_RESTART"}
+            
+            # Timeout ekleyin
+            response = requests.post(url, json=payload, timeout=5)
+            
+            if response.status_code == 200:
+                logger.info(f"Feedback başarıyla gönderildi: {response.json()}")
+                return True
+            else:
+                logger.error(f"Feedback başarısız. Kod: {response.status_code}, Yanıt: {response.text}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Network hatası: {e}")
+            return False
+        except Exception as e:
+            logger.error(f"Genel hata: {e}")
+            return False
+
 
     @staticmethod
     def rotate_point_cloud(points: np.ndarray, angle_degrees: float, axis: str) -> np.ndarray:
@@ -159,88 +197,91 @@ class JaguarScanner:
         with open(file_path, 'w') as file:
             file.write(str(index))
 
-    def pick_object(self, point: dict, soft_point, use_back_transit: bool):
+    def pick_object(self, point: dict, soft_point):
         """
         Parça alma (pick) işlemini gerçekleştirir.
         
         Args:
             point (dict): Hedef nokta.
             soft_point: Soft nokta konumu.
-            use_back_transit (bool): Back transit kullanılacak mı.
+            use_left_transit_point (bool): Back transit kullanılacak mı.
         """
         transit_vel = 80
         # Özel durum: Belirli noktalarda ekstra transit hareketleri
         if point == right_of_robot_points[0]:
             transit_vel = 50
-            robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * transit_vel)
+            self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * transit_vel)
         elif point == left_of_robot_points[0]:
             transit_vel = 50
-            robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * transit_vel)
+            self.robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * transit_vel)
 
-        robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 100)
+        self.robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 100)
         # Transit hareketleri
-        if point in right_of_robot_points and point["p_up"][0] > 300:
+        if point in (right_of_robot_points + right_small) and point["p_up"][0] > 300:
             transit_vel = 50
-            robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
-        elif use_back_transit or (point["p_up"][0] > 300 and point in left_of_robot_points):
+            self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+        elif point in (left_of_robot_points+left_small) and (point["p_up"][0] > 300 and point in left_of_robot_points):
             transit_vel = 50
-            robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+            self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         
         # Parça alma hareketleri
-        robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
-        robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
-        robot.WaitMs(1000)
-        robot.SetDO(7, 1)  # Parçayı kavrama sinyali
-        robot.WaitMs(1000)
-        robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+        self.robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+        self.robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
+        self.robot.WaitMs(1000)
+        self.robot.SetDO(7, 1)  # Parçayı kavrama sinyali
         print("PICK OBJECT", self.current_di0_value)
         
         # DI0 değerine göre parça alma işleminin başarıyla tamamlanıp tamamlanmadığını kontrol et
-        if not self.current_di0_value[1]:
+        if not self.current_di0_value:
             print("Parça başarıyla kavrandı.")
-            robot.Mode(0)
-        else:
-            # Parça kavrama hatası durumunda
-            robot.SetDO(7, 0)
-            print("Parça kavurma hatası.")
-            robot.Mode(1)
-            
-            # Yeni parça alma girişimi için indeksi güncelle
-            current_index = self.read_current_point_index()
-            current_index = self.get_next_valid_index(current_index, len(self.points))
-            self.write_current_point_index(current_index)
-            
-            # Yeni parça alma işlemi için hazırlan
-            point = self.points[current_index]
-            if current_index < len(left_of_robot_points + left_small):
-                soft_point = p90
-            else:
-                soft_point = p91
+            self.robot.Mode(0)
+        elif self.current_di0_value == 1:
+            start_time = time.time()
+            while self.current_di0_value == 1 and (time.time() - start_time) < 5:
+                if (time.time() - start_time)%2 == 0:
+                    logger.error("Parça kavrama hatası, bekleniyor...")
+                time.sleep(0.1) 
+            if self.current_di0_value == 1:
+                # Parça kavrama hatası durumunda
+                self.robot.SetDO(7, 0)
+                print("Parça kavurma hatası.")
+                self.robot.Mode(1)
+                # Yeni parça alma girişimi için indeksi güncelle
+                current_index = self.read_current_point_index()
+                current_index = self.get_next_valid_index(current_index, len(self.points))
+                self.robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+                self.write_current_point_index(current_index)
                 
-            total_left_back_points = len(left_of_robot_points + left_small)
-            use_back_transit = current_index >= len(left_of_robot_points + left_small) and current_index < total_left_back_points
-            
-            if isinstance(config["same_place_index"], int):
-                point = self.points[config["same_place_index"]]
-            else:
+                # Yeni parça alma işlemi için hazırlan
                 point = self.points[current_index]
+                if current_index < len(left_of_robot_points + left_small):
+                    soft_point = p90
+                else:
+                    soft_point = p91
                 
-            self.pick_point = point
-            self.pick_soft_point = soft_point
-            self.pick_use_back_transit = use_back_transit
-            self.pick_object(point, soft_point, use_back_transit)
-            return
+                if isinstance(config["same_place_index"], int):
+                    point = self.points[config["same_place_index"]]
+                else:
+                    point = self.points[current_index]
+                    
+                self.pick_point = point
+                self.pick_soft_point = soft_point
+                self.pick_left_transit_point = left_transit_point
+                self.pick_object(point, soft_point)
+                return
         
+        self.robot.WaitMs(1500)
+        self.robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
         # Geri dönüş transit hareketleri
-        if point in right_of_robot_points and point["p_up"][0] > 300:
+        if point in (right_of_robot_points + right_small) and point["p_up"][0] > 300:
             transit_vel = 50
-            robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
-        elif use_back_transit or (point["p_up"][0] > 300 and (point in left_of_robot_points)):
+            self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+        elif point in (left_of_robot_points+left_small) and (point["p_up"][0] > 300 and point in left_of_robot_points):
             transit_vel = 50
-            robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+            self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         
         # Son hareket: Soft point'e git
-        robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+        self.robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * transit_vel)
     
     @handle_errors
     def smol_calc(self, small_data: np.ndarray):
@@ -360,40 +401,112 @@ class JaguarScanner:
         logger.debug("Vertical measurements processed successfully.")
 
         # Parça bırakma işlemleri
-        if hasattr(self, "pick_point"):
-            if config["put_back"]:
+        if config["pick"]:
+            if config["drop_object"]:
+                #Check whether the part quality is acceptable according to that drop it to metal detector or trash if put_back is False
+                if self.check_part_quality(current_results):
+                    drop_point = metal_detector
+                    logger.info("Parça kalite kontrolünden geçti, metal dedektörüne bırakılıyor.")
+                else:
+                    drop_point = trash
+                    logger.error("Parça kalite kontrolünden geçemedi, metal dedektör yerine çöpe bırakılıyor.")
+                # Eğer put_back true ise ve drop point metal_detector ise, parçayı metal dedektörüne bırak
+
+                if config["put_back"] and drop_point == trash:
+                    point = self.pick_point
+                    soft_point = self.pick_soft_point
+                    transit_vel = 60
+
+                    self.robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 100)
+                    if point in right_of_robot_points and point["p_up"][0] > 300:
+                        self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+                    elif (point["p_up"][0] > 300) and (point in (left_of_robot_points+left_small)):
+                        transit_vel = 50
+                        self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+                    
+                    self.robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+                    self.robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
+                    self.robot.WaitMs(500)
+                    self.robot.SetDO(7, 0)
+                    self.robot.WaitMs(500)
+                    self.robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+                    
+                    if point in right_of_robot_points and point["p_up"][0] > 300:
+                        self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+                    elif (point["p_up"][0] > 300) and (point in (left_of_robot_points+left_small)):
+                        transit_vel = 50
+                        self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+
+                else: # Eğer put_back false ise veya drop point trash değil ise, parçayı bant stationa götür ve metal_detector noktasına bırak
+                    logger.error("bant stationa gidiliyor.")
+                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
+                    # Metal dedektörüne bırakma işlemi için piston ve vakum kontrol adımları
+                    self.robot.SetDO(0, 0)      # Piston kapalı
+                    self.robot.WaitMs(3000)
+                    self.robot.SetDO(2, 0)      # Ray kapalı
+                    self.robot.WaitMs(2000)
+                    self.robot.SetDO(0, 1)      # Piston açık
+                    self.robot.WaitMs(1000)
+                    self.robot.SetDO(3, 1)      # Vakum açık
+                    self.robot.WaitMs(2000)
+                    self.robot.SetDO(0, 0)      # Piston kapalı
+                    self.robot.WaitMs(4000)
+                    self.robot.SetDO(2, 1)      # Ray açık
+                    self.robot.WaitMs(2000)
+                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.SetDO(7, 0)      # Parçayı bırak
+                    self.robot.WaitMs(1000)
+                    self.robot.MoveL(safeback, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.WaitMs(1000)
+                    self.robot.SetDO(0, 1)      # Piston açık
+                    self.robot.WaitMs(2000)
+                    self.robot.SetDO(3, 0)      # Vakum kapalı (piston vacuum)
+                    self.robot.WaitMs(1000)
+                    self.robot.SetDO(0, 0)      # Piston kapalı
+                    self.robot.WaitMs(3000)
+                    self.robot.SetDO(2, 0)      # Ray kapalı (rail)
+                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.WaitMs(1000)
+                    self.robot.SetDO(7, 1)
+                    self.robot.WaitMs(1000)
+                    self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.WaitMs(500)
+                    
+                    self.robot.MoveCart(drop_point, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.SetDO(7, 0)
+
+                    logger.info("Object dropped at appropriate drop point.")
+            elif config["put_back"] :
                 point = self.pick_point
                 soft_point = self.pick_soft_point
-                use_back_transit = self.pick_use_back_transit
-                transit_vel = 80
+                transit_vel = 60
 
-                robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 100)
+                self.robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 60)
                 if point in right_of_robot_points and point["p_up"][0] > 300:
-                    robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
-                elif use_back_transit or (point["p_up"][0] > 300 and (point in left_of_robot_points)):
+                    self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+                elif (point["p_up"][0] > 300) and (point in (left_of_robot_points+left_small)):
                     transit_vel = 50
-                    robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+                    self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
                 
-                robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
-                robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
-                robot.WaitMs(500)
-                robot.SetDO(7, 0)
-                robot.WaitMs(500)
-                robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+                self.robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
+                self.robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
+                self.robot.WaitMs(500)
+                self.robot.SetDO(7, 0)
+                self.robot.WaitMs(500)
+                self.robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
                 
                 if point in right_of_robot_points and point["p_up"][0] > 300:
-                    robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
-                elif use_back_transit or (point["p_up"][0] > 300 and (point in left_of_robot_points)):
+                    self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+                elif (point["p_up"][0] > 300) and (point in (left_of_robot_points+left_small)):
                     transit_vel = 50
-                    robot.MoveCart(back_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
+                    self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
             else:
-                if config["drop_object"]:
-                    drop_point = metal_detector if self.check_part_quality(current_results) else trash
-                    robot.MoveCart(drop_point, 0, 0, vel=config["vel_mul"] * 80)
-                    robot.SetDO(7, 0)
-                    logger.info("Object dropped at appropriate drop point.")
-                else:
-                    logger.info("Parça bırakma ayarı devre dışı bırakıldı.")
+                logger.info("Parça bırakma ayarı devre dışı bırakıldı.")
 
         return vertical_results
     
@@ -409,7 +522,6 @@ class JaguarScanner:
                 return False
         print("Parça kalite kontrolünden başarıyla geçti.")
         return True
-
 
     def write_to_db(self, result: Dict[str, float], iteration: int):
         conn = mysql.connector.connect(
@@ -489,6 +601,15 @@ class JaguarScanner:
 
     def run_scan_cycle(self):
         ROBOT_POSITIONS = config["robot_positions"]
+
+        if self.robot_tcp[1][0] >= 300:
+            if self.robot_tcp[1][1] >= 0:
+                logger.error("Robot sağ tarafta", self.robot_tcp[1][0])
+                self.robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * 60)
+            else:
+                logger.error("Robot sol tarafta", self.robot_tcp[1][0])
+                self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 60)
+
         for self.cycle in range(config["range_"]):
             start_time = time.time()
             current_results = {}
@@ -503,16 +624,11 @@ class JaguarScanner:
                 self.write_current_point_index(current_index)
             
             try:
-                send_command({"cmd": 107, "data": {"content": "ResetAllError()"}})
-
                 if config["pick"]:
                     if current_index < len(left_of_robot_points + left_small):
                         soft_point = p90
                     else:
                         soft_point = p91
-
-                    total_left_back_points = len(left_of_robot_points + left_small)
-                    use_back_transit = current_index >= len(left_of_robot_points + left_small) and current_index < total_left_back_points
 
                     if isinstance(config["same_place_index"], int):
                         point = self.points[config["same_place_index"]]
@@ -521,11 +637,10 @@ class JaguarScanner:
 
                     self.pick_point = point
                     self.pick_soft_point = soft_point
-                    self.pick_use_back_transit = use_back_transit
+                    self.pick_left_transit_point = left_transit_point
+                    self.pick_object(point, soft_point)
 
-                    self.pick_object(point, soft_point, use_back_transit)
-
-                robot.MoveCart(ROBOT_POSITIONS['scrc'], 0, 0, vel=config["vel_mul"] * 100)
+                self.robot.MoveCart(ROBOT_POSITIONS['scrc'], 0, 0, vel=config["vel_mul"] * 100)
 
                 small_data = self.mech_eye.main(lua_name="small.lua", scan_line_count=1500)
                 if config["use_agg"]:
@@ -565,6 +680,7 @@ class JaguarScanner:
             finally:
                 with open('jsons/scan_output.json', 'a') as f:
                     f.write(json.dumps(current_results) + '\n')
+        
 
 if __name__ == "__main__":
     scanner = JaguarScanner()

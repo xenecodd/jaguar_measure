@@ -15,7 +15,7 @@ body {
 
 /* Optional: Custom scrollbar */
 ::-webkit-scrollbar {
-  @apply w-2 bg-gray-100;
+  @apply w-6 bg-gray-100;
 }
 
 ::-webkit-scrollbar-thumb {

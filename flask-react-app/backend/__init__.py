@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from config import Config
 
+from sockets.robot_status_socket import register_socket_events
 # Blueprint'leri düzgün import et
 from routes.scan_routes import scan_bp
 from routes.health_routes import health_bp
@@ -25,9 +26,6 @@ def create_app():
     
     # SocketIO'yu init et
     socketio.init_app(app)
-
-    # Socket eventlerini kaydet
-    from sockets.robot_status_socket import register_socket_events
     register_socket_events(socketio)
 
     return app, socketio

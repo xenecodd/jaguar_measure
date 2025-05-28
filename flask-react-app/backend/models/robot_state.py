@@ -14,6 +14,7 @@ class RobotState:
     restart_event: Optional = None
     monitor_thread: Optional = None
     auto_monitor_running: bool = False
+    alt_button_pressed: bool = False
     pressed: bool = False
     di0_status: Tuple[int, int] = (0, 0)
     di8_status: Tuple[int, int] = (0, 0)
