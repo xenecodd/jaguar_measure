@@ -33,7 +33,7 @@ const Config = () => {
     "save_point_clouds": "Save point cloud data to disk",
     "save_to_db": "Store results in database",
     "same_object": "Treat as same object instance",
-    "same_place_index": "Index for same place identification"
+    "same_place_index": "Index for picking object from same place (change value to -1 to cancel same place index feature)"
   };
 
   useEffect(() => {
@@ -175,6 +175,7 @@ const Config = () => {
                   <input
                     type="number"
                     value={value}
+                    step={key === "vel_mul" ? 0.1 : 1}
                     onChange={(e) => handleChange(key, Number(e.target.value))}
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
@@ -189,21 +190,6 @@ const Config = () => {
                   />
                 )}
 
-                {!isSimpleValue && (
-                  <div>
-                    <textarea
-                      value={JSON.stringify(value, null, 2)}
-                      onChange={(e) => {
-                        try {
-                          handleChange(key, JSON.parse(e.target.value));
-                        } catch (error) {
-                        }
-                      }}
-                      rows={3}
-                      className="w-full p-2 font-mono text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                )}
               </div>
             </div>
           );

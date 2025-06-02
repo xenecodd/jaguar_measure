@@ -1,1 +1,54 @@
-2025-05-28 12:58:52,773 - ERROR - Robot status thread started
+2025-06-02 21:16:38,961 - INFO - Robot status monitor started
+2025-06-02 21:16:38,962 - INFO - Robot service threads started
+2025-06-02 21:18:40,608 - INFO - Received scan request: {'ignored_index_list': [58], 'alt_button': False}
+2025-06-02 21:18:41,089 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-02 21:26:36,210 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': False}
+2025-06-02 21:26:36,215 - INFO - Auto-restart monitor started
+2025-06-02 21:26:59,735 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': False}
+2025-06-02 22:13:30,047 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': False}
+2025-06-02 22:30:35,852 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': False}
+2025-06-02 22:35:46,405 - INFO - Robot status monitor started
+2025-06-02 22:35:46,405 - INFO - Robot service threads started
+2025-06-02 22:38:45,332 - INFO - Robot status monitor started
+2025-06-02 22:38:45,332 - INFO - Robot service threads started
+2025-06-02 22:39:02,427 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-02 22:39:03,733 - INFO - Received scan request: {'ignored_index_list': [21, 12], 'alt_button': False}
+2025-06-02 22:39:04,326 - INFO - Received scan request: {'ignored_index_list': [21, 12, 13], 'alt_button': False}
+2025-06-02 22:39:04,777 - INFO - Received scan request: {'ignored_index_list': [21, 12, 13, 3], 'alt_button': False}
+2025-06-02 22:39:05,076 - INFO - Received scan request: {'ignored_index_list': [21, 12, 13, 3, 2], 'alt_button': False}
+2025-06-02 22:39:05,807 - INFO - Received scan request: {'ignored_index_list': [21, 12, 13, 3, 2, 11], 'alt_button': False}
+2025-06-02 22:39:06,211 - INFO - Received scan request: {'ignored_index_list': [21, 12, 13, 3, 2, 11, 1], 'alt_button': False}
+2025-06-02 22:39:06,570 - INFO - Received scan request: {'ignored_index_list': [21, 12, 13, 3, 2, 11, 1, 0], 'alt_button': False}
+2025-06-02 22:39:06,840 - INFO - Received scan request: {'ignored_index_list': [21, 12, 13, 3, 2, 11, 1, 0, 10], 'alt_button': False}
+2025-06-02 22:39:07,098 - INFO - Received scan request: {'ignored_index_list': [12, 13, 3, 2, 11, 1, 0, 10], 'alt_button': False}
+2025-06-02 22:39:07,420 - INFO - Received scan request: {'ignored_index_list': [12, 13, 3, 2, 1, 0, 10], 'alt_button': False}
+2025-06-02 22:39:07,738 - INFO - Received scan request: {'ignored_index_list': [13, 3, 2, 1, 0, 10], 'alt_button': False}
+2025-06-02 22:39:07,965 - INFO - Received scan request: {'ignored_index_list': [13, 3, 1, 0, 10], 'alt_button': False}
+2025-06-02 22:39:08,205 - INFO - Received scan request: {'ignored_index_list': [13, 3, 0, 10], 'alt_button': False}
+2025-06-02 22:39:08,524 - INFO - Received scan request: {'ignored_index_list': [13, 3, 10], 'alt_button': False}
+2025-06-02 22:39:08,745 - INFO - Received scan request: {'ignored_index_list': [13, 3], 'alt_button': False}
+2025-06-02 22:39:09,128 - INFO - Received scan request: {'ignored_index_list': [13], 'alt_button': False}
+2025-06-02 22:39:09,459 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-02 22:40:52,464 - INFO - Robot status monitor started
+2025-06-02 22:40:52,464 - INFO - Robot service threads started
+2025-06-02 22:42:41,738 - INFO - Robot status monitor started
+2025-06-02 22:42:41,739 - INFO - Robot service threads started
+2025-06-02 22:43:22,615 - INFO - Robot status monitor started
+2025-06-02 22:43:22,615 - INFO - Robot service threads started
+2025-06-02 22:43:39,803 - INFO - Received scan request: {'ignored_index_list': [52], 'alt_button': False}
+2025-06-02 22:47:14,062 - INFO - Robot status monitor started
+2025-06-02 22:47:14,062 - INFO - Robot service threads started
+2025-06-02 22:48:33,373 - INFO - Robot status monitor started
+2025-06-02 22:48:33,373 - INFO - Robot service threads started
+2025-06-02 22:48:50,106 - INFO - Received scan request: {'ignored_index_list': [52], 'alt_button': False}
+2025-06-02 22:48:51,095 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-02 22:48:51,875 - INFO - Received scan request: {'ignored_index_list': [43], 'alt_button': False}
+2025-06-02 22:48:52,371 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-02 22:48:52,939 - INFO - Received scan request: {'ignored_index_list': [33], 'alt_button': False}
+2025-06-02 22:48:53,324 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-02 22:51:39,679 - INFO - Received scan request: {'ignored_index_list': [13], 'alt_button': False}
+2025-06-02 22:51:40,692 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-02 22:52:32,249 - INFO - Received scan request: {'ignored_index_list': [3], 'alt_button': False}
+2025-06-02 22:52:32,958 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-02 22:55:24,802 - INFO - Received scan request: {'ignored_index_list': [13], 'alt_button': False}
+2025-06-02 22:55:25,251 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}

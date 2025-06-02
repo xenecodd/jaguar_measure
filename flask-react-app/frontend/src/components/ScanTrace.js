@@ -30,6 +30,7 @@ const ScanTrace = ({ onScan }) => {
             fill: data.colors[idx] || 'gray',
           }))
         );
+      console.log(data)
       } catch (error) {
         console.log('Renkler alınırken hata oluştu:', error);
         setTimeout(fetchColors, 5000);
@@ -98,7 +99,7 @@ const ScanTrace = ({ onScan }) => {
           <div
             key={rect.id}
             onClick={() => handleSendIgnoredPoints(rect.id)}
-            className={`flex ${rect.fill === "red" ? "animate-pulse" : ""} items-center justify-center cursor-pointer transition-transform duration-200 transform hover:scale-105 text-white font-semibold text-sm rounded-xl shadow-md`}
+            className={`flex ${rect.fill === "yellow" ? "animate-pulse " : ""} items-center text-xl justify-center cursor-pointer transition-transform duration-200 transform hover:scale-105 text-white font-semibold text-sm rounded-xl shadow-md`}
             style={{
               backgroundColor: rect.fill,
               boxShadow: '0 2px 8px rgba(0,0,0,0.2)',

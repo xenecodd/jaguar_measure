@@ -19,9 +19,7 @@ handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s -
 if not logger.handlers:
     logger.addHandler(handler)
 
-profiler = Profiler()
-if not find_and_connect(profiler):
-    logger.error("Could not connect to the profiler. Please check the connection and try again.")
+
 robot = Robot.RPC('192.168.58.2')
 mutex = Lock()
 
@@ -38,7 +36,7 @@ class CustomAcquisitionCallback(AcquisitionCallbackBase):
 
 class TriggerWithExternalDeviceAndFixedRate(object):
     def __init__(self, vel_mul=1):
-        self.profiler = profiler
+        self.profiler = Profiler()
         self.vel_mul = vel_mul
         self.robot = robot
         self.current_di0_value = (0, 0)
@@ -174,6 +172,10 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         cv2.imwrite(intensity_file_name, self.profile_batch.get_intensity_image().data())
 
     def main(self, lua_name, scan_line_count=4000):
+
+        if not find_and_connect(self.profiler):
+            return -1
+
         self.set_parameters(scan_line_count)
 
         self.profile_batch = ProfileBatch(self.data_width)
@@ -187,4 +189,5 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
         points = save_point_cloud(profile_batch=self.profile_batch, user_set=self.user_set, save_csv=False, save_ply=False, save_np=True)
         
+        self.profiler.disconnect()
         return points

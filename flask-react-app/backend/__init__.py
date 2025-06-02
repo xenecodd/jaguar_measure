@@ -1,13 +1,16 @@
+# __init__.py
 from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from config import Config
 
-from sockets.robot_status_socket import register_socket_events
-# Blueprint'leri düzgün import et
+# Blueprint'leri import et
 from routes.scan_routes import scan_bp
 from routes.health_routes import health_bp
 from routes.robot_routes import robot_bp
+
+# Robot servisini import et
+from services.robot_service import start_robot_service, set_status_callback
 
 # SocketIO objesi global
 socketio = SocketIO(cors_allowed_origins="*", async_mode='threading', 
@@ -26,6 +29,16 @@ def create_app():
     
     # SocketIO'yu init et
     socketio.init_app(app)
-    register_socket_events(socketio)
+    
+    # Robot servisi için callback fonksiyonunu ayarla
+    def emit_robot_data(event_name, data):
+        """Robot verilerini SocketIO ile yayınla"""
+        socketio.emit(event_name, data)
+    
+    # Callback'i robot servisine kaydet
+    set_status_callback(emit_robot_data)
+    
+    # Robot servisini başlat (bağımsız thread'lerde)
+    start_robot_service()
 
     return app, socketio

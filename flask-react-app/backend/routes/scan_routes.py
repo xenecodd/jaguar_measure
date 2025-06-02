@@ -15,6 +15,7 @@ from services.scan_service import save_to_excel
 from services.robot_service import safe_get_di
 from services.scan_service import monitor_robot
 from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
+from services.robot_service import read_current_point_index
 
 mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
 robot = mech_eye.robot
@@ -229,7 +230,10 @@ def get_colors():
             idx = o.get("Index")
             if idx is not None and (idx) not in ignored:
                 colors[idx] = "green" if o.get("OK") == "1" else "red"
+        idx = read_current_point_index()
+        colors[idx] = "yellow"
+        
         return jsonify({'colors': colors}), 200
+    
     except Exception as e:
-        # Gerekirse burada logging de ekleyebilirsiniz
         return jsonify({'error': 'Server error', 'message': str(e)}), 500

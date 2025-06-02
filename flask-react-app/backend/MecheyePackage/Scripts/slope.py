@@ -3,14 +3,6 @@ import open3d as o3d
 import matplotlib.pyplot as plt
 from scipy.optimize import leastsq
 from Scripts import edges
-import os
-
-def read_current_point_index() -> int:
-    if os.path.exists(config["file_path"]):
-        with open(config["file_path"], 'r') as file:
-            return int(file.read().strip())
-    return 0
-
 # Çember fitting için yardımcı fonksiyonlar
 def calc_radius(xc, yc, x, y):
     return np.sqrt((x - xc)**2 + (y - yc)**2)
@@ -116,14 +108,4 @@ def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=56.67):
     filtered_pcd2 = o3d.geometry.PointCloud()
     filtered_pcd2.points = o3d.utility.Vector3dVector(points)
     filtered_pcd2.paint_uniform_color([1, 0, 0])  # Kırmızı renk
-
-    # # Filtrelenmiş noktaları kaydetme
-    # index = read_current_point_index()
-    # if b_vertical:
-    #     slope_name = f"r1_50_{index}"
-    #     o3d.io.write_point_cloud(f"/home/eypan/Projects/JaguarWorks/jaguar_measure/flask-react-app/Measure/MecheyePackage/Slope_outputs/all_points_{index}.ply", filtered_pcd2)
-    # else:
-    #     slope_name = f"r2_35_{index}"
-    # o3d.io.write_point_cloud(f"/home/eypan/Projects/JaguarWorks/jaguar_measure/flask-react-app/Measure/MecheyePackage/Slope_outputs/{slope_name}.ply", filtered_pcd)
-    
     return yc, zc, r_outer, l79_73
