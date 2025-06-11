@@ -17,7 +17,7 @@ def initial_guess(x, y):
     r = np.mean(np.sqrt((x - xc)**2 + (y - yc)**2))
     return [xc, yc, r]
 
-def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=56.67):
+def slope(pcd, b_vertical=None, y_divisor=0.22, delta_y=0.5, crc_l=56.67):
     """
     Nokta bulutu üzerinde kaydırma, filtreleme ve çember fitting işlemleri yapar.
 
@@ -88,7 +88,6 @@ def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=56.67):
     theta = np.linspace(0, 2 * np.pi, 100)
     circle_y = yc + r_outer * np.cos(theta)
     circle_z = zc + r_outer * np.sin(theta)
-    print("Slope is here")
     # Görselleştirme
     plt.figure(figsize=(8, 8))
     plt.scatter(points[:,1], points[:,2], color='green', label='Noktalar')
@@ -102,10 +101,14 @@ def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=56.67):
     plt.grid(True)
 
     # Open3D ile 3D görselleştirme
-    filtered_pcd = o3d.geometry.PointCloud()
-    filtered_pcd.points = o3d.utility.Vector3dVector(filtered_points)
-    filtered_pcd.paint_uniform_color([0, 0, 1])  # Mavi renk
-    filtered_pcd2 = o3d.geometry.PointCloud()
-    filtered_pcd2.points = o3d.utility.Vector3dVector(points)
-    filtered_pcd2.paint_uniform_color([1, 0, 0])  # Kırmızı renk
+    # filtered_pcd = o3d.geometry.PointCloud()
+    # filtered_pcd.points = o3d.utility.Vector3dVector(filtered_points)
+    # filtered_pcd.paint_uniform_color([0, 0, 1])  # Mavi renk
+    # filtered_pcd2 = o3d.geometry.PointCloud()
+    # filtered_pcd2.points = o3d.utility.Vector3dVector(points)
+    # filtered_pcd2.paint_uniform_color([1, 0, 0])  # Kırmızı renk
+
+    # o3d.io.write_point_cloud("filtered_points.ply", filtered_pcd)   
+    # o3d.io.write_point_cloud("filtered2.ply", filtered_pcd2)
+    
     return yc, zc, r_outer, l79_73

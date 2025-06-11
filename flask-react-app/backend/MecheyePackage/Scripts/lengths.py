@@ -67,8 +67,6 @@ def arm_horn_lengths(points, b_vertical=None):
     l_248 = b_vertical - np.min(points[:, 1])
     return l_248
 
-
-
 def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_fraction=0.05):
     """
     Nokta bulutunun X-Y düzlemindeki sol ve sağ bölgesini analiz eder, 
@@ -133,7 +131,7 @@ def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_
     else:
         right_arr = np.empty((0, 2))
 
-    # Yeni left: left_arr'deki en yüksek x değerine yakın (kenar) noktaların ortalaması
+    # left_arr'deki en yüksek x değerine yakın (kenar) noktaların ortalaması
     if left_arr.size > 0:
         max_left_val = np.max(left_arr[:, 0])
         left_range = max_left_val - np.min(left_arr[:, 0])
@@ -143,7 +141,7 @@ def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_
     else:
         new_left = None
 
-    # Yeni right: right_arr'deki en düşük x değerine yakın (kenar) noktaların ortalaması
+    # right_arr'deki en düşük x değerine yakın (kenar) noktaların ortalaması
     if right_arr.size > 0:
         min_right_val = np.min(right_arr[:, 0])
         right_range = np.max(right_arr[:, 0]) - min_right_val
@@ -198,7 +196,6 @@ def filter_and_visualize_projection_with_ply(points):
     ]
     
     l_81_5 = np.min(projected_points_2d[:, 1])-np.min(points[:, 1])
-    # print("l_81_5:", l_81_5)
     
     # Görselleştirme
     plt.figure(figsize=(8, 8))

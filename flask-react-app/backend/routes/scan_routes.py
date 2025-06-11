@@ -17,7 +17,7 @@ from services.scan_service import monitor_robot
 from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
 from services.robot_service import read_current_point_index
 
-mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
+mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1)
 robot = mech_eye.robot
 
 

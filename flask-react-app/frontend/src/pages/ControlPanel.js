@@ -126,11 +126,17 @@ const ControlPanel = () => {
                   <span>TCP Bağlantı</span>
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="flex items-center">
+                  <div className={`h-2 w-2 rounded-full animate-pulse ${status?.MODE === 2 ? "bg-green-500" : "bg-amber-500"} mr-2`}></div>
+                  <span>Mod: {status?.MODE === 0 ? "Otomatik" : "Manuel"}</span>
+                </div>
+              </div>
             </div>
   
             {/* Butonlar */}
             <div className="space-y-4">
-              {traceValue && (
+              {traceValue|true && (
                 <Button
                   text="Arayüzden Taramayı Başlat"
                   type="success"

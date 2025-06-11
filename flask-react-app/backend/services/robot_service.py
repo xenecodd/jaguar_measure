@@ -32,6 +32,7 @@ def get_robot_status(max_retries=10):
             robot_state = ws_manager.get_robot_state()
             values = robot_state["di_values"]
             tcp = robot_state["tcp"]
+            mode = robot_state["mode"]
             
             if values and tcp:
                 tcp_tuple = tuple((0, [tcp["x"], tcp["y"], tcp["z"]]))
@@ -39,7 +40,8 @@ def get_robot_status(max_retries=10):
                     tuple([0, values["98"]]), 
                     tuple([0, values["99"]]), 
                     tuple([0, values["90"]]), 
-                    tcp_tuple
+                    tcp_tuple,
+                    mode
                 )
         except Exception as e:
             logger.error(f"get_robot_status error: {e}")
@@ -63,10 +65,10 @@ def robot_status_monitor():
                 continue
             
             # Robot verilerini al
-            di8, di9, di0, tcp = get_robot_status()
+            di8, di9, di0, tcp, mode = get_robot_status()
             
             # Geri kalan kod aynı...
-            state.update_di_values(di0=di0, di8=di8, di9=di9, tcp=tcp)
+            state.update_di_values(di0=di0, di8=di8, di9=di9, tcp=tcp, mode=mode)
             status = state.get_status()
             
             if status_callback and status:

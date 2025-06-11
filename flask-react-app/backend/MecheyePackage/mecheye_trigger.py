@@ -13,12 +13,6 @@ from fair_api import Robot
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-if not logger.handlers:
-    logger.addHandler(handler)
-
 
 robot = Robot.RPC('192.168.58.2')
 mutex = Lock()
@@ -101,8 +95,8 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         post_move = None
 
         scrc2 = [-450, 130, 470, 82.80, 89.93, -7.30]
-        p90 = [-335, -400, 450, -90, 0, 90]
-        p91 = [-335, 250, 450, -90, 0, 90]
+        p90 = [-335, -400, 450, -90, -0.5, 90]
+        p91 = [-335, 250, 450, -90, -0.5, 90]
         h1 = [-375, -120, 580, -90, -90, 180]
         h2 = [-375, 200, 580, -90, -90, 180]
         h1_alt = [-425, -120, 510, -90, -90, 180]
@@ -121,7 +115,6 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             pre_move = ("MoveL", p90)
 
         if pre_move:
-            print(f"Before pre move {lua_name}:", self.robot.GetActualTCPPose()[1])
             threading.Thread(target=self._move_robot, args=pre_move).start()
 
         status = self.profiler.start_acquisition()
@@ -142,8 +135,8 @@ class TriggerWithExternalDeviceAndFixedRate(object):
             show_error(status)
 
         if post_move:
-            print(f"Before post move: {lua_name}", self.robot.GetActualTCPPose()[1])
             self._move_robot(*post_move)
+            time.sleep(1)
 
         self.profile_batch.append(self.callback.profile_batch)
         return True

@@ -20,6 +20,7 @@ class RobotState:
     di8_status: Tuple[int, int] = (0, 0)
     di9_status: Tuple[int, int] = (0, 0)
     tcp_status: Tuple[float, float, float, float, float, float] = (0, 0, 0, 0, 0, 0)
+    mode: int = 1
     profiler: Profiler = Profiler()
     error_count: int = 0
     last_successful_status: Dict[str, Any] = None
@@ -31,6 +32,7 @@ class RobotState:
                 "DI9": self.di9_status[1],
                 "DI0": self.di0_status[1],
                 "TCP": self.tcp_status,
+                "MODE": self.mode,
                 "scan_active": self.scan_started,
                 "monitor_active": self.auto_monitor_running
             }
@@ -45,7 +47,7 @@ class RobotState:
                 "timestamp": time.time()
             }
 
-    def update_di_values(self, di0=None, di8=None, di9=None, tcp=None):
+    def update_di_values(self, di0=None, di8=None, di9=None, tcp=None, mode=None):
         with self._lock:
             if di0 is not None:
                 self.di0_status = di0
@@ -55,6 +57,8 @@ class RobotState:
                 self.di9_status = di9
             if tcp is not None:
                 self.tcp_status = tcp
+            if mode is not None:
+                self.mode = mode
 
     def set_scan_started(self, started: bool):
         with self._lock:

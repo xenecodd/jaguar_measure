@@ -11,6 +11,7 @@ robot_bp = Blueprint('robot', __name__, url_prefix='/api/robot')
 def control_air():
     try:
         robot.SetDO(7, 0)
+        robot.Mode(0)
         state.pressed = True
         return jsonify({"success": True, "message": "Air signal sent successfully"})
     except Exception as e:

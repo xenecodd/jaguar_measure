@@ -40,6 +40,8 @@ class WebSocketManager:
             "rz": 0
         }
 
+        self.mode = 1
+
     def clear_timers(self):
         if self.reconnect_timer:
             self.reconnect_timer.cancel()
@@ -74,6 +76,9 @@ class WebSocketManager:
                 if "tcp" in data:
                     self.tcp = data["tcp"]
 
+                if "mode" in data:
+                    self.mode = data["mode"]
+                    
                 self.connection_status = 1
                 self.logout_flag = False
                 self.retry_count = 0
@@ -193,7 +198,7 @@ class WebSocketManager:
             return True
 
         except Exception as e:
-            logger.error(f"Bağlantı hatası: {e}")
+            logger.error(f"Bağlantı hatası ws_robot_state: {e}")
             return False
 
     def disconnect(self):
@@ -212,8 +217,9 @@ class WebSocketManager:
     def get_robot_state(self):
         with self.lock:
             return {
-                "di_values": self.di_values.copy(),
-                "tcp": self.tcp.copy(),
+                "di_values": self.di_values,
+                "tcp": self.tcp,
+                "mode": self.mode,
                 "connection_status": self.connection_status,
                 "socket_error": self.socket_error
             }
@@ -233,3 +239,6 @@ def get_di_values():
 
 def get_tcp():
     return ws_manager.tcp
+
+def get_mode():
+    return ws_manager.mode

@@ -22,15 +22,12 @@ if not DEVICE_IP or not PORT:
     raise EnvironmentError('Environment variables REACT_APP_DEVICE_IP and REACT_APP_PORT must be set')
 
 API_BASE_URL = f"http://{DEVICE_IP}:{PORT}"
+
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+
 mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
 robot = mech_eye.robot
 
-if not logger.handlers:
-    logger.addHandler(handler)
 
 def handle_errors(func):
     def wrapper(*args, **kwargs):
@@ -71,8 +68,23 @@ def write_current_point_index(index: int):
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(base_dir, 'config.json')
+
 with open(config_path, "r") as f:
     config = json.load(f)
+
+# Add save_figures configuration if not present
+if "save_figures" not in config:
+    config["save_figures"] = True
+    with open(config_path, "w") as f:
+        json.dump(config, f, indent=4)
+        
+def save_figure(plt, filename: str, dpi: int = 300):
+    """Helper function to save matplotlib figures"""
+    if config["save_figures"]:
+        fig_path = os.path.join(os.path.dirname(__file__), "Scan_Outputs", "figures", filename)
+        os.makedirs(os.path.dirname(fig_path), exist_ok=True)
+        plt.savefig(fig_path, dpi=dpi, bbox_inches='tight')
+        logger.info(f"Plot saved to {fig_path}")
 
 # Backend yapılandırması: Agg mod, non-interaktif; TkAgg ise interaktif.
 if config["use_agg"]:
@@ -315,11 +327,20 @@ class JaguarScanner:
         _, z_center_small, radius_small = circle_fitter.fit_circles_and_plot(
             find_second_circle=False, val_x=0.18, val_z=0.2, delta_z=25
         )
+        # Save the plot before getting other measurements
+        save_figure(plt, "small_circles.png")
+        
         s_datum = circle_fitter.get_datum()
         self.dist_3mm_s, _ = circle_fitter.get_distance(second_crc=False, z_distance_to_datum=23.1)
         self.feature_3 = z_center_small - s_datum
         self.radius_small = radius_small
         self.z_center_small = z_center_small
+        
+        if config["use_agg"]:
+            plt.close()
+        elif not config["use_agg"]:
+            plt.show()
+            
         logger.debug("smol_calc completed successfully.")
 
     @handle_errors
@@ -359,11 +380,20 @@ class JaguarScanner:
 
         self.circle_fitter = CircleFitter(horizontal)
         _, circle2 = self.circle_fitter.fit_circles_and_plot()
+        # Save the plot before getting other measurements
+        save_figure(plt, "horizontal_circles.png")
+        
         self.dist_3mm_h = self.circle_fitter.get_distance()[0]
         self.l_40 = get_40(horizontal)
         self.height = np.max(self.horizontal[:, 1]) - self.circle_fitter.get_datum()
         self.feature_1 = circle2[1]
         self.feature_2 = circle2[2]
+        
+        if config["use_agg"]:
+            plt.close()
+        elif not config["use_agg"]:
+            plt.show()
+            
         logger.debug("hor_calc completed successfully.")
 
     @handle_errors
@@ -381,19 +411,42 @@ class JaguarScanner:
         
         vertical_copy = self.to_origin(vertical.copy())
         l_17_2, ok_17_2 = horn_diff(vertical_copy)
+        save_figure(plt, "vertical_horn_17_2.png")
+        if not config["use_agg"]:
+            plt.show()
+        plt.close()
+        
         l_23_4, ok_23_4 = horn_diff(vertical_copy, 240, 280)
+        save_figure(plt, "vertical_horn_23_4.png")
+        if not config["use_agg"]:
+            plt.show()
+        plt.close()
         
         # Sonuç hesaplamaları
         B = self.circle_fitter.get_B()
         b_trans_val = np.max(vertical[:, 1]) - np.max(self.horizontal[:, 2])
         b_vertical = B + b_trans_val
         _, _, r1, l_79_73 = slope(vertical, b_vertical)
+        save_figure(plt, "vertical_slope_1.png")
+        if not config["use_agg"]:
+            plt.show()
+        plt.close()
+        
         _, _, r2, _ = slope(vertical, y_divisor=0.11, crc_l=28)
+        save_figure(plt, "vertical_slope_2.png")
+        if not config["use_agg"]:
+            plt.show()
+        plt.close()
+        
         l_42 = np.max(vertical[:, 1]) - b_vertical
         l_248 = arm_horn_lengths(vertical, b_vertical)
         mean_3mm = np.mean([self.dist_3mm_h, self.dist_3mm_s])
         l_88_6 = self.feature_1 - self.feature_2
         l_81_5 = filter_and_visualize_projection_with_ply(self.horizontal)
+        save_figure(plt, "vertical_projection.png")
+        if not config["use_agg"]:
+            plt.show()
+        plt.close()
 
         vertical_results = {
             "l_17_2": l_17_2,
@@ -661,9 +714,11 @@ class JaguarScanner:
                     self.pick_soft_point = soft_point
                     self.pick_left_transit_point = left_transit_point
                     self.pick_object(point, soft_point)
-
+                
+                if self.cycle == 0:
+                    self.robot.Mode(1)  # Robotu manuel moda al
                 self.robot.MoveCart(ROBOT_POSITIONS['scrc'], 0, 0, vel=config["vel_mul"] * 100)
-
+                self.robot.Mode(0)  # Robotu otomatik moda al
                 small_data = self.mech_eye.main(lua_name="small.lua", scan_line_count=1500)
                 if config["use_agg"]:
                     thread_small = threading.Thread(target=self.smol_calc, args=(small_data,))
