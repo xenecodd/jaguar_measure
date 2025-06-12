@@ -86,7 +86,7 @@ def save_figure(plt, filename: str, dpi: int = 300):
         plt.savefig(fig_path, dpi=dpi, bbox_inches='tight')
         logger.info(f"Plot saved to {fig_path}")
 
-# Backend yapılandırması: Agg mod, non-interaktif; TkAgg ise interaktif.
+# Backend configuration: Agg mode is non-interactive; TkAgg is interactive.
 if config["use_agg"]:
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -97,21 +97,21 @@ else:
 
 class JaguarScanner:
     """
-    JaguarScanner sınıfı; self.robot kontrolü, tarama ve ölçüm işlemlerini yürüten profesyonel bir uygulamadır.
+    JaguarScanner class; a professional application that manages self.robot control, scanning, and measurement operations.
     
-    Özellikler:
-      - Ölçüm verilerini toplar, işler ve Excel dosyasına kaydeder.
-      - Robotun pick (parça alma) ve put-back (parça geri koyma) işlemlerini yönetir.
-      - Thread'li hesaplama ile performansı artırır.
+    Features:
+      - Collects, processes, and saves measurement data to an Excel file.
+      - Manages the robot's pick and put-back operations.
+      - Increases performance with threaded computation.
     """
     def __init__(self, vel_mul: float=1, use_agg: bool = config["use_agg"], put_back: bool = False):
         """
-        JaguarScanner örneğini başlatır.
+        Initializes a JaguarScanner instance.
         
         Args:
-            vel_mul (float): Hız çarpanı.
-            use_agg (bool, optional): Agg mod kullanımı. Varsayılan True.
-            put_back (bool, optional): Parçanın geri konulup konulacağı. False ise trash noktasına yönlendirilir.
+            vel_mul (float): Velocity multiplier.
+            use_agg (bool, optional): Use Agg mode. Default is True.
+            put_back (bool, optional): Whether the part will be put back. If False, it is directed to the trash point.
         """
         self.mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul)
         self.robot = self.mech_eye.robot
@@ -126,18 +126,19 @@ class JaguarScanner:
         self.current_di0_value = 0
         self.di0_thread = threading.Thread(target=self.read_di0_updates, daemon=True)
         self.di0_thread.start()
+        self.rescan = 0
     
     def read_di0_updates(self):
         sio = self.sio
         @sio.event
         def connect():
-            print("Socket.IO sunucusuna bağlandı!")
+            print("Connected to Socket.IO server!")
 
         @sio.event
         def robot_status(data):
             self.robot_tcp = data.get("TCP", None)
             self.current_di0_value = data.get("DI0", 0)
-            # logger.error(f"DI0 güncellendi: {self.current_di0_value}")
+            # logger.error(f"DI0 updated: {self.current_di0_value}")
             # logger.error(f"Robot TCP: {self.robot_tcp}")
 
         try:
@@ -152,21 +153,21 @@ class JaguarScanner:
             url = f"http://{DEVICE_IP}:{PORT}/api/scan"
             payload = {"message": "FORCE_RESTART"}
             
-            # Timeout ekleyin
+            # Add timeout
             response = requests.post(url, json=payload, timeout=5)
             
             if response.status_code == 200:
-                logger.info(f"Feedback başarıyla gönderildi: {response.json()}")
+                logger.info(f"Feedback sent successfully: {response.json()}")
                 return True
             else:
-                logger.error(f"Feedback başarısız. Kod: {response.status_code}, Yanıt: {response.text}")
+                logger.error(f"Feedback failed. Code: {response.status_code}, Response: {response.text}")
                 return False
                 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Network hatası: {e}")
+            logger.error(f"Network error: {e}")
             return False
         except Exception as e:
-            logger.error(f"Genel hata: {e}")
+            logger.error(f"General error: {e}")
             return False
 
 
@@ -218,18 +219,47 @@ class JaguarScanner:
             next_index = (next_index + 1) % total_points
         return next_index
 
+    def check_part_quality(self, results: dict) -> int:
+        for feature, target_tolerance in config["tolerances"].items():
+            target, tolerance = target_tolerance
+            value = results.get(feature, None)
+            
+            if value is None:
+                print(f"Parça kalite kontrolünden geçemedi: {feature} değeri hesaplanamadı")
+                return False
+
+            lower_bound = target - tolerance
+            upper_bound = target + tolerance
+            
+            if not (lower_bound <= value <= upper_bound):
+                deviation = abs(value - target)
+                print(f"Parça kalite kontrolünden geçemedi: {feature} = {value}, hedef = {target}±{tolerance}")
+                
+                # Gürültüden kaynaklı olabilir mi kontrolü (örneğin toleransın 2 katından fazla sapma varsa)
+                if deviation > tolerance * 2:
+                    
+                    logger.error(f"⚠ Uyarı: {feature} ölçümünde olasılıkla gürültü kaynaklı anormal bir değer algılandı.")
+                    return deviation
+                
+                return False
+
+        print("Parça kalite kontrolünden başarıyla geçti.")
+        return True
 
     def pick_object(self, point: dict, soft_point):
         """
-        Parça alma (pick) işlemini gerçekleştirir.
+        Performs the pick operation.
         
         Args:
-            point (dict): Hedef nokta.
-            soft_point: Soft nokta konumu.
-            use_left_transit_point (bool): Back transit kullanılacak mı.
+            point (dict): Target point.
+            soft_point: Soft point position.
+            use_left_transit_point (bool): Whether to use back transit.
         """
         transit_vel = 80
-        # Özel durum: Belirli noktalarda ekstra transit hareketleri
+        if self.cycle == 0:
+            self.robot.Mode(1)  # Set robot to manual mode so it moves slower on the first movement
+
+        # Special case: Extra transit movements at certain points
         if point == right_of_robot_points[0]:
             transit_vel = 50
             self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * transit_vel)
@@ -238,7 +268,9 @@ class JaguarScanner:
             self.robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * transit_vel)
 
         self.robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * 100)
-        # Transit hareketleri
+        self.robot.Mode(0)  # Set robot to automatic mode
+
+        # Transit movements
         if point in (right_of_robot_points + right_small) and point["p_up"][0] > 300:
             transit_vel = 50
             self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
@@ -246,35 +278,35 @@ class JaguarScanner:
             transit_vel = 50
             self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         
-        # Parça alma hareketleri
+        # Pick movements
         self.robot.MoveCart(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
         self.robot.MoveL(point["p"], 0, 0, vel=config["vel_mul"] * 50)
         self.robot.WaitMs(1000)
-        self.robot.SetDO(7, 1)  # Parçayı kavrama sinyali
+        self.robot.SetDO(7, 1)  # Signal to grip the part
         print("PICK OBJECT", self.current_di0_value)
         
-        # DI0 değerine göre parça alma işleminin başarıyla tamamlanıp tamamlanmadığını kontrol et
+        # Check if the pick operation was successful according to the DI0 value
         if not self.current_di0_value:
-            print("Parça başarıyla kavrandı.")
+            print("Part successfully gripped.")
             self.robot.Mode(0)
         elif self.current_di0_value == 1:
             start_time = time.time()
             while self.current_di0_value == 1 and (time.time() - start_time) < 5:
                 if (time.time() - start_time)%2 == 0:
-                    logger.error("Parça kavrama hatası, bekleniyor...")
+                    logger.error("Part gripping error, waiting...")
                 time.sleep(0.1) 
             if self.current_di0_value == 1:
-                # Parça kavrama hatası durumunda
+                # In case of part gripping error
                 self.robot.SetDO(7, 0)
-                print("Parça kavurma hatası.")
+                print("Part gripping error.")
                 self.robot.Mode(1)
-                # Yeni parça alma girişimi için indeksi güncelle
+                # Update index for new pick attempt
                 current_index = read_current_point_index()
                 current_index = self.get_next_valid_index(current_index, len(self.points))
                 self.robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
                 write_current_point_index(current_index)
                 
-                # Yeni parça alma işlemi için hazırlan
+                # Prepare for new pick operation
                 point = self.points[current_index]
                 if current_index < len(left_of_robot_points + left_small):
                     soft_point = p90
@@ -292,12 +324,12 @@ class JaguarScanner:
                 self.pick_object(point, soft_point)
                 return
             else:
-                print("Parça başarıyla kavrandı.")
+                print("Part successfully gripped.")
                 self.robot.Mode(0)
         
         self.robot.WaitMs(1500)
         self.robot.MoveL(point["p_up"], 0, 0, vel=config["vel_mul"] * transit_vel)
-        # Geri dönüş transit hareketleri
+        # Return transit movements
         if point in (right_of_robot_points + right_small) and point["p_up"][0] > 300:
             transit_vel = 50
             self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
@@ -305,12 +337,12 @@ class JaguarScanner:
             transit_vel = 50
             self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
         
-        # Son hareket: Soft point'e git
+        # Final movement: go to soft point
         self.robot.MoveCart(soft_point, 0, 0, vel=config["vel_mul"] * transit_vel)
     
     @handle_errors
     def smol_calc(self, small_data: np.ndarray):
-        # Nokta bulutunu döndürmek, filtrelemek ve orijin referansına çevirmek
+        # Rotate, filter, and move the point cloud to the origin reference
         small = self.rotate_point_cloud(small_data, -90, "z")
         small = small[small[:, 2] > np.min(small[:, 2]) + 37]
         small = small[small[:, 0] < np.min(small[:, 0]) + 50]
@@ -323,7 +355,7 @@ class JaguarScanner:
             logger.info(f"Small point cloud saved to {out_path}")
 
         circle_fitter = CircleFitter(small)
-        # Hataya yol açabilen parametreler için gerekirse try/except kullanılabilir.
+        # If needed, try/except can be used for parameters that may cause errors.
         _, z_center_small, radius_small = circle_fitter.fit_circles_and_plot(
             find_second_circle=False, val_x=0.18, val_z=0.2, delta_z=25
         )
@@ -345,7 +377,7 @@ class JaguarScanner:
 
     @handle_errors
     def hor_calc(self, horizontal_data: np.ndarray, horizontal2_data: np.ndarray):
-        # Önce horizontal2_data üzerinde düzeltmeleri yapıyoruz
+        # First, we make corrections on horizontal2_data
         horizontal2_data[:, 2] -= 70
         horizontal2_data[:, 0] -= 50.21
 
@@ -360,11 +392,11 @@ class JaguarScanner:
             o3d.io.write_point_cloud(out_path_pre, self.pcd)
             logger.info(f"Horizontal pre point cloud saved to {out_path_pre}")
 
-        # Datum hesaplama
+        # Datum calculation
         diff = np.abs(np.max(horizontal_data[:, 0]) - np.min(horizontal2_data[:, 0]))
         datum_horizontal = np.max(horizontal_data[:, 0]) - diff
 
-        # Line noktalarını oluşturup nokta bulutu ile birleştiriyoruz
+        # Create line points and merge with point cloud
         y_values = np.linspace(np.min(horizontal_data[:, 1]), np.max(horizontal_data[:, 1]), num=100)
         line_points = np.array([[datum_horizontal, y, np.min(horizontal_data[:, 2])] for y in y_values])
         augmented_pc = np.vstack((horizontal_data, line_points))
@@ -397,8 +429,8 @@ class JaguarScanner:
         logger.debug("hor_calc completed successfully.")
 
     @handle_errors
-    def process_vertical_measurement(self, vertical_data: np.ndarray) -> dict:
-        # Vertical veriyi işliyoruz
+    def process_vertical_measurement(self, vertical_data: np.ndarray):
+        # Process vertical data
         vertical = self.remove_gripper_points(vertical_data)
         vertical = self.rotate_point_cloud(vertical, 180, "z")
 
@@ -422,7 +454,7 @@ class JaguarScanner:
             plt.show()
         plt.close()
         
-        # Sonuç hesaplamaları
+        # Result calculations
         B = self.circle_fitter.get_B()
         b_trans_val = np.max(vertical[:, 1]) - np.max(self.horizontal[:, 2])
         b_vertical = B + b_trans_val
@@ -465,21 +497,25 @@ class JaguarScanner:
 
         current_results = self.combine_results(vertical_results)
         logger.debug("Vertical measurements processed successfully.")
+        return current_results
 
-        # Parça bırakma işlemleri
+    def after_scan(self,current_results: dict):
+
+        # Part drop operations
         if config["pick"]:
-            logger.error("Parça bırakma işlemi başlatılıyor.")
+            logger.error("Part drop operation started.")
             if config["drop_object"]:
                 #Check whether the part quality is acceptable according to that drop it to metal detector or trash if put_back is False
                 if self.check_part_quality(current_results):
                     drop_point = metal_detector
-                    logger.info("Parça kalite kontrolünden geçti, metal dedektörüne bırakılıyor.")
-                else:
+                    logger.info("Part passed quality control, dropping to metal detector.")
+                elif not self.check_part_quality(current_results):
                     drop_point = trash
-                    logger.error("Parça kalite kontrolünden geçemedi, metal dedektör yerine çöpe bırakılıyor.")
-                # Eğer put_back true ise ve drop point metal_detector ise, parçayı metal dedektörüne bırak
-
-                if False: # config["put_back"] and drop_point == trash:
+                    logger.error("Part failed quality control, dropping to trash instead of metal detector.")
+                # If put_back is true and drop point is metal_detector, drop the part to metal detector
+                else:
+                    return False
+                if config["put_back"] and drop_point == trash:
                     point = self.pick_point
                     soft_point = self.pick_soft_point
                     transit_vel = 60
@@ -504,22 +540,22 @@ class JaguarScanner:
                         transit_vel = 50
                         self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
 
-                else: # Eğer put_back false ise veya drop point trash değil ise, parçayı bant stationa götür ve metal_detector noktasına bırak
-                    logger.error("bant stationa gidiliyor.")
+                else: # If put_back is false or drop point is not trash, take the part to the band station and drop it at the metal_detector point
+                    logger.error("Going to band station.")
                     self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
-                    # Metal dedektörüne bırakma işlemi için piston ve vakum kontrol adımları
+                    # Piston and vacuum control steps for dropping to metal detector
                     
-                    self.robot.SetDO(1, 1)      # mainflow açık
-                    self.robot.SetDO(0, 0)      # Piston kapalı
+                    self.robot.SetDO(1, 1)      # mainflow on
+                    self.robot.SetDO(0, 0)      # Piston off
                     self.robot.WaitMs(3000)
-                    self.robot.SetDO(4, 0)      # Ray açık (rail)
-                    self.robot.SetDO(2, 1)      # Ray kapalı
+                    self.robot.SetDO(4, 0)      # Rail open
+                    self.robot.SetDO(2, 1)      # Rail closed
                     self.robot.WaitMs(2000)
-                    self.robot.SetDO(0, 1)      # Piston açık
+                    self.robot.SetDO(0, 1)      # Piston on
                     self.robot.WaitMs(1000)
-                    self.robot.SetDO(3, 1)      # Vakum açık
+                    self.robot.SetDO(3, 1)      # Vacuum on
                     self.robot.WaitMs(2000)
-                    self.robot.SetDO(0, 0)      # Piston kapalı
+                    self.robot.SetDO(0, 0)      # Piston off
                     self.robot.WaitMs(4000)
                     self.robot.SetDO(2, 0)
                     self.robot.SetDO(4, 1)      
@@ -528,18 +564,18 @@ class JaguarScanner:
                     self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.SetDO(7, 0)      # Parçayı bırak
+                    self.robot.SetDO(7, 0)      # Drop the part
                     self.robot.WaitMs(1000)
                     self.robot.MoveL(safeback, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.WaitMs(1000)
-                    self.robot.SetDO(0, 1)      # Piston açık
+                    self.robot.SetDO(0, 1)      # Piston on
                     self.robot.WaitMs(2000)
-                    self.robot.SetDO(3, 0)      # Vakum kapalı (piston vacuum)
+                    self.robot.SetDO(3, 0)      # Vacuum off (piston vacuum)
                     self.robot.WaitMs(1000)
-                    self.robot.SetDO(0, 0)      # Piston kapalı
+                    self.robot.SetDO(0, 0)      # Piston off
                     self.robot.WaitMs(3000)
-                    self.robot.SetDO(4, 0)      # Ray açık (rail)
-                    self.robot.SetDO(2, 1)      # Ray kapalı
+                    self.robot.SetDO(4, 0)      # Rail open
+                    self.robot.SetDO(2, 1)      # Rail closed
                     self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.WaitMs(1000)
                     self.robot.SetDO(7, 1)
@@ -548,11 +584,11 @@ class JaguarScanner:
                     self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.WaitMs(500)
-                    self.robot.MoveL(p90, 0, 0, vel=config["vel_mul"] * 35)      # mainflow kapalı
+                    self.robot.MoveL(p90, 0, 0, vel=config["vel_mul"] * 35)      # mainflow off
                     self.robot.MoveCart(metal_detector, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.SetDO(7, 0)
                     self.robot.WaitMs(1000)
-                    self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 35)      # mainflow kapalı
+                    self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 35)      # mainflow off
                     self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
 
                     logger.info("Object dropped at appropriate drop point.")
@@ -581,22 +617,7 @@ class JaguarScanner:
                     transit_vel = 50
                     self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * transit_vel)
             else:
-                logger.info("Parça bırakma ayarı devre dışı bırakıldı.")
-
-        return vertical_results
-    
-    def check_part_quality(self, results: dict) -> bool:
-        for feature, target_tolerance in config["tolerances"].items():
-            target, tolerance = target_tolerance
-            value = results.get(feature, None)
-            if value is None:
-                print(f"Parça kalite kontrolünden geçemedi: {feature} değeri hesaplanamadı")
-                return False
-            if not (target - tolerance <= value <= target + tolerance):
-                print(f"Parça kalite kontrolünden geçemedi: {feature} = {value}, hedef = {target}±{tolerance}")
-                return False
-        print("Parça kalite kontrolünden başarıyla geçti.")
-        return True
+                logger.info("Part drop setting disabled.")
 
     def write_to_db(self, result: Dict[str, float], iteration: int):
         conn = mysql.connector.connect(
@@ -634,12 +655,12 @@ class JaguarScanner:
         conn.close()
 
     def combine_results(self, vertical_results: dict) -> dict:
-        # Değerleri güvenli bir şekilde almak için yardımcı fonksiyon
+        # Helper function to safely get values
         def safe_get(dict_obj, key, default=None):
             value = dict_obj.get(key, default)
-            # Eğer bir değer sözlük ise, string temsiline dönüştür
+            # If a value is a dictionary, convert to string representation
             if isinstance(value, dict):
-                # print(f"Uyarı: {key} için dictionary değeri algılandı: {value}")
+                # print(f"Warning: Dictionary value detected for {key}: {value}")
                 return str(value)
             return value
         
@@ -663,13 +684,13 @@ class JaguarScanner:
             "Feature17 (2C)": safe_get(vertical_results, "ok_17_2")
         }
         
-        # Tüm değerlerin serileştirilebilir olduğundan emin olalım
+        # Ensure all values are serializable
         for key, value in results.items():
             try:
-                # Test amaçlı json.dumps
+                # For testing, json.dumps
                 json.dumps(value)
             except (TypeError, OverflowError):
-                # print(f"Serileştirilemeyen değer bulundu: {key} = {value}")
+                # print(f"Non-serializable value found: {key} = {value}")
                 results[key] = str(value)
         
         return results
@@ -679,15 +700,20 @@ class JaguarScanner:
 
         if self.robot_tcp[1][0] >= 300:
             if self.robot_tcp[1][1] >= 0:
-                logger.error("Robot sağ tarafta", self.robot_tcp[1][0])
+                logger.error("Robot is on the right side", self.robot_tcp[1][0])
                 self.robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * 60)
             else:
-                logger.error("Robot sol tarafta", self.robot_tcp[1][0])
+                logger.error("Robot is on the left side", self.robot_tcp[1][0])
                 self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 60)
 
         for self.cycle in range(config["range_"]):
             start_time = time.time()
             current_results = {}
+            
+            if self.rescan > 0:
+                self.cycle -= 1
+                write_current_point_index(current_index-1)
+            
             print("Cycle:",self.cycle)
             current_index = read_current_point_index()
             if current_index in config["ignored_points"]:
@@ -699,7 +725,7 @@ class JaguarScanner:
                 write_current_point_index(current_index)
             
             try:
-                if config["pick"]:
+                if config["pick"] and self.rescan == 0:
                     if current_index < len(left_of_robot_points + left_small):
                         soft_point = p90
                     else:
@@ -715,10 +741,8 @@ class JaguarScanner:
                     self.pick_left_transit_point = left_transit_point
                     self.pick_object(point, soft_point)
                 
-                if self.cycle == 0:
-                    self.robot.Mode(1)  # Robotu manuel moda al
                 self.robot.MoveCart(ROBOT_POSITIONS['scrc'], 0, 0, vel=config["vel_mul"] * 100)
-                self.robot.Mode(0)  # Robotu otomatik moda al
+                
                 small_data = self.mech_eye.main(lua_name="small.lua", scan_line_count=1500)
                 if config["use_agg"]:
                     thread_small = threading.Thread(target=self.smol_calc, args=(small_data,))
@@ -743,11 +767,24 @@ class JaguarScanner:
                     thread_small.join()
                     thread_horizontal.join()
 
+                current_results = self.process_vertical_measurement(vertical_data)
                 
-                vertical_results = self.process_vertical_measurement(vertical_data)
-                current_results = self.combine_results(vertical_results)
+                quality_check = self.check_part_quality(current_results)
+                
+                if not quality_check or quality_check > 1:
+                    if self.rescan < config["max_rescan"]:
+                        self.rescan += 1
+                        logger.error("Quality check failed or abnormal values detected. Restarting scan.")
+                        continue
+                    else:
+                        logger.error("Max rescan attempts reached. Continuing with next point.")
+
+                self.after_scan(current_results) # After scan operations, such as dropping the part or putting it back.
+
+                self.rescan = 0  # Reset rescan counter after successful scan
+                
                 current_results["Index"] = read_current_point_index()
-                current_results["OK"] = "1" if self.check_part_quality(current_results) else "0"
+                current_results["OK"] = "1" if quality_check else "0"
                 if config["save_to_db"]:
                     self.write_to_db(current_results, iteration=read_current_point_index())
                 current_results["Processing Time (s)"] = time.time() - start_time
@@ -757,9 +794,9 @@ class JaguarScanner:
             finally:
                 if config["use_agg"] == True:
                     plt.close("all")
-                with open('jsons/scan_output.json', 'a') as f:
-                    f.write(json.dumps(current_results) + '\n')
-        
+                if "Error" in current_results or "Index" in current_results:
+                    with open('jsons/scan_output.json', 'a') as f:
+                        f.write(json.dumps(current_results) + '\n')
 
 if __name__ == "__main__":
     scanner = JaguarScanner()

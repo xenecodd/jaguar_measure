@@ -24,7 +24,7 @@ robot = mech_eye.robot
 scan_bp = Blueprint('scan', __name__, url_prefix='/api/scan')
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler(Config.LOG_FILE, encoding='utf-8', errors='replace'),

@@ -19,7 +19,6 @@ set_time() {
     # ISO 8601 formatını temizle (örnek: 2025-05-30T10:00:00.123456+00:00 => 2025-05-30 10:00:00)
     cleaned=$(echo "$datetime" | cut -d '.' -f1 | sed 's/T/ /')
     
-    # +14 saat ekle (GNU date kullanarak)
     new_time=$(date -d "$cleaned" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || echo "")
     
     if [[ -n "$new_time" ]]; then
