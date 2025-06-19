@@ -121,7 +121,7 @@ class JaguarScanner:
         self.excel_threads = []
         self.points = left_of_robot_points + left_small + right_of_robot_points + right_small
         self.pick_point = 1
-        self.robot_tcp = [[0],[0, 0, 0, 0, 0, 0]]
+        self.robot_tcp = [0, 0, 0, 0, 0, 0]
         self.sio = socketio.Client()
         self.current_di0_value = 0
         self.di0_thread = threading.Thread(target=self.read_di0_updates, daemon=True)
@@ -499,22 +499,20 @@ class JaguarScanner:
         logger.debug("Vertical measurements processed successfully.")
         return current_results
 
-    def after_scan(self,current_results: dict):
+    def after_scan(self,quality_check: int):
 
         # Part drop operations
         if config["pick"]:
             logger.error("Part drop operation started.")
             if config["drop_object"]:
                 #Check whether the part quality is acceptable according to that drop it to metal detector or trash if put_back is False
-                if self.check_part_quality(current_results):
+                if quality_check == 1:
                     drop_point = metal_detector
                     logger.info("Part passed quality control, dropping to metal detector.")
-                elif not self.check_part_quality(current_results):
+                else:
                     drop_point = trash
                     logger.error("Part failed quality control, dropping to trash instead of metal detector.")
-                # If put_back is true and drop point is metal_detector, drop the part to metal detector
-                else:
-                    return False
+
                 if config["put_back"] and drop_point == trash:
                     point = self.pick_point
                     soft_point = self.pick_soft_point
@@ -563,7 +561,7 @@ class JaguarScanner:
                     self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 10)
                     self.robot.SetDO(7, 0)      # Drop the part
                     self.robot.WaitMs(1000)
                     self.robot.MoveL(safeback, 0, 0, vel=config["vel_mul"] * 35)
@@ -576,22 +574,25 @@ class JaguarScanner:
                     self.robot.WaitMs(3000)
                     self.robot.SetDO(4, 0)      # Rail open
                     self.robot.SetDO(2, 1)      # Rail closed
-                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 20)
                     self.robot.WaitMs(1000)
                     self.robot.SetDO(7, 1)
                     self.robot.WaitMs(1000)
-                    self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 10)
                     self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.WaitMs(500)
-                    self.robot.MoveL(p90, 0, 0, vel=config["vel_mul"] * 35)      # mainflow off
+                    self.robot.MoveL(p90, 0, 0, vel=config["vel_mul"] * 35)    
                     self.robot.MoveCart(metal_detector, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveCart(post_metal_detector, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.WaitMs(500)
                     self.robot.SetDO(7, 0)
-                    self.robot.WaitMs(1000)
-                    self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 35)      # mainflow off
+                    self.robot.WaitMs(500)
+                    self.robot.MoveCart(metal_detector, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 35)    
                     self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
 
-                    logger.info("Object dropped at appropriate drop point.")
+                    logger.error("Object dropped at appropriate drop point.")
             elif config["put_back"] :
                 point = self.pick_point
                 soft_point = self.pick_soft_point
@@ -631,6 +632,7 @@ class JaguarScanner:
         create_table_query = """
         CREATE TABLE IF NOT EXISTS scan_results (
             id INT AUTO_INCREMENT PRIMARY KEY,
+            date DATE,
             iteration INT,
             feature VARCHAR(255),
             value DOUBLE
@@ -639,7 +641,7 @@ class JaguarScanner:
         cursor.execute(create_table_query)
         conn.commit()
 
-        insert_query = "INSERT INTO scan_results (iteration, feature, value) VALUES (%s, %s, %s)"
+        insert_query = "INSERT INTO scan_results (date, iteration, feature, value) VALUES (CURDATE(), %s, %s, %s)"
 
         for feature_name, raw_value in result.items():
             try:
@@ -698,28 +700,25 @@ class JaguarScanner:
     def run_scan_cycle(self):
         ROBOT_POSITIONS = config["robot_positions"]
 
-        if self.robot_tcp[1][0] >= 300:
-            if self.robot_tcp[1][1] >= 0:
-                logger.error("Robot is on the right side", self.robot_tcp[1][0])
+        if self.robot_tcp[0] >= 300:
+            if self.robot_tcp[1] >= 0:
+                logger.error("Robot is on the right side", self.robot_tcp[0])
+                self.robot.MoveCart(right_transit_point, 0, 0, vel=config["vel_mul"] * 60)
                 self.robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * 60)
             else:
-                logger.error("Robot is on the left side", self.robot_tcp[1][0])
+                logger.error("Robot is on the left side", self.robot_tcp[0])
+                self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * 60)
                 self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 60)
-
-        for self.cycle in range(config["range_"]):
+        self.cycle = 0
+        while self.cycle < config["range_"]:
             start_time = time.time()
             current_results = {}
             
-            if self.rescan > 0:
-                self.cycle -= 1
-                write_current_point_index(current_index-1)
-            
-            print("Cycle:",self.cycle)
             current_index = read_current_point_index()
             if current_index in config["ignored_points"]:
                 current_index = self.get_next_valid_index(current_index, len(self.points))
                 write_current_point_index(current_index)
-            if self.cycle != 0:
+            if self.cycle != 0 and self.rescan == 0:
                 self.old_point = self.points[current_index]
                 current_index = self.get_next_valid_index(current_index, len(self.points))
                 write_current_point_index(current_index)
@@ -769,24 +768,30 @@ class JaguarScanner:
 
                 current_results = self.process_vertical_measurement(vertical_data)
                 
-                quality_check = self.check_part_quality(current_results)
+                quality_check = True if self.check_part_quality(current_results)==1 else False
                 
-                if not quality_check or quality_check > 1:
+                if not quality_check == 1:
                     if self.rescan < config["max_rescan"]:
                         self.rescan += 1
                         logger.error("Quality check failed or abnormal values detected. Restarting scan.")
                         continue
                     else:
-                        logger.error("Max rescan attempts reached. Continuing with next point.")
+                        logger.error("Max rescan attempts reached. Continuing...")
 
-                self.after_scan(current_results) # After scan operations, such as dropping the part or putting it back.
+                self.after_scan(quality_check) # After scan operations, such as dropping the part or putting it back.
 
                 self.rescan = 0  # Reset rescan counter after successful scan
-                
+                self.cycle += 1  # Increment cycle count
+
                 current_results["Index"] = read_current_point_index()
                 current_results["OK"] = "1" if quality_check else "0"
                 if config["save_to_db"]:
-                    self.write_to_db(current_results, iteration=read_current_point_index())
+                    try:
+                        logger.error("Writing results to database...")
+                        self.write_to_db(current_results, iteration=read_current_point_index())
+                        logger.error("Results written to database successfully.")
+                    except Exception as e:
+                        logger.error(f"Database write error: {e}")
                 current_results["Processing Time (s)"] = time.time() - start_time
                 
             except Exception as e:
@@ -797,6 +802,8 @@ class JaguarScanner:
                 if "Error" in current_results or "Index" in current_results:
                     with open('jsons/scan_output.json', 'a') as f:
                         f.write(json.dumps(current_results) + '\n')
+
+        write_current_point_index(self.get_next_valid_index(current_index, len(self.points)))
 
 if __name__ == "__main__":
     scanner = JaguarScanner()

@@ -19,7 +19,8 @@ set_time() {
     # ISO 8601 formatını temizle (örnek: 2025-05-30T10:00:00.123456+00:00 => 2025-05-30 10:00:00)
     cleaned=$(echo "$datetime" | cut -d '.' -f1 | sed 's/T/ /')
     
-    new_time=$(date -d "$cleaned" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || echo "")
+    # 9 saat ekle
+    new_time=$(date -d "$cleaned +9 hours" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || echo "")
     
     if [[ -n "$new_time" ]]; then
         # Yeni zamanı sisteme ayarla (sudo gerekli)
@@ -32,6 +33,7 @@ set_time() {
         echo -e "${YELLOW}Warning: Could not parse datetime${NC}"
     fi
 }
+
 
 # === Ana fonksiyon ===
 main() {

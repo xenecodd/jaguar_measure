@@ -58,5 +58,8 @@ ENV PYTHONPATH=/usr/local/lib/python3.10/site-packages
 
 RUN rm -rf /usr/local/lib/python3.10/site-packages/mecheye/profiler_utils.py
 COPY ./MecheyePackage/profiler_utils.py /usr/local/lib/python3.10/site-packages/mecheye/
+
+RUN python3 -m pip install --no-cache-dir apscheduler
+
 # Start the application
 CMD ["python3", "run.py"]

@@ -17,7 +17,8 @@ export const ENDPOINTS = {
   LATEST_SCAN: '/api/scan/latest',
   COLORS: '/api/scan/colors',
   DOWNLOAD_EXCEL: '/api/scan/download-excel',
-  CONFIG: '/api/scan/config'
+  CONFIG: '/api/scan/config',
+  SET_INDEX: '/api/scan/index/set'
 };
 
 // Polling intervals (in milliseconds)

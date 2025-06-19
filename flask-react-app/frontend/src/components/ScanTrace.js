@@ -30,7 +30,6 @@ const ScanTrace = ({ onScan }) => {
             fill: data.colors[idx] || 'gray',
           }))
         );
-      console.log(data)
       } catch (error) {
         console.log('Renkler alınırken hata oluştu:', error);
         setTimeout(fetchColors, 5000);
@@ -62,6 +61,15 @@ const ScanTrace = ({ onScan }) => {
           : rect
       )
     );
+  };
+
+  const handleDoubleClick = async(id) => {
+    try {
+      const response = await apiService.setIndex(id);
+    }
+    catch (error) {
+      toast.error("Hata oluştu: " + error);
+    }
   };
 
   // Ignored points listesini güncelle ve API'ye gönder
@@ -99,6 +107,7 @@ const ScanTrace = ({ onScan }) => {
           <div
             key={rect.id}
             onClick={() => handleSendIgnoredPoints(rect.id)}
+            onDoubleClick={() => handleDoubleClick(rect.id)}
             className={`flex ${rect.fill === "yellow" ? "animate-pulse " : ""} items-center text-xl justify-center cursor-pointer transition-transform duration-200 transform hover:scale-105 text-white font-semibold text-sm rounded-xl shadow-md`}
             style={{
               backgroundColor: rect.fill,

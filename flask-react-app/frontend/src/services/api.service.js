@@ -31,6 +31,16 @@ export const apiService = {
     }
   },
   
+  // Set index
+  setIndex: async (index) => {
+    try {
+      const response = await apiClient.post(ENDPOINTS.SET_INDEX, { index });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   // Start or stop scan
   controlScan: async (action) => {
     try {

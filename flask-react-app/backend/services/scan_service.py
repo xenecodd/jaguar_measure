@@ -23,6 +23,44 @@ logger = logging.getLogger(__name__)
 with open(Config.CONFIG_PATH, "r") as f:
     config = json.load(f)
 
+
+def format_filename_to_label(filename):
+    """Convert filename to user-friendly label"""
+    # Remove .json extension
+    name_without_ext = filename.replace('.json', '')
+    # Replace underscores with spaces
+    formatted = name_without_ext.replace('_', ' ')
+    # Capitalize each word
+    return formatted.title()
+
+def get_available_files_from_directory():
+    """Get all JSON files from jsons directory"""
+    try:
+        jsons_dir = Path(__file__).resolve().parent.parent / 'jsons'
+        
+        if not jsons_dir.exists():
+            return []
+        
+        # Get all .json files
+        json_files = [f for f in os.listdir(jsons_dir) if f.endswith('.json')]
+        
+        # Sort alphabetically
+        json_files.sort()
+        
+        # Create list with name and label
+        available_files = []
+        for filename in json_files:
+            available_files.append({
+                'name': filename,
+                'label': format_filename_to_label(filename)
+            })
+        
+        return available_files
+        
+    except Exception as e:
+        print(f"Error reading jsons directory: {str(e)}")
+        return []
+
 def calculate_tolerance_distance(value: float, target: float) -> float:
     """Calculate the absolute distance between a value and its target."""
     return np.abs(value - target)
@@ -63,17 +101,20 @@ def make_json_serializable(obj):
 def generate_json_data(results, tolerances=config['tolerances']):
     """
     Generates JSON data from scan results, with tolerance checks and color coding.
-    
-    Args:
-        results (list): List of dictionaries containing scan result data
-        tolerances (dict, optional): Dictionary of feature tolerances with format {feature: (target, tolerance)}
-    
-    Returns:
-        dict: JSON-compatible data structure containing processed results with color coding
     """
     if tolerances is None:
         tolerances = {}
     
+    latest_results_by_index = {}
+    for result in results:
+        idx = result.get("Index")
+        latest_results_by_index[idx] = result  # Önceki aynı index'li değerlerin üstüne yazar
+    # Filtrele: Index değeri None olmayanlar
+    results = sorted(
+        [r for r in latest_results_by_index.values() if r.get("Index") is not None],
+        key=lambda r: r["Index"]
+    )
+
     processed_data = {
         "scan_results": [],
         "summary": {
@@ -83,7 +124,6 @@ def generate_json_data(results, tolerances=config['tolerances']):
     }
     
     for iteration, result in enumerate(results, start=1):
-        iteration_ok = True
         
         # Determine iteration background color (alternating)
         iteration_color = "FCE4D6" if iteration % 2 == 0 else "D9EAD3"
@@ -337,8 +377,6 @@ def monitor_robot(stop_event, restart_event):
     
     logger.info("Monitor robot waiting for restart signal...")
     # DI9 üzerinden yeniden başlatma sinyali bekleniyor:
-    wait_time = 5
-    start = time.time()
     while True:
         try:
             current_di9 = safe_get_di(99)
@@ -350,10 +388,7 @@ def monitor_robot(stop_event, restart_event):
             logger.info(f"Restart signal detected: DI9={current_di9}")
             restart_event.set()
             break
-        elif time.time() - start > wait_time:
-            logger.info("Waiting for restart signal. Please press start.")
-            wait_time += 5
-            start = time.time()
+        time.sleep(0.5)
     
     logger.info("Monitor robot exiting.")
 

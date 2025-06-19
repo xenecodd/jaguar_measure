@@ -101,6 +101,11 @@ def read_current_point_index() -> int:
                 return 0
     return 0
 
+def write_current_point_index(index: int):
+    file_path = str(BASE_DIR.parent / "backend" / "MecheyePackage" / "point_index.txt")
+    with open(file_path, 'w') as file:
+        file.write(str(index))
+
 def start_robot_service():
     """Robot servisini başlat (bağımsız thread)"""
     # Health check thread'i

@@ -10,12 +10,9 @@ from config import BASE_DIR, Config
 import threading
 import multiprocessing
 import time
-from services.scan_service import run_scan, auto_restart_monitor
-from services.scan_service import save_to_excel
-from services.robot_service import safe_get_di
-from services.scan_service import monitor_robot
+from services.scan_service import save_to_excel, get_available_files_from_directory, format_filename_to_label, run_scan, auto_restart_monitor, monitor_robot
+from services.robot_service import safe_get_di, read_current_point_index, write_current_point_index
 from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
-from services.robot_service import read_current_point_index
 
 mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1)
 robot = mech_eye.robot
@@ -126,30 +123,43 @@ def scan():
     
     return jsonify(message="Unknown command"), 400
 
-
 @scan_bp.route('/latest', methods=['GET'])
 def get_latest_scan():
     try:
         # Get file name from request parameters, default to scan_output.json
         file_name = request.args.get('file', 'scan_output.json')
         
-        # Ensure we only accept specific files for security
-        allowed_files = ['scan_output.json', 'firstpart_scan.json','3dprinter_scans.json','first64.json','sec64.json','last16.json']
-        if file_name not in allowed_files:
-            return jsonify({"message": f"Invalid file requested: {file_name}"}), 400
-            
+        # Get available files dynamically
+        available_files = get_available_files_from_directory()
+        
         file_path = os.path.join(Path(__file__).resolve().parent.resolve().parent, 'jsons', file_name)
         if not os.path.exists(file_path):
-            return jsonify({"message": f"File {file_name} not found"}), 404
+            return jsonify({
+                "message": f"File {file_name} not found",
+                "available_files": available_files
+            }), 404
 
         with open(file_path, 'r') as f:
             lines = f.readlines()
             all_results = [json.loads(line.strip()) for line in lines if line.strip()]
             processed_data = generate_json_data(all_results)
+            
+            # Add available files to response
+            processed_data['available_files'] = available_files
+            
             return jsonify(processed_data), 200
+            
     except Exception as e:
-        return jsonify({"message": f"Error: {str(e)}"}), 500
-
+        # Even in error case, try to return available files
+        try:
+            available_files = get_available_files_from_directory()
+        except:
+            available_files = []
+            
+        return jsonify({
+            "message": f"Error: {str(e)}",
+            "available_files": available_files
+        }), 500
 
 @scan_bp.route('/download-excel', methods=['GET'])
 def download_excel():
@@ -177,7 +187,6 @@ def download_excel():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
 
-
 @scan_bp.route('/log', methods=['GET'])
 def get_scan_log():
     try:
@@ -186,7 +195,6 @@ def get_scan_log():
         return jsonify({'logs': logs}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @scan_bp.route('/config', methods=['GET', 'POST'])
 def update_config():
@@ -212,7 +220,24 @@ def update_config():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
+@scan_bp.route('/index/set', methods=['GET','POST'])
+def set_current_point_index():
+    try:
+        data = request.get_json()
+        index = int(data["index"])
+        logger.info(f"Setting current point index to: {index}")
+        
+        if index is None:
+            return jsonify({'error': 'Invalid index'}), 400
+        
+        write_current_point_index(index)
+        logger.info(f"Current point index set to {index}")
+        
+        return jsonify({'message': f'Current point index set to {index} successfully'}), 200
+    
+    except Exception as e:
+        return jsonify({'error': 'Server error', 'message': str(e)}), 500
+    
 @scan_bp.route('/colors', methods=['GET'])
 def get_colors():
     try:

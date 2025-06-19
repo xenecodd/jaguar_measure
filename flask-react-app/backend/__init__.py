@@ -12,6 +12,31 @@ from routes.robot_routes import robot_bp
 # Robot servisini import et
 from services.robot_service import start_robot_service, set_status_callback
 
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+MAX_LOG_LINES = 1000       # Maksimum tutulacak satır sayısı
+
+def trim_log_file():
+    try:
+        with open(Config.LOG_FILE, 'r') as f:
+            lines = f.readlines()
+        if len(lines) > MAX_LOG_LINES:
+            with open(Config.LOG_FILE, 'w') as f:
+                f.writelines(lines[-MAX_LOG_LINES:])
+            print(f"[LOG] Log dosyası budandı ({len(lines)} satır → {MAX_LOG_LINES})")
+    except Exception as e:
+        print(f"[ERROR] Log budama hatası: {e}")
+
+# Scheduler başlat
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=trim_log_file, trigger="interval", minutes=5)
+scheduler.start()
+
+# Uygulama kapanırken scheduler’ı durdur
+atexit.register(lambda: scheduler.shutdown())
+
 # SocketIO objesi global
 socketio = SocketIO(cors_allowed_origins="*", async_mode='threading', 
                     ping_interval=Config.SOCKET_PING_INTERVAL,
