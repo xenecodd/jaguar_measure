@@ -17,6 +17,11 @@ class Config:
     ROBOT_TIMEOUT = float(os.getenv("ROBOT_TIMEOUT", 2.0))
     SOCKET_PING_INTERVAL = int(os.getenv("SOCKET_PING_INTERVAL", 1))
     SOCKET_PING_TIMEOUT = int(os.getenv("SOCKET_PING_TIMEOUT", 5))
+    # Database configuration
+    DB_HOST = os.getenv("DB_HOST", "192.168.1.180")
+    DB_USER = os.getenv("DB_USER", "cobot_dbuser")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "um6vv$7*sJ@5Q*")
+    DB_NAME = os.getenv("DB_NAME", "cobot")
     # SCAN_SCRIPT_PATH; ölçülecek dosyanın yolu:
     SCAN_SCRIPT_PATH = str(BASE_DIR.parent /"backend" / "MecheyePackage" / "scan.py")
     CONFIG_PATH = str(BASE_DIR.parent /"backend" / "MecheyePackage" / "config.json")

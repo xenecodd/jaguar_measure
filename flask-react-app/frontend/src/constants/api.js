@@ -18,7 +18,8 @@ export const ENDPOINTS = {
   COLORS: '/api/scan/colors',
   DOWNLOAD_EXCEL: '/api/scan/download-excel',
   CONFIG: '/api/scan/config',
-  SET_INDEX: '/api/scan/index/set'
+  SET_INDEX: '/api/scan/index/set',
+  HISTORY: '/api/scan/history'
 };
 
 // Polling intervals (in milliseconds)

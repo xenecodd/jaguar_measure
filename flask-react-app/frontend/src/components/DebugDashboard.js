@@ -10,6 +10,7 @@ const DebugDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [filesLoading, setFilesLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [warning, setWarning] = useState(null);
     const [expandedIterations, setExpandedIterations] = useState({});
     const [selectedFeature, setSelectedFeature] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
@@ -17,6 +18,13 @@ const DebugDashboard = () => {
     const [showResults, setShowResults] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
     const [availableFiles, setAvailableFiles] = useState([]);
+
+    // New state for historical data functionality
+    const [dataMode, setDataMode] = useState("latest"); // "latest" or "historical"
+    const [availableDates, setAvailableDates] = useState([]);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [datesLoading, setDatesLoading] = useState(false);
 
     // Extract feature list for dropdown
     const featureList = useMemo(() => {
@@ -28,8 +36,23 @@ const DebugDashboard = () => {
         ));
     }, [latestScan]);
 
+    // Initialize default dates (yesterday)
     useEffect(() => {
-        // Fetch available files
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+        setStartDate(yesterdayStr);
+        setEndDate(yesterdayStr);
+    }, []);
+
+    // Fetch available dates when component mounts
+    useEffect(() => {
+        fetchAvailableDates();
+    }, []);
+
+    useEffect(() => {
+        // Fetch available files for latest mode
         const fetchAvailableFiles = async () => {
             try {
                 setFilesLoading(true);
@@ -46,24 +69,47 @@ const DebugDashboard = () => {
                 setFilesLoading(false);
             }
         };
-        fetchAvailableFiles();
-    }, []);
+
+        if (dataMode === "latest") {
+            fetchAvailableFiles();
+        }
+    }, [dataMode]);
 
     useEffect(() => {
-        if (selectedFile) {
+        if (dataMode === "latest" && selectedFile) {
             fetchLatestScan();
         }
-    }, [selectedFile]);
+    }, [selectedFile, dataMode]);
+
+    const submitDateRange = () => {
+        if (dataMode === "historical" && startDate && endDate) {
+            fetchHistoricalScan();
+        }
+    };
+
+    const fetchAvailableDates = async () => {
+        try {
+            setDatesLoading(true);
+            const response = await apiService.getAvailableDates();
+            setAvailableDates(response.available_dates || []);
+            setDatesLoading(false);
+        } catch (err) {
+            setWarning('Failed to load available dates for historical data');
+            setDatesLoading(false);
+        }
+    };
 
     const fetchLatestScan = async () => {
         try {
             setLoading(true);
+            setError(null);
+            setWarning(null);
             setSearchQuery(""); // Reset search query
             setFilterStatus("all"); // Reset filter status
             setExpandedIterations({}); // Reset expanded iterations
 
             const data = await apiService.getLatestScan(selectedFile);
-            
+
             // Handle error response
             if (data.message && data.available_files) {
                 setError(data.message);
@@ -113,6 +159,67 @@ const DebugDashboard = () => {
         }
     };
 
+    const fetchHistoricalScan = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            setWarning(null);
+            setSearchQuery(""); // Reset search query
+            setFilterStatus("all"); // Reset filter status
+            setExpandedIterations({}); // Reset expanded iterations
+
+            const data = await apiService.getHistoricalScan(startDate, endDate);
+
+            // Handle case where no data found
+            if (data.message && data.data && data.data.length === 0) {
+                setWarning(`No data found for the date range ${startDate} to ${endDate}`);
+                setLatestScan(null);
+                setLoading(false);
+                return;
+            }
+
+            // Convert status.ok to boolean explicitly
+            const correctedData = {
+                ...data,
+                scan_results: data?.scan_results?.map(iteration => ({
+                    ...iteration,
+                    features: iteration?.features?.map(feature => ({
+                        ...feature,
+                        tolerance_check: {
+                            ...feature.tolerance_check,
+                            within_tolerance:
+                                feature.tolerance_check?.within_tolerance === true ||
+                                feature.tolerance_check?.within_tolerance === "true"
+                        }
+                    })) || [],
+                    status: {
+                        ...iteration.status,
+                        ok:
+                            iteration.status?.ok === true ||
+                            iteration.status?.ok === "true"
+                    }
+                })) || []
+            };
+
+            setLatestScan(correctedData);
+
+            // Initialize first iteration as expanded
+            if (correctedData?.scan_results) {
+                const initialExpandState = {};
+                correctedData.scan_results.forEach((_, index) => {
+                    initialExpandState[index] = index === 0;
+                });
+                setExpandedIterations(initialExpandState);
+            }
+
+            setLoading(false);
+        } catch (error) {
+            setError('Failed to load historical scan data');
+            console.error('Error fetching historical scan:', error);
+            setLoading(false);
+        }
+    };
+
     // Filter iterations based on search query and status filter
     const filteredIterations = useMemo(() => {
         if (!latestScan?.scan_results) return [];
@@ -129,7 +236,7 @@ const DebugDashboard = () => {
             const okMatch = okFeature && String(okFeature.value).toLowerCase().includes(query);
             const timeFeature = iteration.features?.find(f => f.name.toLowerCase().includes("processing time"));
             const timeMatch = timeFeature && String(timeFeature.value).toLowerCase().includes(query);
-            const featureMatch = iteration.features?.some(feature => 
+            const featureMatch = iteration.features?.some(feature =>
                 feature.name?.toLowerCase().includes(query) ||
                 String(feature.value).toLowerCase().includes(query) ||
                 Object.values(feature.tolerance_check || {}).some(val =>
@@ -145,9 +252,15 @@ const DebugDashboard = () => {
     }, [latestScan, searchQuery, filterStatus]);
 
     const downloadExcel = () => {
-        apiService.downloadExcel(selectedFile).then((res) => {
-            FileDownload(res.data, `${selectedFile || 'data'}.xlsx`);
-        });
+        if (dataMode === "latest") {
+            apiService.downloadExcel(selectedFile).then((res) => {
+                FileDownload(res.data, `${selectedFile || 'data'}.xlsx`);
+            });
+        } else {
+            // For historical data, we might need a different endpoint or approach
+            // This depends on your backend implementation
+            setWarning('Excel download for historical data is not yet implemented');
+        }
     };
 
     const toggleIteration = (index) => {
@@ -209,12 +322,12 @@ const DebugDashboard = () => {
 
     const stats = calculateStats();
 
-    if (filesLoading) {
+    if (filesLoading || datesLoading) {
         return (
             <div className="flex justify-center items-center h-64">
                 <div className="flex flex-col items-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-                    <p className="mt-4 text-gray-600">Loading available files...</p>
+                    <p className="mt-4 text-gray-600">Loading available data...</p>
                 </div>
             </div>
         );
@@ -234,17 +347,25 @@ const DebugDashboard = () => {
         );
     }
 
-    if (!latestScan || !latestScan.scan_results || latestScan.scan_results.length === 0) {
+    if (warning && (!latestScan || !latestScan.scan_results || latestScan.scan_results.length === 0)) {
         return (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-                <div className="text-gray-600 text-xl mb-2">No Scan Data Available</div>
-                <p className="text-gray-500">There are no scan results to display at this time.</p>
-                <button
-                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                    onClick={() => window.location.reload()}
-                >
-                    Refresh
-                </button>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                <div className="text-yellow-600 text-xl mb-2">{warning}</div>
+                <p className="text-yellow-500">Try selecting a different date range or switch to latest data mode.</p>
+                <div className="mt-4 space-x-2">
+                    <button
+                        className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
+                        onClick={() => setDataMode("latest")}
+                    >
+                        Switch to Latest
+                    </button>
+                    <button
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                        onClick={() => window.location.reload()}
+                    >
+                        Refresh
+                    </button>
+                </div>
             </div>
         );
     }
@@ -255,12 +376,29 @@ const DebugDashboard = () => {
                 <div className="p-3 font-bold bg-gray-100 border-b flex justify-between items-center">
                     <span>Scan Summary</span>
                     <span className="text-sm font-normal text-gray-500">
-                        {new Date().toLocaleString()}
+                        {dataMode === "historical" && startDate && endDate ?
+                            `${startDate} to ${endDate}` :
+                            new Date().toLocaleString()
+                        }
                     </span>
                 </div>
                 <div className={`p-4 bg-opacity-10 ${stats.passRate >= 80 ? 'bg-green-100' :
                     stats.passRate >= 50 ? 'bg-yellow-100' : 'bg-red-100'
                     }`}>
+                    {warning && (
+                        <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded-md">
+                            <div className="flex">
+                                <div className="flex-shrink-0">
+                                    <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="ml-3">
+                                    <p className="text-sm text-yellow-700">{warning}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         <StatusCard
                             title="Total Iterations"
@@ -320,7 +458,6 @@ const DebugDashboard = () => {
                                 </thead>
                                 <tbody>
                                     {Object.entries(stats.failureReasons)
-                                        .sort(([_, countA], [__, countB]) => countB - countA)
                                         .map(([reason, count], idx) => {
                                             const percentage = (count / stats.total * 100).toFixed(1);
                                             return (
@@ -329,7 +466,7 @@ const DebugDashboard = () => {
                                                     <td className="py-2 px-3">{count}</td>
                                                     <td className="py-2 px-3 w-1/3">
                                                         <div className="flex items-center">
-                                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                                            <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
                                                                 <div className="bg-red-600 h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
                                                             </div>
                                                             <span className="ml-2 text-xs text-gray-500">{percentage}%</span>
@@ -351,34 +488,113 @@ const DebugDashboard = () => {
     const renderControlPanel = () => {
         return (
             <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border">
+                {/* Data Mode Toggle */}
                 <div className="mb-4">
-                    <label htmlFor="fileSelector" className="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
-                    {filesLoading ? (
-                        <div className="flex items-center">
-                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-600 mr-2"></div>
-                            <span>Loading files...</span>
-                        </div>
-                    ) : (
-                        <>
-                            <select
-                                id="fileSelector"
-                                className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                value={selectedFile}
-                                onChange={(e) => setSelectedFile(e.target.value)}
-                            >
-                                {availableFiles.map((file, index) => (
-                                    <option key={index} value={file.name}>{file.label}</option>
-                                ))}
-                            </select>
-                            <Button
-                                text="Download Excel"
-                                type="secondary"
-                                className="text-xs mt-2 px-2 py-1"
-                                onClick={downloadExcel}
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Data Mode</label>
+                    <div className="flex space-x-4">
+                        <label className="flex items-center">
+                            <input
+                                type="radio"
+                                className="form-radio h-4 w-4 text-blue-600"
+                                name="dataMode"
+                                value="latest"
+                                checked={dataMode === "latest"}
+                                onChange={(e) => setDataMode(e.target.value)}
                             />
-                        </>
-                    )}
+                            <span className="ml-2 text-sm text-gray-700">Latest Data</span>
+                        </label>
+                        <label className="flex items-center">
+                            <input
+                                type="radio"
+                                className="form-radio h-4 w-4 text-blue-600"
+                                name="dataMode"
+                                value="historical"
+                                checked={dataMode === "historical"}
+                                onChange={(e) => setDataMode(e.target.value)}
+                            />
+                            <span className="ml-2 text-sm text-gray-700">Historical Data</span>
+                        </label>
+                    </div>
                 </div>
+
+                {/* Latest Data Controls */}
+                {dataMode === "latest" && (
+                    <div className="mb-4">
+                        <label htmlFor="fileSelector" className="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
+                        {filesLoading ? (
+                            <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-600 mr-2"></div>
+                                <span>Loading files...</span>
+                            </div>
+                        ) : (
+                            <>
+                                <select
+                                    id="fileSelector"
+                                    className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    value={selectedFile}
+                                    onChange={(e) => setSelectedFile(e.target.value)}
+                                >
+                                    {availableFiles.map((file, index) => (
+                                        <option key={index} value={file.name}>{file.label}</option>
+                                    ))}
+                                </select>
+                                <Button
+                                    text="Download Excel"
+                                    type="secondary"
+                                    className="text-xs mt-2 px-2 py-1"
+                                    onClick={downloadExcel}
+                                />
+                            </>
+                        )}
+                    </div>
+                )}
+
+                {/* Historical Data Controls */}
+                {dataMode === "historical" && (
+                    <div className="mb-4 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                <input
+                                    type="date"
+                                    id="startDate"
+                                    className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                <input
+                                    type="date"
+                                    id="endDate"
+                                    className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-start">
+                            <Button
+                                text="Search Date Range"
+                                onClick={submitDateRange}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                            />
+                        </div>
+                        {availableDates.length > 0 && (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Available Dates ({availableDates.length} total)
+                                </label>
+                                <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded border max-h-24 overflow-y-auto">
+                                    {availableDates.slice(0, 10).join(', ')}
+                                    {availableDates.length > 10 && ` ... and ${availableDates.length - 10} more`}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 <div className="flex flex-col md:flex-row gap-4 mb-4">
                     <div className="flex-grow">
                         <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">Search</label>

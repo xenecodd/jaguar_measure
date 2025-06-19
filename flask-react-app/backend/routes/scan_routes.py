@@ -13,10 +13,14 @@ import time
 from services.scan_service import save_to_excel, get_available_files_from_directory, format_filename_to_label, run_scan, auto_restart_monitor, monitor_robot
 from services.robot_service import safe_get_di, read_current_point_index, write_current_point_index
 from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
+from flask import Blueprint, request, jsonify
+from datetime import datetime, timedelta
+from services.scan_db_service import ScanDatabaseService
 
 mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1)
 robot = mech_eye.robot
 
+db_service = ScanDatabaseService()
 
 scan_bp = Blueprint('scan', __name__, url_prefix='/api/scan')
 
@@ -123,6 +127,73 @@ def scan():
     
     return jsonify(message="Unknown command"), 400
 
+@scan_bp.route('/history', methods=['GET'])
+def get_scan_history():
+    """Get historical scan data from database"""
+    try:
+        # Get date parameters
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        
+        # Default to last 7 days if no dates provided
+        if not start_date or not end_date:
+            end_date = datetime.now().date()
+            start_date = end_date - timedelta(days=7)
+        else:
+            # Convert string dates to date objects
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        
+        # Get data from database
+        raw_data = db_service.get_scan_data_by_date_range(start_date, end_date)
+        
+        if not raw_data:
+            return jsonify({
+                "message": "No data found for the specified date range",
+                "data": [],
+                "date_range": {
+                    "start": start_date.strftime('%Y-%m-%d'),
+                    "end": end_date.strftime('%Y-%m-%d')
+                }
+            }), 200
+        
+        # Process data using existing generate_json_data function
+        processed_data = generate_json_data(raw_data)
+        
+        # Add metadata
+        processed_data['data_source'] = 'database'
+        processed_data['date_range'] = {
+            "start": start_date.strftime('%Y-%m-%d'),
+            "end": end_date.strftime('%Y-%m-%d')
+        }
+        
+        return jsonify(processed_data), 200
+        
+    except ValueError as e:
+        return jsonify({
+            "message": f"Invalid date format. Use YYYY-MM-DD format. Error: {str(e)}"
+        }), 400
+    except Exception as e:
+        return jsonify({
+            "message": f"Error retrieving historical data: {str(e)}"
+        }), 500
+
+@scan_bp.route('/dates', methods=['GET'])
+def get_available_dates():
+    """Get list of available dates in database"""
+    try:
+        dates = db_service.get_available_dates()
+        
+        return jsonify({
+            "available_dates": dates,
+            "total_dates": len(dates)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            "message": f"Error retrieving available dates: {str(e)}"
+        }), 500
+
 @scan_bp.route('/latest', methods=['GET'])
 def get_latest_scan():
     try:
@@ -144,7 +215,9 @@ def get_latest_scan():
             all_results = [json.loads(line.strip()) for line in lines if line.strip()]
             processed_data = generate_json_data(all_results)
             
-            # Add available files to response
+            # Add metadata to distinguish from database data
+            processed_data['data_source'] = 'json_file'
+            processed_data['file_name'] = file_name
             processed_data['available_files'] = available_files
             
             return jsonify(processed_data), 200
@@ -160,7 +233,7 @@ def get_latest_scan():
             "message": f"Error: {str(e)}",
             "available_files": available_files
         }), 500
-
+    
 @scan_bp.route('/download-excel', methods=['GET'])
 def download_excel():
     try:

@@ -41,6 +41,20 @@ export const apiService = {
     }
   },
 
+  getHistoricalScan: async (startDate, endDate) => {
+    try {
+      const response = await apiClient.get(ENDPOINTS.HISTORY, {
+        params: {
+          start_date: startDate,
+          end_date: endDate
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   // Start or stop scan
   controlScan: async (action) => {
     try {

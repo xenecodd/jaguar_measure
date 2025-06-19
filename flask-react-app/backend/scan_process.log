@@ -1,574 +1,3 @@
-2025-06-18 23:29:52,013 - INFO - Scan process started successfully
-2025-06-18 23:29:53,011 - INFO - Monitor robot started - Current DI8: (0, 0)
-2025-06-18 23:30:14,300 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:18,937 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:21,801 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:25,403 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:31,937 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
-2025-06-18 23:30:33,258 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:37,864 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:40,671 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:44,291 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:51,331 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
-2025-06-18 23:30:52,650 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:30:57,780 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:31:00,621 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:31:04,239 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:31:08,985 - ERROR - [SCAN_ERR] ⚠ Uyarı: Feature10 (R2-35) ölçümünde olasılıkla gürültü kaynaklı anormal bir değer algılandı.
-2025-06-18 23:31:08,985 - ERROR - [SCAN_ERR] Max rescan attempts reached. Continuing...
-2025-06-18 23:31:08,985 - ERROR - [SCAN_ERR] Part drop operation started.
-2025-06-18 23:31:13,275 - INFO - [SCAN] <ServerProxy for 192.168.58.2:20003/RPC2>
-2025-06-18 23:31:13,275 - INFO - [SCAN] Connected to Socket.IO server!
-2025-06-18 23:31:13,275 - INFO - [SCAN] PICK OBJECT 1
-2025-06-18 23:31:13,275 - INFO - [SCAN] Part successfully gripped.
-2025-06-18 23:31:13,275 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature10 (R2-35) = 36.922331636545906, hedef = 35±1.5
-2025-06-18 23:31:13,275 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature10 (R2-35) = 36.506543731919955, hedef = 35±1.5
-2025-06-18 23:31:13,276 - INFO - [SCAN] Uyarı: Filtrelenmiş nokta bulutlarından biri boş!
-2025-06-18 23:31:13,276 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature10 (R2-35) = 72.23662661463416, hedef = 35±1.5
-2025-06-18 23:31:14,140 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
-2025-06-18 23:31:14,302 - INFO - scan.py was closed
-2025-06-18 23:31:14,620 - INFO - Monitor robot waiting for restart signal...
-2025-06-18 23:31:15,832 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
-2025-06-18 23:31:16,120 - INFO - Auto-restart triggered by ALT button
-2025-06-18 23:31:16,123 - INFO - Scan started successfully
-2025-06-18 23:31:16,124 - INFO - Scan process started successfully
-2025-06-18 23:31:17,124 - INFO - Monitor robot started - Current DI8: (0, 0)
-2025-06-18 23:31:36,290 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:31:40,912 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:31:43,774 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:31:47,386 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:31:54,487 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
-2025-06-18 23:31:55,807 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:00,893 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:03,714 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:07,327 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:13,935 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
-2025-06-18 23:32:15,258 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:20,362 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:23,185 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:26,796 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:33,940 - ERROR - [SCAN_ERR] Part drop operation started.
-2025-06-18 23:32:38,256 - ERROR - [SCAN_ERR] Writing results to database...
-2025-06-18 23:32:38,347 - ERROR - [SCAN_ERR] Results written to database successfully.
-2025-06-18 23:32:46,929 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:52,022 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:54,816 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:32:58,445 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:33:04,968 - ERROR - [SCAN_ERR] Part drop operation started.
-2025-06-18 23:33:09,411 - ERROR - [SCAN_ERR] Writing results to database...
-2025-06-18 23:33:09,472 - ERROR - [SCAN_ERR] Results written to database successfully.
-2025-06-18 23:33:09,477 - INFO - [SCAN] <ServerProxy for 192.168.58.2:20003/RPC2>
-2025-06-18 23:33:09,477 - INFO - [SCAN] Connected to Socket.IO server!
-2025-06-18 23:33:09,478 - INFO - [SCAN] PICK OBJECT 1
-2025-06-18 23:33:09,478 - INFO - [SCAN] Part successfully gripped.
-2025-06-18 23:33:09,478 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature2 (25mm/2) = 11.995962034631113, hedef = 12.5±0.5
-2025-06-18 23:33:09,478 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature12 (88.6) = 90.67593409959264, hedef = 88.6±1.5
-2025-06-18 23:33:09,478 - INFO - [SCAN] Parça kalite kontrolünden başarıyla geçti.
-2025-06-18 23:33:09,479 - INFO - [SCAN] PICK OBJECT 1
-2025-06-18 23:33:09,479 - INFO - [SCAN] Part successfully gripped.
-2025-06-18 23:33:09,479 - INFO - [SCAN] Parça kalite kontrolünden başarıyla geçti.
-2025-06-18 23:33:10,477 - WARNING - Scan process terminated with code 0
-2025-06-18 23:33:10,477 - INFO - scan.py was closed
-2025-06-18 23:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-18 23:34:17,971 - DEBUG - Next wakeup is due at 2025-06-18 23:39:17.970177+00:00 (in 299.998950 seconds)
-2025-06-18 23:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:39:17 UTC)" (scheduled at 2025-06-18 23:34:17.970177+00:00)
-2025-06-18 23:34:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:39:17 UTC)" executed successfully
-2025-06-18 23:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-18 23:39:17,971 - DEBUG - Next wakeup is due at 2025-06-18 23:44:17.970177+00:00 (in 299.998818 seconds)
-2025-06-18 23:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:44:17 UTC)" (scheduled at 2025-06-18 23:39:17.970177+00:00)
-2025-06-18 23:39:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:44:17 UTC)" executed successfully
-2025-06-18 23:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-18 23:44:17,971 - DEBUG - Next wakeup is due at 2025-06-18 23:49:17.970177+00:00 (in 299.998935 seconds)
-2025-06-18 23:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:49:17 UTC)" (scheduled at 2025-06-18 23:44:17.970177+00:00)
-2025-06-18 23:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:49:17 UTC)" executed successfully
-2025-06-18 23:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-18 23:49:17,971 - DEBUG - Next wakeup is due at 2025-06-18 23:54:17.970177+00:00 (in 299.998997 seconds)
-2025-06-18 23:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:54:17 UTC)" (scheduled at 2025-06-18 23:49:17.970177+00:00)
-2025-06-18 23:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:54:17 UTC)" executed successfully
-2025-06-18 23:49:27,032 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
-2025-06-18 23:49:27,158 - INFO - Auto-restart triggered by ALT button
-2025-06-18 23:49:27,163 - INFO - Scan started successfully
-2025-06-18 23:49:27,164 - INFO - Scan process started successfully
-2025-06-18 23:49:28,164 - INFO - Monitor robot started - Current DI8: (0, 0)
-2025-06-18 23:50:07,269 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:11,895 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:14,765 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:18,405 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:25,414 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
-2025-06-18 23:50:26,734 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:31,349 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:34,176 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:37,776 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:44,758 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
-2025-06-18 23:50:46,078 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:50,687 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:53,591 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:50:57,255 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:51:04,173 - ERROR - [SCAN_ERR] Max rescan attempts reached. Continuing...
-2025-06-18 23:51:04,174 - ERROR - [SCAN_ERR] Part drop operation started.
-2025-06-18 23:51:10,002 - ERROR - [SCAN_ERR] Writing results to database...
-2025-06-18 23:51:10,065 - ERROR - [SCAN_ERR] Results written to database successfully.
-2025-06-18 23:51:40,792 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:51:45,900 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:51:48,740 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:51:52,362 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:51:58,165 - ERROR - [SCAN_ERR] ⚠ Uyarı: Feature10 (R2-35) ölçümünde olasılıkla gürültü kaynaklı anormal bir değer algılandı.
-2025-06-18 23:51:58,165 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
-2025-06-18 23:51:59,486 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:52:04,102 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:52:06,975 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:52:10,577 - ERROR - [SCAN_ERR] sh: 1: ping: not found
-2025-06-18 23:52:17,171 - ERROR - [SCAN_ERR] Part drop operation started.
-2025-06-18 23:52:22,918 - ERROR - [SCAN_ERR] Writing results to database...
-2025-06-18 23:52:22,978 - ERROR - [SCAN_ERR] Results written to database successfully.
-2025-06-18 23:52:22,978 - INFO - [SCAN] <ServerProxy for 192.168.58.2:20003/RPC2>
-2025-06-18 23:52:22,979 - INFO - [SCAN] Connected to Socket.IO server!
-2025-06-18 23:52:22,979 - INFO - [SCAN] PICK OBJECT 1
-2025-06-18 23:52:22,979 - INFO - [SCAN] Part gripping error.
-2025-06-18 23:52:22,979 - INFO - [SCAN] PICK OBJECT 1
-2025-06-18 23:52:22,979 - INFO - [SCAN] Part successfully gripped.
-2025-06-18 23:52:22,979 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature1 (102.1) = 100.09113880247489, hedef = 102.1±2
-2025-06-18 23:52:22,979 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature8 (L79.73) = 77.90481365609433, hedef = 79.73±1.5
-2025-06-18 23:52:22,980 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature1 (102.1) = 99.87032164151519, hedef = 102.1±2
-2025-06-18 23:52:22,980 - INFO - [SCAN] PICK OBJECT 1
-2025-06-18 23:52:22,980 - INFO - [SCAN] Part gripping error.
-2025-06-18 23:52:22,980 - INFO - [SCAN] PICK OBJECT 1
-2025-06-18 23:52:22,980 - INFO - [SCAN] Part successfully gripped.
-2025-06-18 23:52:22,980 - INFO - [SCAN] Uyarı: Filtrelenmiş nokta bulutlarından biri boş!
-2025-06-18 23:52:22,980 - INFO - [SCAN] Parça kalite kontrolünden geçemedi: Feature10 (R2-35) = 154.40507516862903, hedef = 35±1.5
-2025-06-18 23:52:22,981 - INFO - [SCAN] Parça kalite kontrolünden başarıyla geçti.
-2025-06-18 23:52:24,429 - WARNING - Scan process terminated with code 0
-2025-06-18 23:52:24,429 - INFO - scan.py was closed
-2025-06-18 23:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-18 23:54:17,970 - DEBUG - Next wakeup is due at 2025-06-18 23:59:17.970177+00:00 (in 299.999263 seconds)
-2025-06-18 23:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:59:17 UTC)" (scheduled at 2025-06-18 23:54:17.970177+00:00)
-2025-06-18 23:54:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-18 23:59:17 UTC)" executed successfully
-2025-06-18 23:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-18 23:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:04:17.970177+00:00 (in 299.999189 seconds)
-2025-06-18 23:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:04:17 UTC)" (scheduled at 2025-06-18 23:59:17.970177+00:00)
-2025-06-18 23:59:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:04:17 UTC)" executed successfully
-2025-06-19 00:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:09:17.970177+00:00 (in 299.998970 seconds)
-2025-06-19 00:04:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:09:17 UTC)" (scheduled at 2025-06-19 00:04:17.970177+00:00)
-2025-06-19 00:04:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:09:17 UTC)" executed successfully
-2025-06-19 00:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:09:17,970 - DEBUG - Next wakeup is due at 2025-06-19 00:14:17.970177+00:00 (in 299.999204 seconds)
-2025-06-19 00:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:14:17 UTC)" (scheduled at 2025-06-19 00:09:17.970177+00:00)
-2025-06-19 00:09:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:14:17 UTC)" executed successfully
-2025-06-19 00:14:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:19:17.970177+00:00 (in 299.998890 seconds)
-2025-06-19 00:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:19:17 UTC)" (scheduled at 2025-06-19 00:14:17.970177+00:00)
-2025-06-19 00:14:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:19:17 UTC)" executed successfully
-2025-06-19 00:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:19:17,970 - DEBUG - Next wakeup is due at 2025-06-19 00:24:17.970177+00:00 (in 299.999202 seconds)
-2025-06-19 00:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:24:17 UTC)" (scheduled at 2025-06-19 00:19:17.970177+00:00)
-2025-06-19 00:19:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:24:17 UTC)" executed successfully
-2025-06-19 00:24:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 00:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:29:17.970177+00:00 (in 299.998642 seconds)
-2025-06-19 00:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:29:17 UTC)" (scheduled at 2025-06-19 00:24:17.970177+00:00)
-2025-06-19 00:24:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:29:17 UTC)" executed successfully
-2025-06-19 00:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:29:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:34:17.970177+00:00 (in 299.998791 seconds)
-2025-06-19 00:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:34:17 UTC)" (scheduled at 2025-06-19 00:29:17.970177+00:00)
-2025-06-19 00:29:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:34:17 UTC)" executed successfully
-2025-06-19 00:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:39:17.970177+00:00 (in 299.999096 seconds)
-2025-06-19 00:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:39:17 UTC)" (scheduled at 2025-06-19 00:34:17.970177+00:00)
-2025-06-19 00:34:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:39:17 UTC)" executed successfully
-2025-06-19 00:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:44:17.970177+00:00 (in 299.998774 seconds)
-2025-06-19 00:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:44:17 UTC)" (scheduled at 2025-06-19 00:39:17.970177+00:00)
-2025-06-19 00:39:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:44:17 UTC)" executed successfully
-2025-06-19 00:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:49:17.970177+00:00 (in 299.998936 seconds)
-2025-06-19 00:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:49:17 UTC)" (scheduled at 2025-06-19 00:44:17.970177+00:00)
-2025-06-19 00:44:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:49:17 UTC)" executed successfully
-2025-06-19 00:49:17,973 - DEBUG - Looking for jobs to run
-2025-06-19 00:49:17,974 - DEBUG - Next wakeup is due at 2025-06-19 00:54:17.970177+00:00 (in 299.996031 seconds)
-2025-06-19 00:49:17,974 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:54:17 UTC)" (scheduled at 2025-06-19 00:49:17.970177+00:00)
-2025-06-19 00:49:17,976 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:54:17 UTC)" executed successfully
-2025-06-19 00:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 00:59:17.970177+00:00 (in 299.998781 seconds)
-2025-06-19 00:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:59:17 UTC)" (scheduled at 2025-06-19 00:54:17.970177+00:00)
-2025-06-19 00:54:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 00:59:17 UTC)" executed successfully
-2025-06-19 00:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 00:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:04:17.970177+00:00 (in 299.999186 seconds)
-2025-06-19 00:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:04:17 UTC)" (scheduled at 2025-06-19 00:59:17.970177+00:00)
-2025-06-19 00:59:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:04:17 UTC)" executed successfully
-2025-06-19 01:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:09:17.970177+00:00 (in 299.999137 seconds)
-2025-06-19 01:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:09:17 UTC)" (scheduled at 2025-06-19 01:04:17.970177+00:00)
-2025-06-19 01:04:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:09:17 UTC)" executed successfully
-2025-06-19 01:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:14:17.970177+00:00 (in 299.998715 seconds)
-2025-06-19 01:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:14:17 UTC)" (scheduled at 2025-06-19 01:09:17.970177+00:00)
-2025-06-19 01:09:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:14:17 UTC)" executed successfully
-2025-06-19 01:14:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 01:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:19:17.970177+00:00 (in 299.998651 seconds)
-2025-06-19 01:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:19:17 UTC)" (scheduled at 2025-06-19 01:14:17.970177+00:00)
-2025-06-19 01:14:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:19:17 UTC)" executed successfully
-2025-06-19 01:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:19:17,970 - DEBUG - Next wakeup is due at 2025-06-19 01:24:17.970177+00:00 (in 299.999301 seconds)
-2025-06-19 01:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:24:17 UTC)" (scheduled at 2025-06-19 01:19:17.970177+00:00)
-2025-06-19 01:19:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:24:17 UTC)" executed successfully
-2025-06-19 01:24:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:24:17,970 - DEBUG - Next wakeup is due at 2025-06-19 01:29:17.970177+00:00 (in 299.999337 seconds)
-2025-06-19 01:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:29:17 UTC)" (scheduled at 2025-06-19 01:24:17.970177+00:00)
-2025-06-19 01:24:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:29:17 UTC)" executed successfully
-2025-06-19 01:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:29:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:34:17.970177+00:00 (in 299.999078 seconds)
-2025-06-19 01:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:34:17 UTC)" (scheduled at 2025-06-19 01:29:17.970177+00:00)
-2025-06-19 01:29:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:34:17 UTC)" executed successfully
-2025-06-19 01:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:39:17.970177+00:00 (in 299.999010 seconds)
-2025-06-19 01:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:39:17 UTC)" (scheduled at 2025-06-19 01:34:17.970177+00:00)
-2025-06-19 01:34:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:39:17 UTC)" executed successfully
-2025-06-19 01:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:44:17.970177+00:00 (in 299.999050 seconds)
-2025-06-19 01:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:44:17 UTC)" (scheduled at 2025-06-19 01:39:17.970177+00:00)
-2025-06-19 01:39:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:44:17 UTC)" executed successfully
-2025-06-19 01:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:49:17.970177+00:00 (in 299.998756 seconds)
-2025-06-19 01:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:49:17 UTC)" (scheduled at 2025-06-19 01:44:17.970177+00:00)
-2025-06-19 01:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:49:17 UTC)" executed successfully
-2025-06-19 01:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:54:17.970177+00:00 (in 299.999054 seconds)
-2025-06-19 01:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:54:17 UTC)" (scheduled at 2025-06-19 01:49:17.970177+00:00)
-2025-06-19 01:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:54:17 UTC)" executed successfully
-2025-06-19 01:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 01:59:17.970177+00:00 (in 299.999155 seconds)
-2025-06-19 01:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:59:17 UTC)" (scheduled at 2025-06-19 01:54:17.970177+00:00)
-2025-06-19 01:54:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 01:59:17 UTC)" executed successfully
-2025-06-19 01:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 01:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:04:17.970177+00:00 (in 299.999034 seconds)
-2025-06-19 01:59:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:04:17 UTC)" (scheduled at 2025-06-19 01:59:17.970177+00:00)
-2025-06-19 01:59:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:04:17 UTC)" executed successfully
-2025-06-19 02:04:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 02:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:09:17.970177+00:00 (in 299.998299 seconds)
-2025-06-19 02:04:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:09:17 UTC)" (scheduled at 2025-06-19 02:04:17.970177+00:00)
-2025-06-19 02:04:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:09:17 UTC)" executed successfully
-2025-06-19 02:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:14:17.970177+00:00 (in 299.999206 seconds)
-2025-06-19 02:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:14:17 UTC)" (scheduled at 2025-06-19 02:09:17.970177+00:00)
-2025-06-19 02:09:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:14:17 UTC)" executed successfully
-2025-06-19 02:14:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:14:17,970 - DEBUG - Next wakeup is due at 2025-06-19 02:19:17.970177+00:00 (in 299.999230 seconds)
-2025-06-19 02:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:19:17 UTC)" (scheduled at 2025-06-19 02:14:17.970177+00:00)
-2025-06-19 02:14:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:19:17 UTC)" executed successfully
-2025-06-19 02:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:24:17.970177+00:00 (in 299.999011 seconds)
-2025-06-19 02:19:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:24:17 UTC)" (scheduled at 2025-06-19 02:19:17.970177+00:00)
-2025-06-19 02:19:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:24:17 UTC)" executed successfully
-2025-06-19 02:24:17,973 - DEBUG - Looking for jobs to run
-2025-06-19 02:24:17,974 - DEBUG - Next wakeup is due at 2025-06-19 02:29:17.970177+00:00 (in 299.996017 seconds)
-2025-06-19 02:24:17,974 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:29:17 UTC)" (scheduled at 2025-06-19 02:24:17.970177+00:00)
-2025-06-19 02:24:17,976 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:29:17 UTC)" executed successfully
-2025-06-19 02:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:29:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:34:17.970177+00:00 (in 299.998930 seconds)
-2025-06-19 02:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:34:17 UTC)" (scheduled at 2025-06-19 02:29:17.970177+00:00)
-2025-06-19 02:29:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:34:17 UTC)" executed successfully
-2025-06-19 02:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:39:17.970177+00:00 (in 299.999089 seconds)
-2025-06-19 02:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:39:17 UTC)" (scheduled at 2025-06-19 02:34:17.970177+00:00)
-2025-06-19 02:34:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:39:17 UTC)" executed successfully
-2025-06-19 02:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:44:17.970177+00:00 (in 299.998988 seconds)
-2025-06-19 02:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:44:17 UTC)" (scheduled at 2025-06-19 02:39:17.970177+00:00)
-2025-06-19 02:39:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:44:17 UTC)" executed successfully
-2025-06-19 02:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:49:17.970177+00:00 (in 299.998846 seconds)
-2025-06-19 02:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:49:17 UTC)" (scheduled at 2025-06-19 02:44:17.970177+00:00)
-2025-06-19 02:44:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:49:17 UTC)" executed successfully
-2025-06-19 02:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:54:17.970177+00:00 (in 299.998951 seconds)
-2025-06-19 02:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:54:17 UTC)" (scheduled at 2025-06-19 02:49:17.970177+00:00)
-2025-06-19 02:49:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:54:17 UTC)" executed successfully
-2025-06-19 02:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 02:59:17.970177+00:00 (in 299.998936 seconds)
-2025-06-19 02:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:59:17 UTC)" (scheduled at 2025-06-19 02:54:17.970177+00:00)
-2025-06-19 02:54:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 02:59:17 UTC)" executed successfully
-2025-06-19 02:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 02:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:04:17.970177+00:00 (in 299.999149 seconds)
-2025-06-19 02:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:04:17 UTC)" (scheduled at 2025-06-19 02:59:17.970177+00:00)
-2025-06-19 02:59:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:04:17 UTC)" executed successfully
-2025-06-19 03:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:09:17.970177+00:00 (in 299.999103 seconds)
-2025-06-19 03:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:09:17 UTC)" (scheduled at 2025-06-19 03:04:17.970177+00:00)
-2025-06-19 03:04:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:09:17 UTC)" executed successfully
-2025-06-19 03:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:14:17.970177+00:00 (in 299.998986 seconds)
-2025-06-19 03:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:14:17 UTC)" (scheduled at 2025-06-19 03:09:17.970177+00:00)
-2025-06-19 03:09:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:14:17 UTC)" executed successfully
-2025-06-19 03:14:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:19:17.970177+00:00 (in 299.998874 seconds)
-2025-06-19 03:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:19:17 UTC)" (scheduled at 2025-06-19 03:14:17.970177+00:00)
-2025-06-19 03:14:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:19:17 UTC)" executed successfully
-2025-06-19 03:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:24:17.970177+00:00 (in 299.998399 seconds)
-2025-06-19 03:19:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:24:17 UTC)" (scheduled at 2025-06-19 03:19:17.970177+00:00)
-2025-06-19 03:19:17,976 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:24:17 UTC)" executed successfully
-2025-06-19 03:24:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 03:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:29:17.970177+00:00 (in 299.998475 seconds)
-2025-06-19 03:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:29:17 UTC)" (scheduled at 2025-06-19 03:24:17.970177+00:00)
-2025-06-19 03:24:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:29:17 UTC)" executed successfully
-2025-06-19 03:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:29:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:34:17.970177+00:00 (in 299.999073 seconds)
-2025-06-19 03:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:34:17 UTC)" (scheduled at 2025-06-19 03:29:17.970177+00:00)
-2025-06-19 03:29:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:34:17 UTC)" executed successfully
-2025-06-19 03:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:39:17.970177+00:00 (in 299.998648 seconds)
-2025-06-19 03:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:39:17 UTC)" (scheduled at 2025-06-19 03:34:17.970177+00:00)
-2025-06-19 03:34:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:39:17 UTC)" executed successfully
-2025-06-19 03:39:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 03:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:44:17.970177+00:00 (in 299.998524 seconds)
-2025-06-19 03:39:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:44:17 UTC)" (scheduled at 2025-06-19 03:39:17.970177+00:00)
-2025-06-19 03:39:17,976 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:44:17 UTC)" executed successfully
-2025-06-19 03:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:49:17.970177+00:00 (in 299.999074 seconds)
-2025-06-19 03:44:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:49:17 UTC)" (scheduled at 2025-06-19 03:44:17.970177+00:00)
-2025-06-19 03:44:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:49:17 UTC)" executed successfully
-2025-06-19 03:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:54:17.970177+00:00 (in 299.999135 seconds)
-2025-06-19 03:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:54:17 UTC)" (scheduled at 2025-06-19 03:49:17.970177+00:00)
-2025-06-19 03:49:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:54:17 UTC)" executed successfully
-2025-06-19 03:54:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 03:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 03:59:17.970177+00:00 (in 299.998787 seconds)
-2025-06-19 03:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:59:17 UTC)" (scheduled at 2025-06-19 03:54:17.970177+00:00)
-2025-06-19 03:54:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 03:59:17 UTC)" executed successfully
-2025-06-19 03:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 03:59:17,970 - DEBUG - Next wakeup is due at 2025-06-19 04:04:17.970177+00:00 (in 299.999275 seconds)
-2025-06-19 03:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:04:17 UTC)" (scheduled at 2025-06-19 03:59:17.970177+00:00)
-2025-06-19 03:59:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:04:17 UTC)" executed successfully
-2025-06-19 04:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:04:17,970 - DEBUG - Next wakeup is due at 2025-06-19 04:09:17.970177+00:00 (in 299.999251 seconds)
-2025-06-19 04:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:09:17 UTC)" (scheduled at 2025-06-19 04:04:17.970177+00:00)
-2025-06-19 04:04:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:09:17 UTC)" executed successfully
-2025-06-19 04:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 04:14:17.970177+00:00 (in 299.998969 seconds)
-2025-06-19 04:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:14:17 UTC)" (scheduled at 2025-06-19 04:09:17.970177+00:00)
-2025-06-19 04:09:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:14:17 UTC)" executed successfully
-2025-06-19 04:14:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 04:19:17.970177+00:00 (in 299.998884 seconds)
-2025-06-19 04:14:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:19:17 UTC)" (scheduled at 2025-06-19 04:14:17.970177+00:00)
-2025-06-19 04:14:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:19:17 UTC)" executed successfully
-2025-06-19 04:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 04:24:17.970177+00:00 (in 299.999121 seconds)
-2025-06-19 04:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:24:17 UTC)" (scheduled at 2025-06-19 04:19:17.970177+00:00)
-2025-06-19 04:19:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:24:17 UTC)" executed successfully
-2025-06-19 04:24:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 04:29:17.970177+00:00 (in 299.999015 seconds)
-2025-06-19 04:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:29:17 UTC)" (scheduled at 2025-06-19 04:24:17.970177+00:00)
-2025-06-19 04:24:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:29:17 UTC)" executed successfully
-2025-06-19 04:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:29:17,970 - DEBUG - Next wakeup is due at 2025-06-19 04:34:17.970177+00:00 (in 299.999264 seconds)
-2025-06-19 04:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:34:17 UTC)" (scheduled at 2025-06-19 04:29:17.970177+00:00)
-2025-06-19 04:29:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:34:17 UTC)" executed successfully
-2025-06-19 04:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:34:17,970 - DEBUG - Next wakeup is due at 2025-06-19 04:39:17.970177+00:00 (in 299.999314 seconds)
-2025-06-19 04:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:39:17 UTC)" (scheduled at 2025-06-19 04:34:17.970177+00:00)
-2025-06-19 04:34:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:39:17 UTC)" executed successfully
-2025-06-19 04:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 04:44:17.970177+00:00 (in 299.999019 seconds)
-2025-06-19 04:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:44:17 UTC)" (scheduled at 2025-06-19 04:39:17.970177+00:00)
-2025-06-19 04:39:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:44:17 UTC)" executed successfully
-2025-06-19 04:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:44:17,970 - DEBUG - Next wakeup is due at 2025-06-19 04:49:17.970177+00:00 (in 299.999291 seconds)
-2025-06-19 04:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:49:17 UTC)" (scheduled at 2025-06-19 04:44:17.970177+00:00)
-2025-06-19 04:44:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:49:17 UTC)" executed successfully
-2025-06-19 04:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:49:17,970 - DEBUG - Next wakeup is due at 2025-06-19 04:54:17.970177+00:00 (in 299.999279 seconds)
-2025-06-19 04:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:54:17 UTC)" (scheduled at 2025-06-19 04:49:17.970177+00:00)
-2025-06-19 04:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:54:17 UTC)" executed successfully
-2025-06-19 04:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 04:59:17.970177+00:00 (in 299.998972 seconds)
-2025-06-19 04:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:59:17 UTC)" (scheduled at 2025-06-19 04:54:17.970177+00:00)
-2025-06-19 04:54:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 04:59:17 UTC)" executed successfully
-2025-06-19 04:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 04:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:04:17.970177+00:00 (in 299.999110 seconds)
-2025-06-19 04:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:04:17 UTC)" (scheduled at 2025-06-19 04:59:17.970177+00:00)
-2025-06-19 04:59:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:04:17 UTC)" executed successfully
-2025-06-19 05:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:04:17,970 - DEBUG - Next wakeup is due at 2025-06-19 05:09:17.970177+00:00 (in 299.999256 seconds)
-2025-06-19 05:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:09:17 UTC)" (scheduled at 2025-06-19 05:04:17.970177+00:00)
-2025-06-19 05:04:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:09:17 UTC)" executed successfully
-2025-06-19 05:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:14:17.970177+00:00 (in 299.998694 seconds)
-2025-06-19 05:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:14:17 UTC)" (scheduled at 2025-06-19 05:09:17.970177+00:00)
-2025-06-19 05:09:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:14:17 UTC)" executed successfully
-2025-06-19 05:14:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:14:17,970 - DEBUG - Next wakeup is due at 2025-06-19 05:19:17.970177+00:00 (in 299.999236 seconds)
-2025-06-19 05:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:19:17 UTC)" (scheduled at 2025-06-19 05:14:17.970177+00:00)
-2025-06-19 05:14:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:19:17 UTC)" executed successfully
-2025-06-19 05:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:24:17.970177+00:00 (in 299.999022 seconds)
-2025-06-19 05:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:24:17 UTC)" (scheduled at 2025-06-19 05:19:17.970177+00:00)
-2025-06-19 05:19:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:24:17 UTC)" executed successfully
-2025-06-19 05:24:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:29:17.970177+00:00 (in 299.998677 seconds)
-2025-06-19 05:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:29:17 UTC)" (scheduled at 2025-06-19 05:24:17.970177+00:00)
-2025-06-19 05:24:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:29:17 UTC)" executed successfully
-2025-06-19 05:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:29:17,970 - DEBUG - Next wakeup is due at 2025-06-19 05:34:17.970177+00:00 (in 299.999219 seconds)
-2025-06-19 05:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:34:17 UTC)" (scheduled at 2025-06-19 05:29:17.970177+00:00)
-2025-06-19 05:29:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:34:17 UTC)" executed successfully
-2025-06-19 05:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:39:17.970177+00:00 (in 299.998962 seconds)
-2025-06-19 05:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:39:17 UTC)" (scheduled at 2025-06-19 05:34:17.970177+00:00)
-2025-06-19 05:34:17,978 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:39:17 UTC)" executed successfully
-2025-06-19 05:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:44:17.970177+00:00 (in 299.998632 seconds)
-2025-06-19 05:39:17,973 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:44:17 UTC)" (scheduled at 2025-06-19 05:39:17.970177+00:00)
-2025-06-19 05:39:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:44:17 UTC)" executed successfully
-2025-06-19 05:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:49:17.970177+00:00 (in 299.999018 seconds)
-2025-06-19 05:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:49:17 UTC)" (scheduled at 2025-06-19 05:44:17.970177+00:00)
-2025-06-19 05:44:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:49:17 UTC)" executed successfully
-2025-06-19 05:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 05:54:17.970177+00:00 (in 299.999087 seconds)
-2025-06-19 05:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:54:17 UTC)" (scheduled at 2025-06-19 05:49:17.970177+00:00)
-2025-06-19 05:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:54:17 UTC)" executed successfully
-2025-06-19 05:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:54:17,970 - DEBUG - Next wakeup is due at 2025-06-19 05:59:17.970177+00:00 (in 299.999334 seconds)
-2025-06-19 05:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:59:17 UTC)" (scheduled at 2025-06-19 05:54:17.970177+00:00)
-2025-06-19 05:54:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 05:59:17 UTC)" executed successfully
-2025-06-19 05:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 05:59:17,970 - DEBUG - Next wakeup is due at 2025-06-19 06:04:17.970177+00:00 (in 299.999244 seconds)
-2025-06-19 05:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:04:17 UTC)" (scheduled at 2025-06-19 05:59:17.970177+00:00)
-2025-06-19 05:59:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:04:17 UTC)" executed successfully
-2025-06-19 06:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 06:09:17.970177+00:00 (in 299.998913 seconds)
-2025-06-19 06:04:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:09:17 UTC)" (scheduled at 2025-06-19 06:04:17.970177+00:00)
-2025-06-19 06:04:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:09:17 UTC)" executed successfully
-2025-06-19 06:09:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 06:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 06:14:17.970177+00:00 (in 299.998223 seconds)
-2025-06-19 06:09:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:14:17 UTC)" (scheduled at 2025-06-19 06:09:17.970177+00:00)
-2025-06-19 06:09:17,980 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:14:17 UTC)" executed successfully
-2025-06-19 06:14:17,973 - DEBUG - Looking for jobs to run
-2025-06-19 06:14:17,973 - DEBUG - Next wakeup is due at 2025-06-19 06:19:17.970177+00:00 (in 299.996382 seconds)
-2025-06-19 06:14:17,974 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:19:17 UTC)" (scheduled at 2025-06-19 06:14:17.970177+00:00)
-2025-06-19 06:14:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:19:17 UTC)" executed successfully
-2025-06-19 06:19:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 06:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 06:24:17.970177+00:00 (in 299.998336 seconds)
-2025-06-19 06:19:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:24:17 UTC)" (scheduled at 2025-06-19 06:19:17.970177+00:00)
-2025-06-19 06:19:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:24:17 UTC)" executed successfully
-2025-06-19 06:24:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 06:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 06:29:17.970177+00:00 (in 299.998460 seconds)
-2025-06-19 06:24:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:29:17 UTC)" (scheduled at 2025-06-19 06:24:17.970177+00:00)
-2025-06-19 06:24:17,978 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:29:17 UTC)" executed successfully
-2025-06-19 06:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:29:17,970 - DEBUG - Next wakeup is due at 2025-06-19 06:34:17.970177+00:00 (in 299.999226 seconds)
-2025-06-19 06:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:34:17 UTC)" (scheduled at 2025-06-19 06:29:17.970177+00:00)
-2025-06-19 06:29:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:34:17 UTC)" executed successfully
-2025-06-19 06:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:34:17,970 - DEBUG - Next wakeup is due at 2025-06-19 06:39:17.970177+00:00 (in 299.999198 seconds)
-2025-06-19 06:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:39:17 UTC)" (scheduled at 2025-06-19 06:34:17.970177+00:00)
-2025-06-19 06:34:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:39:17 UTC)" executed successfully
-2025-06-19 06:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 06:44:17.970177+00:00 (in 299.998564 seconds)
-2025-06-19 06:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:44:17 UTC)" (scheduled at 2025-06-19 06:39:17.970177+00:00)
-2025-06-19 06:39:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:44:17 UTC)" executed successfully
-2025-06-19 06:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 06:49:17.970177+00:00 (in 299.998877 seconds)
-2025-06-19 06:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:49:17 UTC)" (scheduled at 2025-06-19 06:44:17.970177+00:00)
-2025-06-19 06:44:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:49:17 UTC)" executed successfully
-2025-06-19 06:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 06:54:17.970177+00:00 (in 299.999050 seconds)
-2025-06-19 06:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:54:17 UTC)" (scheduled at 2025-06-19 06:49:17.970177+00:00)
-2025-06-19 06:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:54:17 UTC)" executed successfully
-2025-06-19 06:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:54:17,970 - DEBUG - Next wakeup is due at 2025-06-19 06:59:17.970177+00:00 (in 299.999308 seconds)
-2025-06-19 06:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:59:17 UTC)" (scheduled at 2025-06-19 06:54:17.970177+00:00)
-2025-06-19 06:54:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 06:59:17 UTC)" executed successfully
-2025-06-19 06:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 06:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:04:17.970177+00:00 (in 299.999198 seconds)
-2025-06-19 06:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:04:17 UTC)" (scheduled at 2025-06-19 06:59:17.970177+00:00)
-2025-06-19 06:59:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:04:17 UTC)" executed successfully
-2025-06-19 07:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:09:17.970177+00:00 (in 299.998954 seconds)
-2025-06-19 07:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:09:17 UTC)" (scheduled at 2025-06-19 07:04:17.970177+00:00)
-2025-06-19 07:04:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:09:17 UTC)" executed successfully
-2025-06-19 07:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:14:17.970177+00:00 (in 299.998891 seconds)
-2025-06-19 07:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:14:17 UTC)" (scheduled at 2025-06-19 07:09:17.970177+00:00)
-2025-06-19 07:09:17,979 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:14:17 UTC)" executed successfully
-2025-06-19 07:14:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:19:17.970177+00:00 (in 299.999046 seconds)
-2025-06-19 07:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:19:17 UTC)" (scheduled at 2025-06-19 07:14:17.970177+00:00)
-2025-06-19 07:14:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:19:17 UTC)" executed successfully
-2025-06-19 07:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:19:17,970 - DEBUG - Next wakeup is due at 2025-06-19 07:24:17.970177+00:00 (in 299.999225 seconds)
-2025-06-19 07:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:24:17 UTC)" (scheduled at 2025-06-19 07:19:17.970177+00:00)
-2025-06-19 07:19:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:24:17 UTC)" executed successfully
-2025-06-19 07:24:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:29:17.970177+00:00 (in 299.998810 seconds)
-2025-06-19 07:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:29:17 UTC)" (scheduled at 2025-06-19 07:24:17.970177+00:00)
-2025-06-19 07:24:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:29:17 UTC)" executed successfully
-2025-06-19 07:29:17,972 - DEBUG - Looking for jobs to run
-2025-06-19 07:29:17,972 - DEBUG - Next wakeup is due at 2025-06-19 07:34:17.970177+00:00 (in 299.997698 seconds)
-2025-06-19 07:29:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:34:17 UTC)" (scheduled at 2025-06-19 07:29:17.970177+00:00)
-2025-06-19 07:29:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:34:17 UTC)" executed successfully
-2025-06-19 07:34:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:34:17,970 - DEBUG - Next wakeup is due at 2025-06-19 07:39:17.970177+00:00 (in 299.999331 seconds)
-2025-06-19 07:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:39:17 UTC)" (scheduled at 2025-06-19 07:34:17.970177+00:00)
-2025-06-19 07:34:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:39:17 UTC)" executed successfully
-2025-06-19 07:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:44:17.970177+00:00 (in 299.998828 seconds)
-2025-06-19 07:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:44:17 UTC)" (scheduled at 2025-06-19 07:39:17.970177+00:00)
-2025-06-19 07:39:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:44:17 UTC)" executed successfully
-2025-06-19 07:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:49:17.970177+00:00 (in 299.999078 seconds)
-2025-06-19 07:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:49:17 UTC)" (scheduled at 2025-06-19 07:44:17.970177+00:00)
-2025-06-19 07:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:49:17 UTC)" executed successfully
-2025-06-19 07:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 07:54:17.970177+00:00 (in 299.998878 seconds)
-2025-06-19 07:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:54:17 UTC)" (scheduled at 2025-06-19 07:49:17.970177+00:00)
-2025-06-19 07:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:54:17 UTC)" executed successfully
-2025-06-19 07:54:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:54:17,970 - DEBUG - Next wakeup is due at 2025-06-19 07:59:17.970177+00:00 (in 299.999336 seconds)
-2025-06-19 07:54:17,970 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:59:17 UTC)" (scheduled at 2025-06-19 07:54:17.970177+00:00)
-2025-06-19 07:54:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 07:59:17 UTC)" executed successfully
-2025-06-19 07:59:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 07:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 08:04:17.970177+00:00 (in 299.999078 seconds)
-2025-06-19 07:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:04:17 UTC)" (scheduled at 2025-06-19 07:59:17.970177+00:00)
-2025-06-19 07:59:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:04:17 UTC)" executed successfully
-2025-06-19 08:04:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:04:17,970 - DEBUG - Next wakeup is due at 2025-06-19 08:09:17.970177+00:00 (in 299.999320 seconds)
-2025-06-19 08:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:09:17 UTC)" (scheduled at 2025-06-19 08:04:17.970177+00:00)
-2025-06-19 08:04:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:09:17 UTC)" executed successfully
-2025-06-19 08:09:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 08:14:17.970177+00:00 (in 299.998858 seconds)
-2025-06-19 08:09:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:14:17 UTC)" (scheduled at 2025-06-19 08:09:17.970177+00:00)
-2025-06-19 08:09:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:14:17 UTC)" executed successfully
-2025-06-19 08:14:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 08:19:17.970177+00:00 (in 299.999002 seconds)
-2025-06-19 08:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:19:17 UTC)" (scheduled at 2025-06-19 08:14:17.970177+00:00)
-2025-06-19 08:14:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:19:17 UTC)" executed successfully
-2025-06-19 08:19:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 08:24:17.970177+00:00 (in 299.999159 seconds)
-2025-06-19 08:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:24:17 UTC)" (scheduled at 2025-06-19 08:19:17.970177+00:00)
-2025-06-19 08:19:17,976 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:24:17 UTC)" executed successfully
-2025-06-19 08:24:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:24:17,970 - DEBUG - Next wakeup is due at 2025-06-19 08:29:17.970177+00:00 (in 299.999353 seconds)
-2025-06-19 08:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:29:17 UTC)" (scheduled at 2025-06-19 08:24:17.970177+00:00)
-2025-06-19 08:24:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:29:17 UTC)" executed successfully
-2025-06-19 08:29:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:29:17,970 - DEBUG - Next wakeup is due at 2025-06-19 08:34:17.970177+00:00 (in 299.999233 seconds)
-2025-06-19 08:29:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:34:17 UTC)" (scheduled at 2025-06-19 08:29:17.970177+00:00)
-2025-06-19 08:29:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:34:17 UTC)" executed successfully
-2025-06-19 08:34:17,971 - DEBUG - Looking for jobs to run
-2025-06-19 08:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 08:39:17.970177+00:00 (in 299.998291 seconds)
-2025-06-19 08:34:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:39:17 UTC)" (scheduled at 2025-06-19 08:34:17.970177+00:00)
-2025-06-19 08:34:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:39:17 UTC)" executed successfully
-2025-06-19 08:39:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:39:17,970 - DEBUG - Next wakeup is due at 2025-06-19 08:44:17.970177+00:00 (in 299.999280 seconds)
-2025-06-19 08:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:44:17 UTC)" (scheduled at 2025-06-19 08:39:17.970177+00:00)
-2025-06-19 08:39:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:44:17 UTC)" executed successfully
-2025-06-19 08:44:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:44:17,970 - DEBUG - Next wakeup is due at 2025-06-19 08:49:17.970177+00:00 (in 299.999373 seconds)
-2025-06-19 08:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:49:17 UTC)" (scheduled at 2025-06-19 08:44:17.970177+00:00)
-2025-06-19 08:44:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:49:17 UTC)" executed successfully
-2025-06-19 08:49:17,970 - DEBUG - Looking for jobs to run
-2025-06-19 08:49:17,970 - DEBUG - Next wakeup is due at 2025-06-19 08:54:17.970177+00:00 (in 299.999258 seconds)
 2025-06-19 08:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:54:17 UTC)" (scheduled at 2025-06-19 08:49:17.970177+00:00)
 2025-06-19 08:49:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 08:54:17 UTC)" executed successfully
 2025-06-19 08:54:17,971 - DEBUG - Looking for jobs to run
@@ -999,3 +428,574 @@
 2025-06-19 16:44:17,970 - DEBUG - Next wakeup is due at 2025-06-19 16:49:17.970177+00:00 (in 299.999267 seconds)
 2025-06-19 16:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 16:49:17 UTC)" (scheduled at 2025-06-19 16:44:17.970177+00:00)
 2025-06-19 16:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 16:49:17 UTC)" executed successfully
+2025-06-19 16:49:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 16:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 16:54:17.970177+00:00 (in 299.998913 seconds)
+2025-06-19 16:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 16:54:17 UTC)" (scheduled at 2025-06-19 16:49:17.970177+00:00)
+2025-06-19 16:49:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 16:54:17 UTC)" executed successfully
+2025-06-19 16:54:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 16:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 16:59:17.970177+00:00 (in 299.998876 seconds)
+2025-06-19 16:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 16:59:17 UTC)" (scheduled at 2025-06-19 16:54:17.970177+00:00)
+2025-06-19 16:54:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 16:59:17 UTC)" executed successfully
+2025-06-19 16:59:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 16:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 17:04:17.970177+00:00 (in 299.998889 seconds)
+2025-06-19 16:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:04:17 UTC)" (scheduled at 2025-06-19 16:59:17.970177+00:00)
+2025-06-19 16:59:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:04:17 UTC)" executed successfully
+2025-06-19 17:04:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 17:04:17,973 - DEBUG - Next wakeup is due at 2025-06-19 17:09:17.970177+00:00 (in 299.996586 seconds)
+2025-06-19 17:04:17,974 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:09:17 UTC)" (scheduled at 2025-06-19 17:04:17.970177+00:00)
+2025-06-19 17:04:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:09:17 UTC)" executed successfully
+2025-06-19 17:09:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 17:14:17.970177+00:00 (in 299.999110 seconds)
+2025-06-19 17:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:14:17 UTC)" (scheduled at 2025-06-19 17:09:17.970177+00:00)
+2025-06-19 17:09:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:14:17 UTC)" executed successfully
+2025-06-19 17:14:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:14:17,972 - DEBUG - Next wakeup is due at 2025-06-19 17:19:17.970177+00:00 (in 299.997911 seconds)
+2025-06-19 17:14:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:19:17 UTC)" (scheduled at 2025-06-19 17:14:17.970177+00:00)
+2025-06-19 17:14:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:19:17 UTC)" executed successfully
+2025-06-19 17:19:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 17:24:17.970177+00:00 (in 299.998681 seconds)
+2025-06-19 17:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:24:17 UTC)" (scheduled at 2025-06-19 17:19:17.970177+00:00)
+2025-06-19 17:19:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:24:17 UTC)" executed successfully
+2025-06-19 17:24:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 17:29:17.970177+00:00 (in 299.998964 seconds)
+2025-06-19 17:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:29:17 UTC)" (scheduled at 2025-06-19 17:24:17.970177+00:00)
+2025-06-19 17:24:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:29:17 UTC)" executed successfully
+2025-06-19 17:29:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 17:29:17,972 - DEBUG - Next wakeup is due at 2025-06-19 17:34:17.970177+00:00 (in 299.998052 seconds)
+2025-06-19 17:29:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:34:17 UTC)" (scheduled at 2025-06-19 17:29:17.970177+00:00)
+2025-06-19 17:29:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:34:17 UTC)" executed successfully
+2025-06-19 17:34:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 17:39:17.970177+00:00 (in 299.999057 seconds)
+2025-06-19 17:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:39:17 UTC)" (scheduled at 2025-06-19 17:34:17.970177+00:00)
+2025-06-19 17:34:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:39:17 UTC)" executed successfully
+2025-06-19 17:39:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 17:44:17.970177+00:00 (in 299.999178 seconds)
+2025-06-19 17:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:44:17 UTC)" (scheduled at 2025-06-19 17:39:17.970177+00:00)
+2025-06-19 17:39:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:44:17 UTC)" executed successfully
+2025-06-19 17:44:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 17:49:17.970177+00:00 (in 299.998996 seconds)
+2025-06-19 17:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:49:17 UTC)" (scheduled at 2025-06-19 17:44:17.970177+00:00)
+2025-06-19 17:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:49:17 UTC)" executed successfully
+2025-06-19 17:49:17,972 - DEBUG - Looking for jobs to run
+2025-06-19 17:49:17,973 - DEBUG - Next wakeup is due at 2025-06-19 17:54:17.970177+00:00 (in 299.997035 seconds)
+2025-06-19 17:49:17,973 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:54:17 UTC)" (scheduled at 2025-06-19 17:49:17.970177+00:00)
+2025-06-19 17:49:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:54:17 UTC)" executed successfully
+2025-06-19 17:54:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:54:17,970 - DEBUG - Next wakeup is due at 2025-06-19 17:59:17.970177+00:00 (in 299.999256 seconds)
+2025-06-19 17:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:59:17 UTC)" (scheduled at 2025-06-19 17:54:17.970177+00:00)
+2025-06-19 17:54:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 17:59:17 UTC)" executed successfully
+2025-06-19 17:59:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 17:59:17,970 - DEBUG - Next wakeup is due at 2025-06-19 18:04:17.970177+00:00 (in 299.999212 seconds)
+2025-06-19 17:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:04:17 UTC)" (scheduled at 2025-06-19 17:59:17.970177+00:00)
+2025-06-19 17:59:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:04:17 UTC)" executed successfully
+2025-06-19 18:04:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:04:17,970 - DEBUG - Next wakeup is due at 2025-06-19 18:09:17.970177+00:00 (in 299.999272 seconds)
+2025-06-19 18:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:09:17 UTC)" (scheduled at 2025-06-19 18:04:17.970177+00:00)
+2025-06-19 18:04:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:09:17 UTC)" executed successfully
+2025-06-19 18:09:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:09:17,970 - DEBUG - Next wakeup is due at 2025-06-19 18:14:17.970177+00:00 (in 299.999234 seconds)
+2025-06-19 18:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:14:17 UTC)" (scheduled at 2025-06-19 18:09:17.970177+00:00)
+2025-06-19 18:09:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:14:17 UTC)" executed successfully
+2025-06-19 18:14:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 18:19:17.970177+00:00 (in 299.998866 seconds)
+2025-06-19 18:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:19:17 UTC)" (scheduled at 2025-06-19 18:14:17.970177+00:00)
+2025-06-19 18:14:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:19:17 UTC)" executed successfully
+2025-06-19 18:19:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 18:24:17.970177+00:00 (in 299.998813 seconds)
+2025-06-19 18:19:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:24:17 UTC)" (scheduled at 2025-06-19 18:19:17.970177+00:00)
+2025-06-19 18:19:17,976 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:24:17 UTC)" executed successfully
+2025-06-19 18:24:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 18:29:17.970177+00:00 (in 299.998942 seconds)
+2025-06-19 18:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:29:17 UTC)" (scheduled at 2025-06-19 18:24:17.970177+00:00)
+2025-06-19 18:24:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:29:17 UTC)" executed successfully
+2025-06-19 18:29:17,973 - DEBUG - Looking for jobs to run
+2025-06-19 18:29:17,974 - DEBUG - Next wakeup is due at 2025-06-19 18:34:17.970177+00:00 (in 299.996123 seconds)
+2025-06-19 18:29:17,974 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:34:17 UTC)" (scheduled at 2025-06-19 18:29:17.970177+00:00)
+2025-06-19 18:29:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:34:17 UTC)" executed successfully
+2025-06-19 18:34:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 18:39:17.970177+00:00 (in 299.998683 seconds)
+2025-06-19 18:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:39:17 UTC)" (scheduled at 2025-06-19 18:34:17.970177+00:00)
+2025-06-19 18:34:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:39:17 UTC)" executed successfully
+2025-06-19 18:39:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 18:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 18:44:17.970177+00:00 (in 299.998684 seconds)
+2025-06-19 18:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:44:17 UTC)" (scheduled at 2025-06-19 18:39:17.970177+00:00)
+2025-06-19 18:39:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:44:17 UTC)" executed successfully
+2025-06-19 18:44:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 18:44:17,972 - DEBUG - Next wakeup is due at 2025-06-19 18:49:17.970177+00:00 (in 299.998144 seconds)
+2025-06-19 18:44:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:49:17 UTC)" (scheduled at 2025-06-19 18:44:17.970177+00:00)
+2025-06-19 18:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:49:17 UTC)" executed successfully
+2025-06-19 18:49:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:49:17,970 - DEBUG - Next wakeup is due at 2025-06-19 18:54:17.970177+00:00 (in 299.999248 seconds)
+2025-06-19 18:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:54:17 UTC)" (scheduled at 2025-06-19 18:49:17.970177+00:00)
+2025-06-19 18:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:54:17 UTC)" executed successfully
+2025-06-19 18:54:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 18:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 18:59:17.970177+00:00 (in 299.998791 seconds)
+2025-06-19 18:54:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:59:17 UTC)" (scheduled at 2025-06-19 18:54:17.970177+00:00)
+2025-06-19 18:54:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 18:59:17 UTC)" executed successfully
+2025-06-19 18:59:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 18:59:17,974 - DEBUG - Next wakeup is due at 2025-06-19 19:04:17.970177+00:00 (in 299.996208 seconds)
+2025-06-19 18:59:17,974 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:04:17 UTC)" (scheduled at 2025-06-19 18:59:17.970177+00:00)
+2025-06-19 18:59:17,976 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:04:17 UTC)" executed successfully
+2025-06-19 19:04:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:09:17.970177+00:00 (in 299.999097 seconds)
+2025-06-19 19:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:09:17 UTC)" (scheduled at 2025-06-19 19:04:17.970177+00:00)
+2025-06-19 19:04:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:09:17 UTC)" executed successfully
+2025-06-19 19:09:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:14:17.970177+00:00 (in 299.998637 seconds)
+2025-06-19 19:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:14:17 UTC)" (scheduled at 2025-06-19 19:09:17.970177+00:00)
+2025-06-19 19:09:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:14:17 UTC)" executed successfully
+2025-06-19 19:14:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:14:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:19:17.970177+00:00 (in 299.999107 seconds)
+2025-06-19 19:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:19:17 UTC)" (scheduled at 2025-06-19 19:14:17.970177+00:00)
+2025-06-19 19:14:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:19:17 UTC)" executed successfully
+2025-06-19 19:19:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:19:17,970 - DEBUG - Next wakeup is due at 2025-06-19 19:24:17.970177+00:00 (in 299.999232 seconds)
+2025-06-19 19:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:24:17 UTC)" (scheduled at 2025-06-19 19:19:17.970177+00:00)
+2025-06-19 19:19:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:24:17 UTC)" executed successfully
+2025-06-19 19:24:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:29:17.970177+00:00 (in 299.999036 seconds)
+2025-06-19 19:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:29:17 UTC)" (scheduled at 2025-06-19 19:24:17.970177+00:00)
+2025-06-19 19:24:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:29:17 UTC)" executed successfully
+2025-06-19 19:29:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:29:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:34:17.970177+00:00 (in 299.999149 seconds)
+2025-06-19 19:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:34:17 UTC)" (scheduled at 2025-06-19 19:29:17.970177+00:00)
+2025-06-19 19:29:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:34:17 UTC)" executed successfully
+2025-06-19 19:34:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:39:17.970177+00:00 (in 299.998348 seconds)
+2025-06-19 19:34:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:39:17 UTC)" (scheduled at 2025-06-19 19:34:17.970177+00:00)
+2025-06-19 19:34:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:39:17 UTC)" executed successfully
+2025-06-19 19:39:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 19:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:44:17.970177+00:00 (in 299.998761 seconds)
+2025-06-19 19:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:44:17 UTC)" (scheduled at 2025-06-19 19:39:17.970177+00:00)
+2025-06-19 19:39:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:44:17 UTC)" executed successfully
+2025-06-19 19:44:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:49:17.970177+00:00 (in 299.999004 seconds)
+2025-06-19 19:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:49:17 UTC)" (scheduled at 2025-06-19 19:44:17.970177+00:00)
+2025-06-19 19:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:49:17 UTC)" executed successfully
+2025-06-19 19:49:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:54:17.970177+00:00 (in 299.999192 seconds)
+2025-06-19 19:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:54:17 UTC)" (scheduled at 2025-06-19 19:49:17.970177+00:00)
+2025-06-19 19:49:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:54:17 UTC)" executed successfully
+2025-06-19 19:54:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 19:54:17,971 - DEBUG - Next wakeup is due at 2025-06-19 19:59:17.970177+00:00 (in 299.998586 seconds)
+2025-06-19 19:54:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:59:17 UTC)" (scheduled at 2025-06-19 19:54:17.970177+00:00)
+2025-06-19 19:54:17,975 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 19:59:17 UTC)" executed successfully
+2025-06-19 19:59:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 19:59:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:04:17.970177+00:00 (in 299.998500 seconds)
+2025-06-19 19:59:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:04:17 UTC)" (scheduled at 2025-06-19 19:59:17.970177+00:00)
+2025-06-19 19:59:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:04:17 UTC)" executed successfully
+2025-06-19 20:04:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:04:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:09:17.970177+00:00 (in 299.998782 seconds)
+2025-06-19 20:04:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:09:17 UTC)" (scheduled at 2025-06-19 20:04:17.970177+00:00)
+2025-06-19 20:04:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:09:17 UTC)" executed successfully
+2025-06-19 20:09:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:09:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:14:17.970177+00:00 (in 299.999123 seconds)
+2025-06-19 20:09:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:14:17 UTC)" (scheduled at 2025-06-19 20:09:17.970177+00:00)
+2025-06-19 20:09:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:14:17 UTC)" executed successfully
+2025-06-19 20:14:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:14:17,970 - DEBUG - Next wakeup is due at 2025-06-19 20:19:17.970177+00:00 (in 299.999202 seconds)
+2025-06-19 20:14:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:19:17 UTC)" (scheduled at 2025-06-19 20:14:17.970177+00:00)
+2025-06-19 20:14:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:19:17 UTC)" executed successfully
+2025-06-19 20:19:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:19:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:24:17.970177+00:00 (in 299.999116 seconds)
+2025-06-19 20:19:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:24:17 UTC)" (scheduled at 2025-06-19 20:19:17.970177+00:00)
+2025-06-19 20:19:17,978 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:24:17 UTC)" executed successfully
+2025-06-19 20:24:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:24:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:29:17.970177+00:00 (in 299.998788 seconds)
+2025-06-19 20:24:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:29:17 UTC)" (scheduled at 2025-06-19 20:24:17.970177+00:00)
+2025-06-19 20:24:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:29:17 UTC)" executed successfully
+2025-06-19 20:29:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:29:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:34:17.970177+00:00 (in 299.999134 seconds)
+2025-06-19 20:29:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:34:17 UTC)" (scheduled at 2025-06-19 20:29:17.970177+00:00)
+2025-06-19 20:29:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:34:17 UTC)" executed successfully
+2025-06-19 20:34:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:34:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:39:17.970177+00:00 (in 299.999085 seconds)
+2025-06-19 20:34:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:39:17 UTC)" (scheduled at 2025-06-19 20:34:17.970177+00:00)
+2025-06-19 20:34:17,974 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:39:17 UTC)" executed successfully
+2025-06-19 20:39:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:39:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:44:17.970177+00:00 (in 299.999057 seconds)
+2025-06-19 20:39:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:44:17 UTC)" (scheduled at 2025-06-19 20:39:17.970177+00:00)
+2025-06-19 20:39:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:44:17 UTC)" executed successfully
+2025-06-19 20:44:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:44:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:49:17.970177+00:00 (in 299.998890 seconds)
+2025-06-19 20:44:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:49:17 UTC)" (scheduled at 2025-06-19 20:44:17.970177+00:00)
+2025-06-19 20:44:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:49:17 UTC)" executed successfully
+2025-06-19 20:45:15,396 - ERROR - JSON parse hatası: Expecting value: line 1 column 1 (char 0)
+2025-06-19 20:45:15,397 - ERROR - WebSocket hatası: Connection to remote host was lost.
+2025-06-19 20:45:15,397 - ERROR - Connection to remote host was lost. - goodbye
+2025-06-19 20:45:15,397 - WARNING - Bağlantı kapandı - Status: None, Mesaj: None
+2025-06-19 20:45:15,397 - INFO - Yeniden bağlanma 0.5 saniye sonra denenecek (deneme: 1)
+2025-06-19 20:45:15,408 - WARNING - WebSocket bağlantısı yok, yeniden bağlanmaya çalışılıyor...
+2025-06-19 20:45:15,408 - INFO - Login yapılıyor...
+2025-06-19 20:45:15,410 - DEBUG - Starting new HTTP connection (1): 192.168.58.2:80
+2025-06-19 20:45:15,418 - DEBUG - http://192.168.58.2:80 "POST /action/login HTTP/1.1" 302 207
+2025-06-19 20:45:15,425 - DEBUG - http://192.168.58.2:80 "GET / HTTP/1.1" 302 217
+2025-06-19 20:45:15,430 - DEBUG - http://192.168.58.2:80 "GET /index.html HTTP/1.1" 200 279853
+2025-06-19 20:45:15,523 - INFO - Websocket connected
+2025-06-19 20:45:15,523 - INFO - WebSocket bağlantısı açıldı
+2025-06-19 20:49:17,970 - DEBUG - Looking for jobs to run
+2025-06-19 20:49:17,971 - DEBUG - Next wakeup is due at 2025-06-19 20:54:17.970177+00:00 (in 299.999032 seconds)
+2025-06-19 20:49:17,971 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:54:17 UTC)" (scheduled at 2025-06-19 20:49:17.970177+00:00)
+2025-06-19 20:49:17,972 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:54:17 UTC)" executed successfully
+2025-06-19 20:54:17,971 - DEBUG - Looking for jobs to run
+2025-06-19 20:54:17,972 - DEBUG - Next wakeup is due at 2025-06-19 20:59:17.970177+00:00 (in 299.998201 seconds)
+2025-06-19 20:54:17,972 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:59:17 UTC)" (scheduled at 2025-06-19 20:54:17.970177+00:00)
+2025-06-19 20:54:17,973 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 20:59:17 UTC)" executed successfully
+2025-06-19 21:12:19,010 - DEBUG - /etc/timezone found, contents:
+ Etc/UTC
+
+2025-06-19 21:12:19,011 - DEBUG - /etc/localtime found
+2025-06-19 21:12:19,014 - DEBUG - 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-06-19 21:12:19,015 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-06-19 21:12:19,021 - INFO - Added job "trim_log_file" to job store "default"
+2025-06-19 21:12:19,022 - INFO - Scheduler started
+2025-06-19 21:12:19,022 - DEBUG - Looking for jobs to run
+2025-06-19 21:12:19,033 - DEBUG - Next wakeup is due at 2025-06-19 21:17:19.015298+00:00 (in 299.982043 seconds)
+2025-06-19 21:12:19,116 - INFO - Robot status monitor started
+2025-06-19 21:12:19,116 - INFO - Robot service threads started
+2025-06-19 21:17:19,019 - DEBUG - Looking for jobs to run
+2025-06-19 21:17:19,020 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:17:19 UTC)" (scheduled at 2025-06-19 21:17:19.015298+00:00)
+2025-06-19 21:17:19,020 - DEBUG - Next wakeup is due at 2025-06-19 21:22:19.015298+00:00 (in 299.994417 seconds)
+2025-06-19 21:17:19,024 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:22:19 UTC)" executed successfully
+2025-06-19 21:22:19,018 - DEBUG - Looking for jobs to run
+2025-06-19 21:22:19,018 - DEBUG - Next wakeup is due at 2025-06-19 21:27:19.015298+00:00 (in 299.996446 seconds)
+2025-06-19 21:22:19,019 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:27:19 UTC)" (scheduled at 2025-06-19 21:22:19.015298+00:00)
+2025-06-19 21:22:19,021 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:27:19 UTC)" executed successfully
+2025-06-19 21:24:55,731 - DEBUG - /etc/timezone found, contents:
+ Etc/UTC
+
+2025-06-19 21:24:55,732 - DEBUG - /etc/localtime found
+2025-06-19 21:24:55,734 - DEBUG - 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-06-19 21:24:55,735 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-06-19 21:24:55,737 - INFO - Added job "trim_log_file" to job store "default"
+2025-06-19 21:24:55,737 - INFO - Scheduler started
+2025-06-19 21:24:55,737 - DEBUG - Looking for jobs to run
+2025-06-19 21:24:55,750 - DEBUG - Next wakeup is due at 2025-06-19 21:29:55.735754+00:00 (in 299.985776 seconds)
+2025-06-19 21:24:55,800 - INFO - Robot status monitor started
+2025-06-19 21:24:55,800 - INFO - Robot service threads started
+2025-06-19 21:25:54,748 - DEBUG - /etc/timezone found, contents:
+ Etc/UTC
+
+2025-06-19 21:25:54,749 - DEBUG - /etc/localtime found
+2025-06-19 21:25:54,758 - DEBUG - 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-06-19 21:25:54,762 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-06-19 21:25:54,763 - INFO - Added job "trim_log_file" to job store "default"
+2025-06-19 21:25:54,763 - INFO - Scheduler started
+2025-06-19 21:25:54,763 - DEBUG - Looking for jobs to run
+2025-06-19 21:25:54,776 - DEBUG - Next wakeup is due at 2025-06-19 21:30:54.762096+00:00 (in 299.986102 seconds)
+2025-06-19 21:25:54,854 - INFO - Robot status monitor started
+2025-06-19 21:25:54,855 - INFO - Robot service threads started
+2025-06-19 21:28:41,371 - DEBUG - /etc/timezone found, contents:
+ Etc/UTC
+
+2025-06-19 21:28:41,372 - DEBUG - /etc/localtime found
+2025-06-19 21:28:41,374 - DEBUG - 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-06-19 21:28:41,375 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-06-19 21:28:41,377 - INFO - Added job "trim_log_file" to job store "default"
+2025-06-19 21:28:41,377 - INFO - Scheduler started
+2025-06-19 21:28:41,378 - DEBUG - Looking for jobs to run
+2025-06-19 21:28:41,391 - DEBUG - Next wakeup is due at 2025-06-19 21:33:41.375618+00:00 (in 299.984642 seconds)
+2025-06-19 21:28:41,471 - INFO - Robot status monitor started
+2025-06-19 21:28:41,471 - INFO - Robot service threads started
+2025-06-19 21:35:17,071 - DEBUG - /etc/timezone found, contents:
+ Etc/UTC
+
+2025-06-19 21:35:17,072 - DEBUG - /etc/localtime found
+2025-06-19 21:35:17,075 - DEBUG - 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-06-19 21:35:17,077 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-06-19 21:35:17,079 - INFO - Added job "trim_log_file" to job store "default"
+2025-06-19 21:35:17,080 - INFO - Scheduler started
+2025-06-19 21:35:17,081 - DEBUG - Looking for jobs to run
+2025-06-19 21:35:17,091 - DEBUG - Next wakeup is due at 2025-06-19 21:40:17.076943+00:00 (in 299.985121 seconds)
+2025-06-19 21:35:17,191 - INFO - Robot status monitor started
+2025-06-19 21:35:17,191 - INFO - Robot service threads started
+2025-06-19 21:35:26,538 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 21:35:34,610 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-19
+2025-06-19 21:35:37,760 - ERROR - Retrieved 0 rows from database for date range 2025-06-19 to 2025-06-19
+2025-06-19 21:35:42,068 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 21:35:44,350 - ERROR - Retrieved 76 rows from database for date range 2025-02-18 to 2025-06-18
+2025-06-19 21:35:44,363 - ERROR - Retrieved 76 rows from database for date range 2025-02-03 to 2025-06-18
+2025-06-19 21:35:50,192 - ERROR - Retrieved 76 rows from database for date range 2025-02-06 to 2025-06-18
+2025-06-19 21:35:52,595 - ERROR - Retrieved 76 rows from database for date range 2025-01-06 to 2025-06-18
+2025-06-19 21:35:52,652 - ERROR - Retrieved 0 rows from database for date range 2025-12-06 to 2025-06-18
+2025-06-19 21:35:56,787 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 21:36:30,049 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 21:40:17,082 - DEBUG - Looking for jobs to run
+2025-06-19 21:40:17,083 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:40:17 UTC)" (scheduled at 2025-06-19 21:40:17.076943+00:00)
+2025-06-19 21:40:17,083 - DEBUG - Next wakeup is due at 2025-06-19 21:45:17.076943+00:00 (in 299.993253 seconds)
+2025-06-19 21:40:17,088 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:45:17 UTC)" executed successfully
+2025-06-19 21:45:17,077 - DEBUG - Looking for jobs to run
+2025-06-19 21:45:17,079 - DEBUG - Next wakeup is due at 2025-06-19 21:50:17.076943+00:00 (in 299.997030 seconds)
+2025-06-19 21:45:17,080 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:50:17 UTC)" (scheduled at 2025-06-19 21:45:17.076943+00:00)
+2025-06-19 21:45:17,086 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:50:17 UTC)" executed successfully
+2025-06-19 21:50:17,077 - DEBUG - Looking for jobs to run
+2025-06-19 21:50:17,082 - DEBUG - Next wakeup is due at 2025-06-19 21:55:17.076943+00:00 (in 299.994416 seconds)
+2025-06-19 21:50:17,084 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:55:17 UTC)" (scheduled at 2025-06-19 21:50:17.076943+00:00)
+2025-06-19 21:50:17,087 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 21:55:17 UTC)" executed successfully
+2025-06-19 21:53:16,505 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 21:53:39,396 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 21:53:39,414 - INFO - Auto-restart monitor started
+2025-06-19 21:53:39,416 - INFO - Auto-restart triggered by ALT button
+2025-06-19 21:53:39,425 - INFO - Scan started successfully
+2025-06-19 21:53:39,446 - INFO - Scan process started successfully
+2025-06-19 21:53:40,425 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 21:53:58,678 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 21:53:58,771 - INFO - scan.py was closed
+2025-06-19 21:53:58,953 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 21:55:17,079 - DEBUG - Looking for jobs to run
+2025-06-19 21:55:17,080 - DEBUG - Next wakeup is due at 2025-06-19 22:00:17.076943+00:00 (in 299.996824 seconds)
+2025-06-19 21:55:17,080 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:00:17 UTC)" (scheduled at 2025-06-19 21:55:17.076943+00:00)
+2025-06-19 21:55:17,086 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:00:17 UTC)" executed successfully
+2025-06-19 22:08:31,278 - DEBUG - /etc/timezone found, contents:
+ Etc/UTC
+
+2025-06-19 22:08:31,284 - DEBUG - /etc/localtime found
+2025-06-19 22:08:31,286 - DEBUG - 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2025-06-19 22:08:31,287 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-06-19 22:08:31,288 - INFO - Added job "trim_log_file" to job store "default"
+2025-06-19 22:08:31,288 - INFO - Scheduler started
+2025-06-19 22:08:31,289 - DEBUG - Looking for jobs to run
+2025-06-19 22:08:31,289 - DEBUG - Next wakeup is due at 2025-06-19 22:13:31.287784+00:00 (in 299.998455 seconds)
+2025-06-19 22:08:31,344 - INFO - Robot status monitor started
+2025-06-19 22:08:31,344 - INFO - Robot service threads started
+2025-06-19 22:08:49,864 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:08:49,870 - INFO - Auto-restart monitor started
+2025-06-19 22:08:49,870 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:08:49,874 - INFO - Scan started successfully
+2025-06-19 22:08:49,874 - INFO - Scan process started successfully
+2025-06-19 22:08:50,874 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:09:15,683 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:09:15,808 - INFO - scan.py was closed
+2025-06-19 22:09:15,903 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:09:17,153 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:09:17,333 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:09:17,432 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:09:17,639 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:09:17,749 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:09:17,764 - INFO - Setting current point index to: 41
+2025-06-19 22:09:17,765 - INFO - Current point index set to 41
+2025-06-19 22:09:17,857 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:09:17,982 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:09:18,077 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:09:18,080 - INFO - Setting current point index to: 41
+2025-06-19 22:09:18,111 - INFO - Current point index set to 41
+2025-06-19 22:09:19,022 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:09:19,411 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:09:19,414 - INFO - Scan started successfully
+2025-06-19 22:09:19,415 - INFO - Scan process started successfully
+2025-06-19 22:09:20,415 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:09:20,869 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:09:20,916 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:09:20,950 - INFO - scan.py was closed
+2025-06-19 22:09:21,742 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:09:21,916 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:09:21,920 - INFO - Scan process started successfully
+2025-06-19 22:09:21,920 - INFO - Scan started successfully
+2025-06-19 22:09:22,920 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:09:33,108 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] check_rotate_log_count = 1000
+2025-06-19 22:09:33,108 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] max_total_log_size_mb = 20
+2025-06-19 22:09:33,108 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] max_single_log_size_mb = 1
+2025-06-19 22:09:33,108 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] max_rotate_file_count = 4
+2025-06-19 22:09:33,109 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] max_total_file_count = 20
+2025-06-19 22:09:33,109 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] log_level = 1
+2025-06-19 22:09:33,109 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] detach_logger_thread = 0
+2025-06-19 22:09:33,109 - INFO - [SCAN] Logger: [loadConfig] Key not found. Setting default value: [ApiLog_2.5.0] max_overall_api_log_size_mb = 200
+2025-06-19 22:09:35,630 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:09:40,743 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:09:43,558 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:09:47,155 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:09:53,703 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
+2025-06-19 22:09:55,023 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:00,118 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:02,955 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:06,579 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:13,097 - ERROR - [SCAN_ERR] Quality check failed or abnormal values detected. Restarting scan.
+2025-06-19 22:10:14,417 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:19,070 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:21,930 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:25,559 - ERROR - [SCAN_ERR] sh: 1: ping: not found
+2025-06-19 22:10:32,196 - ERROR - [SCAN_ERR] Max rescan attempts reached. Continuing...
+2025-06-19 22:10:32,196 - ERROR - [SCAN_ERR] Part drop operation started.
+2025-06-19 22:10:37,456 - ERROR - [SCAN_ERR] Writing results to database...
+2025-06-19 22:10:37,546 - ERROR - [SCAN_ERR] Results written to database successfully.
+2025-06-19 22:10:38,587 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:10:38,784 - INFO - scan.py was closed
+2025-06-19 22:10:39,017 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:10:43,867 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-19 22:10:44,023 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:10:44,038 - INFO - Setting current point index to: 21
+2025-06-19 22:10:44,039 - INFO - Current point index set to 21
+2025-06-19 22:10:44,132 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-19 22:10:44,910 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:10:45,023 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:10:45,025 - INFO - Scan started successfully
+2025-06-19 22:10:45,026 - INFO - Scan process started successfully
+2025-06-19 22:10:46,026 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:11:07,501 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:11:07,551 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:11:07,661 - INFO - scan.py was closed
+2025-06-19 22:11:08,696 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:09,372 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-19 22:11:09,521 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:10,474 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-19 22:11:10,591 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:10,737 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-19 22:11:10,750 - INFO - Setting current point index to: 21
+2025-06-19 22:11:10,751 - INFO - Current point index set to 21
+2025-06-19 22:11:10,832 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:11,781 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:11:12,056 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:11:12,060 - INFO - Scan started successfully
+2025-06-19 22:11:12,061 - INFO - Scan process started successfully
+2025-06-19 22:11:13,061 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:11:20,355 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:11:20,422 - INFO - scan.py was closed
+2025-06-19 22:11:20,574 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:11:33,735 - INFO - Received scan request: {'ignored_index_list': [35], 'alt_button': False}
+2025-06-19 22:11:33,884 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:34,054 - INFO - Received scan request: {'ignored_index_list': [35], 'alt_button': False}
+2025-06-19 22:11:35,090 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:35,934 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:11:36,078 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:36,186 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:11:36,842 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:36,983 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:11:37,079 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:37,572 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:11:37,707 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:37,790 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:11:37,885 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:11:37,896 - INFO - Setting current point index to: 41
+2025-06-19 22:11:37,897 - INFO - Current point index set to 41
+2025-06-19 22:11:38,005 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:11:38,009 - INFO - Setting current point index to: 41
+2025-06-19 22:11:38,011 - INFO - Current point index set to 41
+2025-06-19 22:11:39,119 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:11:39,602 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:11:39,605 - INFO - Scan started successfully
+2025-06-19 22:11:39,606 - INFO - Scan process started successfully
+2025-06-19 22:11:40,606 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:11:56,444 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:11:56,482 - INFO - scan.py was closed
+2025-06-19 22:11:56,632 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:12:00,127 - INFO - Received scan request: {'ignored_index_list': [41, 21], 'alt_button': False}
+2025-06-19 22:12:00,272 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:12:00,400 - INFO - Received scan request: {'ignored_index_list': [41, 21], 'alt_button': False}
+2025-06-19 22:12:01,285 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:12:01,426 - INFO - Received scan request: {'ignored_index_list': [41, 21], 'alt_button': False}
+2025-06-19 22:12:01,638 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:12:01,642 - INFO - Setting current point index to: 21
+2025-06-19 22:12:01,644 - INFO - Current point index set to 21
+2025-06-19 22:12:01,942 - INFO - Received scan request: {'ignored_index_list': [41, 21], 'alt_button': False}
+2025-06-19 22:12:02,038 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:12:03,059 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:12:03,140 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:12:03,142 - INFO - Scan started successfully
+2025-06-19 22:12:03,144 - INFO - Scan process started successfully
+2025-06-19 22:12:04,143 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:12:23,324 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:12:23,475 - INFO - scan.py was closed
+2025-06-19 22:12:23,666 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:12:35,505 - INFO - Received scan request: {'ignored_index_list': [41, 46], 'alt_button': False}
+2025-06-19 22:12:35,617 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:12:35,630 - INFO - Setting current point index to: 46
+2025-06-19 22:12:35,630 - INFO - Current point index set to 46
+2025-06-19 22:12:35,743 - INFO - Received scan request: {'ignored_index_list': [41, 46], 'alt_button': False}
+2025-06-19 22:12:35,747 - INFO - Setting current point index to: 46
+2025-06-19 22:12:35,748 - INFO - Current point index set to 46
+2025-06-19 22:12:35,859 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:12:35,863 - INFO - Setting current point index to: 46
+2025-06-19 22:12:35,865 - INFO - Current point index set to 46
+2025-06-19 22:12:35,965 - INFO - Received scan request: {'ignored_index_list': [41, 46], 'alt_button': False}
+2025-06-19 22:12:36,073 - INFO - Received scan request: {'ignored_index_list': [41], 'alt_button': False}
+2025-06-19 22:12:38,512 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:12:38,698 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:12:38,700 - INFO - Scan started successfully
+2025-06-19 22:12:38,701 - INFO - Scan process started successfully
+2025-06-19 22:12:39,700 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:12:43,420 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:12:53,786 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:12:53,884 - INFO - scan.py was closed
+2025-06-19 22:12:54,220 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:12:56,114 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-19 22:12:56,254 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:12:56,398 - INFO - Received scan request: {'ignored_index_list': [21], 'alt_button': False}
+2025-06-19 22:12:56,512 - INFO - Received scan request: {'ignored_index_list': [], 'alt_button': False}
+2025-06-19 22:12:56,528 - INFO - Setting current point index to: 21
+2025-06-19 22:12:56,529 - INFO - Current point index set to 21
+2025-06-19 22:12:57,738 - INFO - Received scan request: {'message': 'START', 'ignored_index_list': None, 'alt_button': True}
+2025-06-19 22:12:58,225 - INFO - Auto-restart triggered by ALT button
+2025-06-19 22:12:58,226 - INFO - Scan started successfully
+2025-06-19 22:12:58,228 - INFO - Scan process started successfully
+2025-06-19 22:12:59,227 - INFO - Monitor robot started - Current DI8: (0, 0)
+2025-06-19 22:13:08,175 - INFO - Received scan request: {'message': 'STOP', 'ignored_index_list': None, 'alt_button': False}
+2025-06-19 22:13:08,238 - INFO - Monitor robot waiting for restart signal...
+2025-06-19 22:13:08,289 - INFO - scan.py was closed
+2025-06-19 22:13:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:13:31,288 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:13:31 UTC)" (scheduled at 2025-06-19 22:13:31.287784+00:00)
+2025-06-19 22:13:31,288 - DEBUG - Next wakeup is due at 2025-06-19 22:18:31.287784+00:00 (in 299.998898 seconds)
+2025-06-19 22:13:31,290 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:18:31 UTC)" executed successfully
+2025-06-19 22:18:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:18:31,288 - DEBUG - Next wakeup is due at 2025-06-19 22:23:31.287784+00:00 (in 299.999157 seconds)
+2025-06-19 22:18:31,288 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:23:31 UTC)" (scheduled at 2025-06-19 22:18:31.287784+00:00)
+2025-06-19 22:18:31,290 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:23:31 UTC)" executed successfully
+2025-06-19 22:23:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:23:31,289 - DEBUG - Next wakeup is due at 2025-06-19 22:28:31.287784+00:00 (in 299.998260 seconds)
+2025-06-19 22:23:31,289 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:28:31 UTC)" (scheduled at 2025-06-19 22:23:31.287784+00:00)
+2025-06-19 22:23:31,293 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:28:31 UTC)" executed successfully
+2025-06-19 22:28:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:28:31,289 - DEBUG - Next wakeup is due at 2025-06-19 22:33:31.287784+00:00 (in 299.998593 seconds)
+2025-06-19 22:28:31,289 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:33:31 UTC)" (scheduled at 2025-06-19 22:28:31.287784+00:00)
+2025-06-19 22:28:31,290 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:33:31 UTC)" executed successfully
+2025-06-19 22:33:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:33:31,288 - DEBUG - Next wakeup is due at 2025-06-19 22:38:31.287784+00:00 (in 299.999299 seconds)
+2025-06-19 22:33:31,288 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:38:31 UTC)" (scheduled at 2025-06-19 22:33:31.287784+00:00)
+2025-06-19 22:33:31,290 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:38:31 UTC)" executed successfully
+2025-06-19 22:38:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:38:31,288 - DEBUG - Next wakeup is due at 2025-06-19 22:43:31.287784+00:00 (in 299.998948 seconds)
+2025-06-19 22:38:31,289 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:43:31 UTC)" (scheduled at 2025-06-19 22:38:31.287784+00:00)
+2025-06-19 22:38:31,292 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:43:31 UTC)" executed successfully
+2025-06-19 22:43:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:43:31,288 - DEBUG - Next wakeup is due at 2025-06-19 22:48:31.287784+00:00 (in 299.999183 seconds)
+2025-06-19 22:43:31,288 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:48:31 UTC)" (scheduled at 2025-06-19 22:43:31.287784+00:00)
+2025-06-19 22:43:31,290 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:48:31 UTC)" executed successfully
+2025-06-19 22:48:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:48:31,289 - DEBUG - Next wakeup is due at 2025-06-19 22:53:31.287784+00:00 (in 299.998602 seconds)
+2025-06-19 22:48:31,289 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:53:31 UTC)" (scheduled at 2025-06-19 22:48:31.287784+00:00)
+2025-06-19 22:48:31,291 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:53:31 UTC)" executed successfully
+2025-06-19 22:50:36,563 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 22:51:15,096 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 22:51:23,406 - ERROR - Retrieved 0 rows from database for date range 2025-06-18 to 2025-06-01
+2025-06-19 22:51:27,650 - ERROR - Retrieved 76 rows from database for date range 2025-06-18 to 2025-06-18
+2025-06-19 22:51:29,833 - ERROR - Retrieved 0 rows from database for date range 2025-06-18 to 2025-06-01
+2025-06-19 22:53:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 22:53:31,289 - DEBUG - Next wakeup is due at 2025-06-19 22:58:31.287784+00:00 (in 299.998260 seconds)
+2025-06-19 22:53:31,290 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:58:31 UTC)" (scheduled at 2025-06-19 22:53:31.287784+00:00)
+2025-06-19 22:53:31,291 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 22:58:31 UTC)" executed successfully
+2025-06-19 22:56:32,445 - ERROR - Retrieved 0 rows from database for date range 2025-06-18 to 2025-06-14
+2025-06-19 22:56:39,083 - ERROR - Retrieved 95 rows from database for date range 2025-06-18 to 2025-06-19
+2025-06-19 22:56:53,466 - ERROR - Retrieved 95 rows from database for date range 2025-06-18 to 2025-06-19
+2025-06-19 22:58:09,422 - ERROR - Retrieved 95 rows from database for date range 2025-06-18 to 2025-06-19
+2025-06-19 22:58:31,289 - DEBUG - Looking for jobs to run
+2025-06-19 22:58:31,291 - DEBUG - Next wakeup is due at 2025-06-19 23:03:31.287784+00:00 (in 299.996194 seconds)
+2025-06-19 22:58:31,291 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:03:31 UTC)" (scheduled at 2025-06-19 22:58:31.287784+00:00)
+2025-06-19 22:58:31,294 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:03:31 UTC)" executed successfully
+2025-06-19 23:02:19,787 - ERROR - Retrieved 95 rows from database for date range 2025-06-18 to 2025-06-19
+2025-06-19 23:03:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 23:03:31,289 - DEBUG - Next wakeup is due at 2025-06-19 23:08:31.287784+00:00 (in 299.998384 seconds)
+2025-06-19 23:03:31,289 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:08:31 UTC)" (scheduled at 2025-06-19 23:03:31.287784+00:00)
+2025-06-19 23:03:31,291 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:08:31 UTC)" executed successfully
+2025-06-19 23:08:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 23:08:31,288 - DEBUG - Next wakeup is due at 2025-06-19 23:13:31.287784+00:00 (in 299.999016 seconds)
+2025-06-19 23:08:31,289 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:13:31 UTC)" (scheduled at 2025-06-19 23:08:31.287784+00:00)
+2025-06-19 23:08:31,290 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:13:31 UTC)" executed successfully
+2025-06-19 23:13:31,288 - DEBUG - Looking for jobs to run
+2025-06-19 23:13:31,288 - DEBUG - Next wakeup is due at 2025-06-19 23:18:31.287784+00:00 (in 299.999153 seconds)
+2025-06-19 23:13:31,289 - INFO - Running job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:18:31 UTC)" (scheduled at 2025-06-19 23:13:31.287784+00:00)
+2025-06-19 23:13:31,290 - INFO - Job "trim_log_file (trigger: interval[0:05:00], next run at: 2025-06-19 23:18:31 UTC)" executed successfully
