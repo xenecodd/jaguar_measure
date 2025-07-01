@@ -1,5 +1,4 @@
 import os
-import sqlite3
 import threading
 import time
 import numpy as np
@@ -66,20 +65,6 @@ def write_current_point_index(index: int):
     file_path = os.path.join(base_dir, "point_index.txt")
     with open(file_path, 'w') as file:
         file.write(str(index))
-
-def is_mysql_available() -> bool:
-    try:
-        conn = mysql.connector.connect(
-            host="192.168.1.180",
-            user="cobot_dbuser",
-            password="um6vv$7*sJ@5Q*",
-            database="cobot",
-            connection_timeout=2  # hızlıca timeout versin
-        )
-        conn.close()
-        return True
-    except mysql.connector.Error:
-        return False
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(base_dir, 'config.json')
@@ -185,42 +170,6 @@ class JaguarScanner:
             logger.error(f"General error: {e}")
             return False
 
-    @staticmethod
-    def flush_sqlite_to_mysql():
-        import mysql.connector
-        try:
-            conn_mysql = mysql.connector.connect(
-                host="192.168.1.180",
-                user="cobot_dbuser",
-                password="um6vv$7*sJ@5Q*",
-                database="cobot"
-            )
-        except:
-            logger.warning("MySQL bağlantısı yok, flush yapılmadı.")
-            return
-
-        conn_sqlite = sqlite3.connect("local_buffer.db")
-        cursor_sqlite = conn_sqlite.cursor()
-        cursor_sqlite.execute("SELECT * FROM buffered_results")
-        rows = cursor_sqlite.fetchall()
-
-        cursor_mysql = conn_mysql.cursor()
-        insert_query = """
-            INSERT INTO scan_results (date, iteration, group_number, feature, value)
-            VALUES (%s, %s, %s, %s, %s)
-        """
-
-        for row in rows:
-            _, date, iteration, group_number, feature, value = row
-            cursor_mysql.execute(insert_query, (date, iteration, group_number, feature, value))
-
-        conn_mysql.commit()
-        conn_mysql.close()
-
-        # Temizle
-        cursor_sqlite.execute("DELETE FROM buffered_results")
-        conn_sqlite.commit()
-        conn_sqlite.close()
 
     @staticmethod
     def rotate_point_cloud(points: np.ndarray, angle_degrees: float, axis: str) -> np.ndarray:
@@ -269,35 +218,6 @@ class JaguarScanner:
         while ignored and next_index in ignored:
             next_index = (next_index + 1) % total_points
         return next_index
-
-    def write_to_sqlite(self, result, iteration, group_number):
-        conn = sqlite3.connect("local_buffer.db")
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS buffered_results (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
-                iteration INTEGER,
-                group_number INTEGER,
-                feature TEXT,
-                value REAL
-            )
-        """)
-
-        for feature, raw_value in result.items():
-            try:
-                value = float(raw_value)
-            except (ValueError, TypeError):
-                value = None
-
-            cursor.execute("""
-                INSERT INTO buffered_results (date, iteration, group_number, feature, value)
-                VALUES (DATE('now'), ?, ?, ?, ?)
-            """, (iteration, group_number, feature, value))
-
-        conn.commit()
-        conn.close()
 
     def check_part_quality(self, results: dict) -> int:
         for feature, target_tolerance in config["tolerances"].items():
@@ -579,23 +499,6 @@ class JaguarScanner:
         logger.debug("Vertical measurements processed successfully.")
         return current_results
 
-    def pick_tape(self):
-        self.robot.SetDO(1, 1)      # mainflow on
-        self.robot.SetDO(0, 0)      # Piston off
-        time.sleep(3)
-        self.robot.SetDO(5, 0)      # Rail open
-        self.robot.SetDO(2, 1)      # Rail closed
-        time.sleep(2)
-        self.robot.SetDO(0, 1)      # Piston on
-        time.sleep(1)
-        self.robot.SetDO(3, 1)      # Vacuum on
-        time.sleep(2)
-        self.robot.SetDO(0, 0)      # Piston off
-        time.sleep(4)
-        self.robot.SetDO(2, 0)
-        self.robot.SetDO(5, 1)      
-        time.sleep(2)
-
     def after_scan(self,quality_check: int):
 
         # Part drop operations
@@ -643,7 +546,7 @@ class JaguarScanner:
                     self.robot.SetDO(1, 1)      # mainflow on
                     self.robot.SetDO(0, 0)      # Piston off
                     self.robot.WaitMs(3000)
-                    self.robot.SetDO(5, 0)      # Rail open
+                    self.robot.SetDO(4, 0)      # Rail open
                     self.robot.SetDO(2, 1)      # Rail closed
                     self.robot.WaitMs(2000)
                     self.robot.SetDO(0, 1)      # Piston on
@@ -653,7 +556,7 @@ class JaguarScanner:
                     self.robot.SetDO(0, 0)      # Piston off
                     self.robot.WaitMs(4000)
                     self.robot.SetDO(2, 0)
-                    self.robot.SetDO(5, 1)      
+                    self.robot.SetDO(4, 1)      
                     self.robot.WaitMs(2000)
                     self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
@@ -669,7 +572,7 @@ class JaguarScanner:
                     self.robot.WaitMs(1000)
                     self.robot.SetDO(0, 0)      # Piston off
                     self.robot.WaitMs(3000)
-                    self.robot.SetDO(5, 0)      # Rail open
+                    self.robot.SetDO(4, 0)      # Rail open
                     self.robot.SetDO(2, 1)      # Rail closed
                     self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 20)
                     self.robot.WaitMs(1000)
@@ -717,6 +620,42 @@ class JaguarScanner:
             else:
                 logger.info("Part drop setting disabled.")
 
+    def write_to_db(self, result: Dict[str, float], iteration: int):
+        conn = mysql.connector.connect(
+            host="192.168.1.180",
+            user="cobot_dbuser",
+            password="um6vv$7*sJ@5Q*",
+            database="cobot"
+        )
+        cursor = conn.cursor()
+
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS scan_results (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            date DATE,
+            iteration INT,
+            feature VARCHAR(255),
+            value DOUBLE
+        )
+        """
+        cursor.execute(create_table_query)
+        conn.commit()
+
+        insert_query = "INSERT INTO scan_results (date, iteration, feature, value) VALUES (CURDATE(), %s, %s, %s)"
+
+        for feature_name, raw_value in result.items():
+            try:
+                value_float = float(raw_value)
+            except (ValueError, TypeError):
+                value_float = None
+
+            data = (iteration, feature_name, value_float)
+            cursor.execute(insert_query, data)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
     def combine_results(self, vertical_results: dict) -> dict:
         # Helper function to safely get values
         def safe_get(dict_obj, key, default=None):
@@ -758,48 +697,8 @@ class JaguarScanner:
         
         return results
 
-    def get_current_group_info(self):
-            """Veritabanından mevcut grup numarasını ve o gruptaki index'leri çeker"""
-            conn = mysql.connector.connect(
-                host="192.168.1.180",
-                user="cobot_dbuser",
-                password="um6vv$7*sJ@5Q*",
-                database="cobot"
-            )
-
-            cursor = conn.cursor()
-
-            create_table_query = """
-            CREATE TABLE IF NOT EXISTS scan_results (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                date DATE,
-                iteration INT,
-                group_number INT,
-                feature VARCHAR(255),
-                value DOUBLE
-            )
-            """
-            cursor.execute(create_table_query)
-            
-            # En son grup numarasını bul
-            cursor.execute("SELECT MAX(group_number) FROM scan_results")
-            result = cursor.fetchone()
-            current_group = result[0] if result[0] is not None else 0
-            
-            # Mevcut gruptaki benzersiz index'leri çek
-            cursor.execute("SELECT DISTINCT iteration FROM scan_results WHERE group_number = %s", (current_group,))
-            group_indices = set(row[0] for row in cursor.fetchall())
-            
-            cursor.close()
-            conn.close()
-            
-            return current_group, group_indices
-
     def run_scan_cycle(self):
         ROBOT_POSITIONS = config["robot_positions"]
-
-        # Başlangıçta grup bilgilerini çek
-        self.current_group, self.group_indices = self.get_current_group_info()
 
         if self.robot_tcp[0] >= 300:
             if self.robot_tcp[1] >= 0:
@@ -810,15 +709,10 @@ class JaguarScanner:
                 logger.error("Robot is on the left side", self.robot_tcp[0])
                 self.robot.MoveCart(left_transit_point, 0, 0, vel=config["vel_mul"] * 60)
                 self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 60)
-        
         self.cycle = 0
         while self.cycle < config["range_"]:
             start_time = time.time()
             current_results = {}
-            selected_results = {}  # Initialize selected_results
-            
-            # Her cycle için deneme verilerini saklamak için liste
-            attempt_results = []
             
             current_index = read_current_point_index()
             if current_index in config["ignored_points"]:
@@ -874,118 +768,42 @@ class JaguarScanner:
 
                 current_results = self.process_vertical_measurement(vertical_data)
                 
-                # Bu deneme sonucunu sakla
-                attempt_results.append(current_results.copy())
+                quality_check = True if self.check_part_quality(current_results)==1 else False
                 
-                quality_check_result = self.check_part_quality(current_results)
-                
-                # Geçerli ölçüm kontrolü (True veya False dışında değer dönerse geçersiz)
-                is_valid_measurement = quality_check_result in [True, False]
-                quality_check = True if quality_check_result == True else False
-                
-                if not is_valid_measurement:
+                if not quality_check == 1:
                     if self.rescan < config["max_rescan"]:
                         self.rescan += 1
-                        logger.error("Invalid measurement detected (noise). Restarting scan.")
-                        continue
-                    else:
-                        logger.error("Max rescan attempts reached. Using last measurement...")
-                elif not quality_check:
-                    if self.rescan < config["max_rescan"]:
-                        self.rescan += 1
-                        logger.error("Quality check failed. Restarting scan.")
+                        logger.error("Quality check failed or abnormal values detected. Restarting scan.")
                         continue
                     else:
                         logger.error("Max rescan attempts reached. Continuing...")
 
-                # Geçerli ölçümlerden son geçerli olanını seç
-                valid_results = []
-                for result in attempt_results:
-                    test_quality = self.check_part_quality(result)
-                    if test_quality in [True, False]:
-                        valid_results.append(result)
-                
-                # Son geçerli ölçümü kullan, yoksa son ölçümü kullan
-                if valid_results:
-                    selected_results = valid_results[-1]  # Son geçerli ölçüm
-                    final_quality_check = self.check_part_quality(selected_results) == True
-                    logger.info("Using last valid measurement from attempts.")
-                else:
-                    selected_results = attempt_results[-1]  # Son ölçüm (geçersiz olsa da)
-                    final_quality_check = False
-                    logger.warning("No valid measurements found. Using last measurement.")
-
-                self.after_scan(final_quality_check) # After scan operations
+                self.after_scan(quality_check) # After scan operations, such as dropping the part or putting it back.
 
                 self.rescan = 0  # Reset rescan counter after successful scan
                 self.cycle += 1  # Increment cycle count
 
-                selected_results["Index"] = read_current_point_index()
-                selected_results["OK"] = "1" if final_quality_check else "0"
-                
-                # Grup yönetimi
-                current_index = read_current_point_index()
-                if current_index not in self.group_indices:
-                    # Bu index bu gruba ilk kez ekleniyor
-                    self.group_indices.add(current_index)
-                    
-                    # Eğer grup 64 index'e ulaştıysa yeni grup başlat
-                    if len(self.group_indices) >= 64:
-                        self.current_group += 1
-                        self.group_indices = {current_index}  # Yeni grup için sadece bu index
-                
+                current_results["Index"] = read_current_point_index()
+                current_results["OK"] = "1" if quality_check else "0"
                 if config["save_to_db"]:
                     try:
                         logger.error("Writing results to database...")
-                        self.write_to_db(selected_results, iteration=read_current_point_index(), group_number=self.current_group)
+                        self.write_to_db(current_results, iteration=read_current_point_index())
                         logger.error("Results written to database successfully.")
                     except Exception as e:
                         logger.error(f"Database write error: {e}")
-                
-                selected_results["Processing Time (s)"] = time.time() - start_time
-                
-                # Bellekteki deneme verilerini temizle
-                attempt_results.clear()
+                current_results["Processing Time (s)"] = time.time() - start_time
                 
             except Exception as e:
                 current_results = {"Error": str(e)}
-                selected_results = current_results
             finally:
                 if config["use_agg"] == True:
                     plt.close("all")
-                if "Error" in selected_results or "Index" in selected_results:
+                if "Error" in current_results or "Index" in current_results:
                     with open('jsons/scan_output.json', 'a') as f:
-                        f.write(json.dumps(selected_results) + '\n')
+                        f.write(json.dumps(current_results) + '\n')
 
-    def write_to_db(self, result: Dict[str, float], iteration: int, group_number: int):
-        try:
-            self.flush_sqlite_to_mysql()
-
-            conn = mysql.connector.connect(
-                host="192.168.1.180",
-                user="cobot_dbuser",
-                password="um6vv$7*sJ@5Q*",
-                database="cobot"
-            )
-            cursor = conn.cursor()
-            insert_query = "INSERT INTO scan_results (date, iteration, group_number, feature, value) VALUES (CURDATE(), %s, %s, %s, %s)"
-
-            for feature_name, raw_value in result.items():
-                try:
-                    value_float = float(raw_value)
-                except (ValueError, TypeError):
-                    value_float = None
-
-                data = (iteration, group_number, feature_name, value_float)
-                cursor.execute(insert_query, data)
-
-            conn.commit()
-            cursor.close()
-            conn.close()
-
-        except Exception as e:
-            logger.error(f"MySQL yazım hatası: {e}")
-            self.write_to_sqlite(result, iteration, group_number)  # Local yedek
+        write_current_point_index(self.get_next_valid_index(current_index, len(self.points)))
 
 if __name__ == "__main__":
     scanner = JaguarScanner()

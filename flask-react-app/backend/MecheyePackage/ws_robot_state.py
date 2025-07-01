@@ -2,7 +2,7 @@ import json
 import threading
 import websocket
 import time
-from MecheyePackage.robot_control import login, send_command
+from MecheyePackage.robot_control import login
 import logging
 
 logger = logging.getLogger(__name__)

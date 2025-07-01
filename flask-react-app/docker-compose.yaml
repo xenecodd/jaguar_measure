@@ -9,6 +9,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_DEVICE_IP=${IP_ADDRESS}
       - REACT_APP_PORT=5000
+      - PORT=80
     working_dir: /app
     command: bash -c "npm install && npm start"
     depends_on:

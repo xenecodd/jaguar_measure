@@ -246,10 +246,20 @@ def download_excel():
         file_path = Path(__file__).resolve().parent.parent / 'jsons' / file_name
         if not os.path.exists(file_path):
             return jsonify({"message": f"File {file_name} not found"}), 404
-
+        
         with open(file_path, 'r') as f:
             data = [json.loads(line) for line in f if line.strip()]
-            save_to_excel(data)
+
+        latest_results_by_index = {}
+        for result in data:
+            idx = result.get("Index")
+            latest_results_by_index[idx] = result
+
+        filtered_sorted_data = sorted(
+            [r for r in latest_results_by_index.values() if r.get("Index") is not None],
+            key=lambda r: r["Index"]
+        )
+        save_to_excel(filtered_sorted_data)
 
         excel_file_path = Path(__file__).resolve().parent.parent / 'excel' / 'scan_results.xlsx'
         return send_file(excel_file_path,

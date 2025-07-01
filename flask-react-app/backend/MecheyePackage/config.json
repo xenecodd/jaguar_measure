@@ -5,13 +5,13 @@
     "password": "um6vv$7*sJ@5Q*",
     "user": "cobot_dbuser"
   },
-  "drop_object": false,
+  "drop_object": true,
   "file_path": "point_index.txt",
   "ignored_points": [],
-  "max_rescan": 2,
+  "max_rescan": 1,
   "pick": true,
   "put_back": true,
-  "range_": 2,
+  "range_": 15,
   "robot_positions": {
     "h_2": [
       -375,

@@ -59,7 +59,7 @@ class ScanDatabaseService:
                 SELECT date, iteration, feature, value
                 FROM scan_results 
                 WHERE date BETWEEN %s AND %s
-                ORDER BY date ASC, iteration ASC, feature ASC
+                ORDER BY date ASC, iteration ASC
             """
             
             cursor.execute(query, (start_date, end_date))
@@ -67,16 +67,11 @@ class ScanDatabaseService:
             
             cursor.close()
             conn.close()
-            logger.error(f"Retrieved {len(rows)} rows from database for date range {start_date} to {end_date}")
             return self._convert_db_rows_to_json_format(rows)
             
         except Exception as e:
             print(f"Error getting scan data: {e}")
             return []
-    
-    def get_scan_data_by_date(self, target_date):
-        """Get scan data for a specific date"""
-        return self.get_scan_data_by_date_range(target_date, target_date)
     
     def _convert_db_rows_to_json_format(self, rows):
         """Convert database rows to the format expected by generate_json_data()"""
@@ -101,8 +96,8 @@ class ScanDatabaseService:
         
         # Convert to list format similar to JSON file format
         all_results = []
-        for date_key in sorted(grouped_data.keys()):
-            for iteration in sorted(grouped_data[date_key].keys()):
+        for date_key in grouped_data.keys():
+            for iteration in grouped_data[date_key].keys():
                 all_results.append(grouped_data[date_key][iteration])
         
         return all_results

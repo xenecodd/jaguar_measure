@@ -458,6 +458,7 @@ const DebugDashboard = () => {
                                 </thead>
                                 <tbody>
                                     {Object.entries(stats.failureReasons)
+                                        .sort((a, b) => (b[1] / stats.total) - (a[1] / stats.total))
                                         .map(([reason, count], idx) => {
                                             const percentage = (count / stats.total * 100).toFixed(1);
                                             return (
@@ -688,6 +689,13 @@ const DebugDashboard = () => {
     };
 
     const renderIteration = (iterationData, index) => {
+        // FIX: Define displayFeatures and processingTimeFeature
+        const displayFeatures = iterationData.features.filter(
+            (f) => !["Index", "OK", "Processing Time (s)"].includes(f.name)
+        );
+        const processingTimeFeature = iterationData.features.find(
+            (f) => f.name.toLowerCase().includes("processing time")
+        );
         const isExpanded = expandedIterations[index];
         const hasFailed = iterationData.status.ok === false;
         const validFeatures = iterationData.features.filter(f => f.tolerance_check && !f.tolerance_check.error);
@@ -706,30 +714,45 @@ const DebugDashboard = () => {
                     onClick={() => toggleIteration(index)}
                 >
                     <div className="flex items-center">
-                        <span className="mr-2 text-gray-600 transition-transform duration-200" style={{
-                            transform: isExpanded ? 'rotate(90deg)' : 'rotate(0)'
-                        }}>
+                        <span
+                            className="mr-2 text-gray-600 transition-transform duration-200"
+                            style={{ transform: isExpanded ? "rotate(90deg)" : "rotate(0)" }}
+                        >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                             </svg>
                         </span>
-                        <span className="font-medium text-gray-800">Iteration {iterationData.iteration}</span>
+
+                        <span className="font-medium text-gray-800">
+                            {(() => {
+                                const indexFeature = iterationData.features?.find(
+                                    (f) => f.name?.toLowerCase() === "index"
+                                );
+                                return indexFeature ? (
+                                    <span>Index: {indexFeature.value}</span>
+                                ) : null;
+                            })()}
+                        </span>
+
                         <div className="ml-4 hidden sm:block">
                             <div className="flex items-center">
                                 <div className="w-24 bg-gray-200 rounded-full h-2.5 mr-2">
                                     <div
-                                        className={hasFailed ? "bg-red-600 h-2.5 rounded-full" : "bg-green-600 h-2.5 rounded-full"}
+                                        className={`${hasFailed ? "bg-red-600" : "bg-green-600"} h-2.5 rounded-full`}
                                         style={{ width: `${passRate}%` }}
                                     ></div>
                                 </div>
-                                <span className="text-xs text-gray-600">{passedFeatures - failedFeaturesCount}/{totalFeatures} features passed</span>
+                                <span className="text-xs text-gray-600">
+                                    {passedFeatures}/{totalFeatures} features passed
+                                </span>
                             </div>
                         </div>
                     </div>
+
                     <div className="flex items-center">
-                        {iterationData.features.find(f => f.name === "Processing Time (s)") && (
+                        {processingTimeFeature && (
                             <span className="mr-3 text-sm text-gray-500 hidden sm:block">
-                                <span className="font-medium">Time:</span> {iterationData.features.find(f => f.name === "Processing Time (s)").value.toFixed(1)}s
+                                <span className="font-medium">Time:</span> {processingTimeFeature.value.toFixed(1)}s
                             </span>
                         )}
                         <span
@@ -740,9 +763,10 @@ const DebugDashboard = () => {
                         </span>
                     </div>
                 </div>
+
                 {isExpanded && (
                     <div className="bg-white">
-                        {hasFailed && iterationData.status.failure_reasons && iterationData.status.failure_reasons.length > 0 && (
+                        {hasFailed && iterationData.status.failure_reasons?.length > 0 && (
                             <div className="p-3 bg-red-50 border-b border-red-100">
                                 <p className="font-medium text-red-800 mb-1">Failure Reasons:</p>
                                 <ul className="list-disc pl-5 text-red-700 space-y-1">
@@ -752,16 +776,15 @@ const DebugDashboard = () => {
                                 </ul>
                             </div>
                         )}
+
                         <div className="p-3 border-b bg-gray-50 flex flex-wrap gap-2">
                             <button
                                 className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium py-1 px-2 rounded"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     const table = document.getElementById(`features-table-${index}`);
-                                    const rows = table.querySelectorAll('tr');
-                                    rows.forEach(row => {
-                                        row.style.display = '';
-                                    });
+                                    const rows = table.querySelectorAll("tbody tr");
+                                    rows.forEach((row) => (row.style.display = ""));
                                 }}
                             >
                                 Show All
@@ -771,10 +794,9 @@ const DebugDashboard = () => {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     const table = document.getElementById(`features-table-${index}`);
-                                    const rows = table.querySelectorAll('tr');
-                                    rows.forEach(row => {
-                                        const isFailedRow = row.classList.contains('failed-feature');
-                                        row.style.display = isFailedRow ? '' : 'none';
+                                    const rows = table.querySelectorAll("tbody tr");
+                                    rows.forEach((row) => {
+                                        row.style.display = row.classList.contains("failed-feature") ? "" : "none";
                                     });
                                 }}
                             >
@@ -785,185 +807,181 @@ const DebugDashboard = () => {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     const table = document.getElementById(`features-table-${index}`);
-                                    const rows = table.querySelectorAll('tr');
-                                    rows.forEach(row => {
-                                        const isPassedRow = row.classList.contains('passed-feature');
-                                        row.style.display = isPassedRow ? '' : 'none';
+                                    const rows = table.querySelectorAll("tbody tr");
+                                    rows.forEach((row) => {
+                                        row.style.display = row.classList.contains("passed-feature") ? "" : "none";
                                     });
                                 }}
                             >
                                 Passed Only
                             </button>
                         </div>
+
                         <div className="overflow-x-auto">
                             <table id={`features-table-${index}`} className="min-w-full bg-white">
                                 <thead>
                                     <tr className="bg-gray-100">
-                                        <th className="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b w-1/4">Feature</th>
-                                        <th className="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b w-1/4">Value</th>
-                                        <th className="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b w-2/4">Tolerance Check</th>
+                                        <th className="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b w-1/4">
+                                            Feature
+                                        </th>
+                                        <th className="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b w-1/4">
+                                            Value
+                                        </th>
+                                        <th className="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b w-2/4">
+                                            Tolerance Check
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {iterationData.features
-                                        .filter(feature => feature.name !== "Index" && feature.name !== "OK")
-                                        .map((feature, featureIdx) => {
-                                            const hasFailedTolerance = feature.tolerance_check &&
-                                                !feature.tolerance_check.error &&
-                                                !feature.tolerance_check.within_tolerance;
-                                            const hasPassedTolerance = feature.tolerance_check &&
-                                                !feature.tolerance_check.error &&
-                                                feature.tolerance_check.within_tolerance;
-                                            let toleranceUtilization = 0;
-                                            if (feature.tolerance_check && feature.tolerance_check.tolerance > 0) {
-                                                toleranceUtilization = Math.abs(feature.tolerance_check.distance / feature.tolerance_check.tolerance) * 100;
-                                            }
-                                            return (
-                                                <tr
-                                                    key={featureIdx}
-                                                    className={`border-b hover:bg-gray-50 ${hasFailedTolerance ? 'bg-red-50 failed-feature' :
-                                                        hasPassedTolerance ? 'passed-feature' : ''
-                                                        }`}
-                                                >
-                                                    <td className="py-3 px-4 font-medium">
-                                                        <div className="flex items-center">
-                                                            {hasFailedTolerance && (
-                                                                <span className="inline-flex items-center justify-center mr-2 flex-shrink-0 w-5 h-5 bg-red-100 text-red-800 rounded-full">
-                                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                                    </svg>
-                                                                </span>
-                                                            )}
-                                                            {hasPassedTolerance && (
-                                                                <span className="inline-flex items-center justify-center mr-2 flex-shrink-0 w-5 h-5 bg-green-100 text-green-800 rounded-full">
-                                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                                    </svg>
-                                                                </span>
-                                                            )}
-                                                            {feature.name}
-                                                        </div>
-                                                    </td>
-                                                    <td
-                                                        className="py-3 px-4 font-mono"
-                                                        style={{
-                                                            color: feature.value_color ? `#${feature.value_color}` : 'inherit',
-                                                            fontWeight: hasFailedTolerance ? 'bold' : 'normal'
-                                                        }}
-                                                    >
-                                                        {typeof feature.value === 'object'
-                                                            ? JSON.stringify(feature.value)
-                                                            : typeof feature.value === 'number'
-                                                                ? feature.value.toFixed(3)
-                                                                : feature.value}
-                                                    </td>
-                                                    <td className="py-3 px-4">
-                                                        {feature.tolerance_check ? (
-                                                            <div>
-                                                                {feature.tolerance_check.error ? (
-                                                                    <span className="text-gray-500 italic">{feature.tolerance_check.error}</span>
-                                                                ) : (
-                                                                    <div className="flex flex-col">
-                                                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
-                                                                            <div className="text-sm">
-                                                                                <span className="text-gray-600 text-xs">Target:</span>
-                                                                                <span className="ml-1 font-medium">{feature.tolerance_check.target}</span>
-                                                                            </div>
-                                                                            <div className="text-sm">
-                                                                                <span className="text-gray-600 text-xs">Tolerance:</span>
-                                                                                <span className="ml-1 font-medium">±{feature.tolerance_check.tolerance}</span>
-                                                                            </div>
-                                                                            <div className="text-sm">
-                                                                                <span className="text-gray-600 text-xs">Distance:</span>
-                                                                                <span
-                                                                                    className={`ml-1 font-medium ${hasFailedTolerance ? 'text-red-700' : 'text-gray-800'}`}
-                                                                                >
-                                                                                    {feature.tolerance_check.distance?.toFixed(3)}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div className="text-sm">
-                                                                                <span className="text-gray-600 text-xs">Remaining:</span>
-                                                                                <span
-                                                                                    className={`ml-1 font-medium ${feature.tolerance_check.tolerance_remaining < 0
-                                                                                        ? 'text-red-700'
-                                                                                        : feature.tolerance_check.tolerance_remaining / feature.tolerance_check.tolerance < 0.2
-                                                                                            ? 'text-yellow-700'
-                                                                                            : 'text-green-700'
-                                                                                        }`}
-                                                                                >
-                                                                                    {feature.tolerance_check.tolerance_remaining?.toFixed(3) || 'N/A'}
-                                                                                </span>
-                                                                            </div>
-                                                                        </div>
-                                                                        {feature.tolerance_check.tolerance > 0 && (
-                                                                            <div className="mb-1">
-                                                                                <div className="flex items-center">
-                                                                                    <div className="flex-grow h-4 bg-gray-200 rounded-full overflow-hidden">
-                                                                                        <div className="relative w-full h-full">
-                                                                                            <div className="absolute inset-y-0 left-1/2 w-0.5 bg-black z-10"></div>
-                                                                                            <div
-                                                                                                className={`absolute inset-y-0 h-full ${hasFailedTolerance ? 'bg-red-600' : 'bg-green-600'}`}
-                                                                                                style={{
-                                                                                                    width: `${Math.min(100, toleranceUtilization)}%`,
-                                                                                                    left: '50%',
-                                                                                                    transform: feature.value < feature.tolerance_check.target ? 'translateX(-100%)' : 'none'
-                                                                                                }}
-                                                                                            ></div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <span className={`ml-2 text-xs ${hasFailedTolerance ? 'text-red-700' : 'text-green-700'}`}>
-                                                                                        {toleranceUtilization.toFixed(1)}%
-                                                                                    </span>
-                                                                                </div>
-                                                                                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                                                                                    <span>{(feature.tolerance_check.target - feature.tolerance_check.tolerance).toFixed(1)}</span>
-                                                                                    <span>{feature.tolerance_check.target}</span>
-                                                                                    <span>{(feature.tolerance_check.target + feature.tolerance_check.tolerance).toFixed(1)}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            <span className="text-gray-500 italic">No tolerance defined</span>
+                                    {displayFeatures.map((feature, featureIdx) => {
+                                        const tc = feature.tolerance_check;
+                                        const hasFailed = tc && !tc.error && !tc.within_tolerance;
+                                        const hasPassed = tc && !tc.error && tc.within_tolerance;
+                                        const tolerance = tc?.tolerance || 0;
+                                        const distance = tc?.distance || 0;
+                                        const utilization = tolerance > 0 ? Math.abs(distance / tolerance) * 100 : 0;
+
+                                        return (
+                                            <tr
+                                                key={featureIdx}
+                                                className={`border-b hover:bg-gray-50 ${hasFailed ? "bg-red-50 failed-feature" : hasPassed ? "passed-feature" : ""
+                                                    }`}
+                                            >
+                                                <td className="py-3 px-4 font-medium">
+                                                    <div className="flex items-center">
+                                                        {hasFailed && (
+                                                            <span className="inline-flex items-center justify-center mr-2 w-5 h-5 bg-red-100 text-red-800 rounded-full">
+                                                                ×
+                                                            </span>
                                                         )}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
+                                                        {hasPassed && (
+                                                            <span className="inline-flex items-center justify-center mr-2 w-5 h-5 bg-green-100 text-green-800 rounded-full">
+                                                                ✓
+                                                            </span>
+                                                        )}
+                                                        {feature.name}
+                                                    </div>
+                                                </td>
+                                                <td
+                                                    className="py-3 px-4 font-mono"
+                                                    style={{
+                                                        color: feature.value_color?.startsWith("#")
+                                                            ? feature.value_color
+                                                            : feature.value_color
+                                                                ? `#${feature.value_color}`
+                                                                : undefined,
+                                                        fontWeight: hasFailed ? "bold" : "normal",
+                                                    }}
+                                                >
+                                                    {typeof feature.value === "object" && feature.value !== null
+                                                        ? JSON.stringify(feature.value)
+                                                        : typeof feature.value === "number"
+                                                            ? feature.value.toFixed(3)
+                                                            : feature.value}
+                                                </td>
+                                                <td className="py-3 px-4">
+                                                    {!tc ? (
+                                                        <span className="text-gray-500 italic">No tolerance defined</span>
+                                                    ) : tc.error ? (
+                                                        <span className="text-gray-500 italic">{tc.error}</span>
+                                                    ) : (
+                                                        <div>
+                                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2 text-sm">
+                                                                <div>
+                                                                    <span className="text-gray-600 text-xs">Target:</span>{" "}
+                                                                    <span className="ml-1 font-medium">{tc.target}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <span className="text-gray-600 text-xs">Tolerance:</span>{" "}
+                                                                    <span className="ml-1 font-medium">±{tc.tolerance}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <span className="text-gray-600 text-xs">Distance:</span>{" "}
+                                                                    <span
+                                                                        className={`ml-1 font-medium ${hasFailed ? "text-red-700" : "text-gray-800"
+                                                                            }`}
+                                                                    >
+                                                                        {distance.toFixed(3)}
+                                                                    </span>
+                                                                </div>
+                                                                <div>
+                                                                    <span className="text-gray-600 text-xs">Remaining:</span>{" "}
+                                                                    <span
+                                                                        className={`ml-1 font-medium ${tc.tolerance_remaining < 0
+                                                                            ? "text-red-700"
+                                                                            : tc.tolerance_remaining / tolerance < 0.2
+                                                                                ? "text-yellow-700"
+                                                                                : "text-green-700"
+                                                                            }`}
+                                                                    >
+                                                                        {tc.tolerance_remaining?.toFixed(3) || "N/A"}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            {tolerance > 0 && (
+                                                                <div className="mb-1">
+                                                                    <div className="flex items-center">
+                                                                        <div className="flex-grow h-4 bg-gray-200 rounded-full overflow-hidden relative">
+                                                                            <div className="absolute inset-y-0 left-1/2 w-0.5 bg-black z-10"></div>
+                                                                            <div
+                                                                                className={`absolute inset-y-0 h-full ${hasFailed ? "bg-red-600" : "bg-green-600"
+                                                                                    }`}
+                                                                                style={{
+                                                                                    width: `${Math.min(100, utilization)}%`,
+                                                                                    left: "50%",
+                                                                                    transform:
+                                                                                        feature.value < tc.target
+                                                                                            ? "translateX(-100%)"
+                                                                                            : "none",
+                                                                                }}
+                                                                            ></div>
+                                                                        </div>
+                                                                        <span
+                                                                            className={`ml-2 text-xs ${hasFailed ? "text-red-700" : "text-green-700"
+                                                                                }`}
+                                                                        >
+                                                                            {utilization.toFixed(1)}%
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                                                        <span>{(tc.target - tc.tolerance).toFixed(1)}</span>
+                                                                        <span>{tc.target}</span>
+                                                                        <span>{(tc.target + tc.tolerance).toFixed(1)}</span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
+
                         <div className="p-3 bg-gray-50 border-t text-sm text-gray-600 flex flex-wrap gap-4">
-                            {iterationData.features.find(f => f.name === "Processing Time (s)") && (
+                            {processingTimeFeature && (
                                 <div>
-                                    <span className="font-medium">Processing Time:</span>
-                                    {iterationData.features.find(f => f.name === "Processing Time (s)").value.toFixed(2)}s
+                                    <span className="font-medium">Processing Time:</span>{" "}
+                                    {processingTimeFeature.value.toFixed(2)}s
                                 </div>
                             )}
                             <div>
-                                <span className="font-medium">Feature Pass Rate:</span>
-                                {passedFeatures}/{totalFeatures} ({(passRate).toFixed(1)}%)
+                                <span className="font-medium">Feature Pass Rate:</span> {passedFeatures}/{totalFeatures} (
+                                {passRate.toFixed(1)}%)
                             </div>
                             <div>
                                 <button
                                     className="text-blue-600 hover:text-blue-800 font-medium"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        const features = iterationData.features
-                                            .filter(f => f.name !== "Index" && f.name !== "OK" && f.name !== "Processing Time (s)");
-                                        const failedFeature = features.find(f =>
-                                            f.tolerance_check &&
-                                            !f.tolerance_check.error &&
-                                            !f.tolerance_check.within_tolerance
+                                        const failed = displayFeatures.find(
+                                            (f) => f.tolerance_check && !f.tolerance_check.error && !f.tolerance_check.within_tolerance
                                         );
-                                        if (failedFeature) {
-                                            setSelectedFeature(failedFeature.name);
-                                        } else if (features.length > 0) {
-                                            setSelectedFeature(features[0].name);
-                                        }
-                                        document.getElementById('feature-chart-section').scrollIntoView({ behavior: 'smooth' });
+                                        const first = displayFeatures[0];
+                                        setSelectedFeature(failed ? failed.name : first?.name);
+                                        document.getElementById("feature-chart-section")?.scrollIntoView({ behavior: "smooth" });
                                     }}
                                 >
                                     Analyze Features
@@ -974,6 +992,7 @@ const DebugDashboard = () => {
                 )}
             </div>
         );
+
     };
 
     return (

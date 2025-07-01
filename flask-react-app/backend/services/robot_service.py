@@ -2,10 +2,8 @@
 import threading
 import time
 import logging
-from MecheyePackage.mecheye_trigger import robot
 from MecheyePackage.ws_robot_state import ws_manager
 from models.robot_state import state
-from MecheyePackage.robot_control import send_command
 from config import BASE_DIR
 import os
 
@@ -16,8 +14,6 @@ ws_manager.connect()
 
 # Global callback fonksiyonu için değişken
 status_callback = None
-
-send_command({"cmd":303,"data":{"mode":"1"}})
 
 def set_status_callback(callback):
     """Robot status callback'ini ayarla"""

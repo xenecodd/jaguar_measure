@@ -123,7 +123,7 @@ main() {
     
     # === Kullanışlı bilgiler ===
     echo -e "\n${GREEN}=== Setup Complete ===${NC}"
-    echo -e "${GREEN}Application should be accessible at: http://$IP_ADDRESS:3000${NC}"
+    echo -e "${GREEN}Application should be accessible at: http://$IP_ADDRESS${NC}"
     echo -e "\n${GREEN}Useful commands:${NC}"
     echo -e " ${GREEN}Stop containers:${NC} sudo docker compose down"
     echo -e " ${GREEN}View logs:${NC} sudo docker compose logs -f"
