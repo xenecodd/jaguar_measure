@@ -315,7 +315,7 @@ def log_subprocess_output(process, log_prefix="[SCAN]", error_prefix="[SCAN_ERR]
                 if not line:
                     break
                 # Filter out specific error messages
-                if "Failed to obtain the IP address" in line:
+                if "Failed to obtain the IP address" or "sh: 1: ping: not found" in line:
                     continue
                 logger.error(f"{error_prefix} {line.strip()}")
         except Exception as e:

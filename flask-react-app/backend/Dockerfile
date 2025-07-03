@@ -1,65 +1,113 @@
-FROM python:3.10
+# ==============================================================================
+# Production Dockerfile for Robotics Control & Data Processing API
+# ==============================================================================
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV SHELL=/bin/bash
+FROM python:3.10-slim
 
-# Update system and install system dependencies
+# ==============================================================================
+# Environment Configuration
+# ==============================================================================
+ENV DEBIAN_FRONTEND=noninteractive \
+    SHELL=/bin/bash \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    LD_PRELOAD=/lib/x86_64-linux-gnu/liblz4.so.1 \
+    PYTHONPATH=/usr/local/lib/python3.10/site-packages
+
+# ==============================================================================
+# System Dependencies Installation
+# ==============================================================================
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 \
-    python3-pip \
+    # Python development
     python3-dev \
+    # OpenCV dependencies
     libopencv-dev \
-    libflann-dev \
-    openssl \
-    libusb-1.0-0 \
-    libusb-1.0-0-dev \
-    wget \
-    net-tools \
-    ca-certificates \
+    libglfw3-dev \
+    libgtk-3-dev \
+    # Build tools
     gcc \
     g++ \
     cmake \
     make \
-    libglfw3-dev \
-    libgtk-3-dev \
+    pkg-config \
+    # System libraries
+    libflann-dev \
     libssl-dev \
-    pkg-config
+    libusb-1.0-0 \
+    libusb-1.0-0-dev \
+    # Utilities
+    wget \
+    net-tools \
+    ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN apt-get clean
+# ==============================================================================
+# Python Dependencies Installation
+# ==============================================================================
 
-# Upgrade pip before installing Python dependencies
-RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install --upgrade pip wheel setuptools
 
-# Install required Python packages
-RUN python3 -m pip install --no-cache-dir wheel Cython opencv-python opencv-contrib-python MechEyeAPI websocket-client
 
-# Copy and install Mech-Eye API
+# Install system-level Python packages that require compilation
+RUN python3 -m pip install --no-cache-dir \
+    Cython \
+    numpy \
+    opencv-python \
+    opencv-contrib-python
+
+# ==============================================================================
+# Mech-Eye API Installation
+# ==============================================================================
+# Copy and install Mech-Eye API package
 COPY ./MecheyePackage/mecheyeinstall/Mech-Eye_API_2.5.0_amd64.deb /tmp/
-RUN dpkg -i /tmp/Mech-Eye_API_2.5.0_amd64.deb || apt-get install -f -y
+RUN dpkg -i /tmp/Mech-Eye_API_2.5.0_amd64.deb || \
+    (apt-get update && apt-get install -f -y) && \
+    rm -f /tmp/Mech-Eye_API_2.5.0_amd64.deb
 
-# Copy application code and requirements.txt
-WORKDIR /backend
+# ==============================================================================
+# Application Setup
+# ==============================================================================
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python application dependencies
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
+
+# Install additional required packages
+RUN python3 -m pip install --no-cache-dir \
+    MechEyeAPI \
+    websocket-client \
+    apscheduler \
+    eventlet
+
+# ==============================================================================
+# Custom Package Installation
+# ==============================================================================
+# Create fair_api directory and copy shared object
+RUN mkdir -p /usr/local/lib/python3.10/site-packages/fair_api
+COPY ./MecheyePackage/fair_api/Robot.cpython-310-x86_64-linux-gnu.so \
+     /usr/local/lib/python3.10/site-packages/fair_api/
+
+# Replace profiler_utils.py with custom version
+RUN rm -f /usr/local/lib/python3.10/site-packages/mecheye/profiler_utils.py
+COPY ./MecheyePackage/profiler_utils.py \
+     /usr/local/lib/python3.10/site-packages/mecheye/
+
+# ==============================================================================
+# Application Code
+# ==============================================================================
+RUN pip install appwrite
 COPY . .
 
 EXPOSE 5000
 
-# Install Python dependencies from requirements.txt
-RUN python3 -m pip install --no-cache-dir -r requirements.txt
-
-# RUN mkdir -p /usr/local/lib/python3.10/site-packages/fair_api
-# RUN wget -P /usr/local/lib/python3.10/site-packages/fair_api/ https://raw.githubusercontent.com/FAIR-INNOVATION/fairino-python-sdk/a1451207e918c228b8933bf5d89bc58a05618103/Linux/fairino/Robot.cpython-310-x86_64-linux-gnu.so
-
-# Copy the fair_api shared object file
-RUN mkdir -p /usr/local/lib/python3.10/site-packages/fair_api
-COPY ./MecheyePackage/fair_api/Robot.cpython-310-x86_64-linux-gnu.so /usr/local/lib/python3.10/site-packages/fair_api/
-
-ENV LD_PRELOAD=/lib/x86_64-linux-gnu/liblz4.so.1
-ENV PYTHONPATH=/usr/local/lib/python3.10/site-packages
-
-RUN rm -rf /usr/local/lib/python3.10/site-packages/mecheye/profiler_utils.py
-COPY ./MecheyePackage/profiler_utils.py /usr/local/lib/python3.10/site-packages/mecheye/
-
-RUN python3 -m pip install --no-cache-dir apscheduler
-
-# Start the application
+# ==============================================================================
+# Application Startup
+# ==============================================================================
+# Set default command
 CMD ["python3", "run.py"]

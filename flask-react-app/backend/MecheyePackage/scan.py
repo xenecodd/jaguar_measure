@@ -15,7 +15,7 @@ import mysql.connector
 import logging
 from typing import Dict
 import socketio
-
+from ResultWriter import AppwriteDataWriter
 
 DEVICE_IP = os.environ.get('IP_ADDRESS')
 PORT = os.environ.get('PORT')
@@ -142,7 +142,9 @@ class JaguarScanner:
         self.di0_thread = threading.Thread(target=self.read_di0_updates, daemon=True)
         self.di0_thread.start()
         self.rescan = 0
-    
+        self.db_writer = AppwriteDataWriter()
+        
+
     def read_di0_updates(self):
         sio = self.sio
         @sio.event
@@ -184,43 +186,6 @@ class JaguarScanner:
         except Exception as e:
             logger.error(f"General error: {e}")
             return False
-
-    @staticmethod
-    def flush_sqlite_to_mysql():
-        import mysql.connector
-        try:
-            conn_mysql = mysql.connector.connect(
-                host="192.168.1.180",
-                user="cobot_dbuser",
-                password="um6vv$7*sJ@5Q*",
-                database="cobot"
-            )
-        except:
-            logger.warning("MySQL bağlantısı yok, flush yapılmadı.")
-            return
-
-        conn_sqlite = sqlite3.connect("local_buffer.db")
-        cursor_sqlite = conn_sqlite.cursor()
-        cursor_sqlite.execute("SELECT * FROM buffered_results")
-        rows = cursor_sqlite.fetchall()
-
-        cursor_mysql = conn_mysql.cursor()
-        insert_query = """
-            INSERT INTO scan_results (date, iteration, group_number, feature, value)
-            VALUES (%s, %s, %s, %s, %s)
-        """
-
-        for row in rows:
-            _, date, iteration, group_number, feature, value = row
-            cursor_mysql.execute(insert_query, (date, iteration, group_number, feature, value))
-
-        conn_mysql.commit()
-        conn_mysql.close()
-
-        # Temizle
-        cursor_sqlite.execute("DELETE FROM buffered_results")
-        conn_sqlite.commit()
-        conn_sqlite.close()
 
     @staticmethod
     def rotate_point_cloud(points: np.ndarray, angle_degrees: float, axis: str) -> np.ndarray:
@@ -271,33 +236,16 @@ class JaguarScanner:
         return next_index
 
     def write_to_sqlite(self, result, iteration, group_number):
-        conn = sqlite3.connect("local_buffer.db")
-        cursor = conn.cursor()
+        self.db_writer.write_to_sqlite(result, iteration, group_number)
 
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS buffered_results (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
-                iteration INTEGER,
-                group_number INTEGER,
-                feature TEXT,
-                value REAL
-            )
-        """)
+    def is_database_available(self) -> bool:
+        return self.db_writer.is_appwrite_available()
 
-        for feature, raw_value in result.items():
-            try:
-                value = float(raw_value)
-            except (ValueError, TypeError):
-                value = None
+    def get_current_group_info(self):
+        return self.db_writer.get_current_group_info()
 
-            cursor.execute("""
-                INSERT INTO buffered_results (date, iteration, group_number, feature, value)
-                VALUES (DATE('now'), ?, ?, ?, ?)
-            """, (iteration, group_number, feature, value))
-
-        conn.commit()
-        conn.close()
+    def write_to_db(self, result: dict, iteration: int, group_number: int):
+        self.db_writer.write_to_db(result, iteration, group_number)
 
     def check_part_quality(self, results: dict) -> int:
         for feature, target_tolerance in config["tolerances"].items():
@@ -758,43 +706,6 @@ class JaguarScanner:
         
         return results
 
-    def get_current_group_info(self):
-            """Veritabanından mevcut grup numarasını ve o gruptaki index'leri çeker"""
-            conn = mysql.connector.connect(
-                host="192.168.1.180",
-                user="cobot_dbuser",
-                password="um6vv$7*sJ@5Q*",
-                database="cobot"
-            )
-
-            cursor = conn.cursor()
-
-            create_table_query = """
-            CREATE TABLE IF NOT EXISTS scan_results (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                date DATE,
-                iteration INT,
-                group_number INT,
-                feature VARCHAR(255),
-                value DOUBLE
-            )
-            """
-            cursor.execute(create_table_query)
-            
-            # En son grup numarasını bul
-            cursor.execute("SELECT MAX(group_number) FROM scan_results")
-            result = cursor.fetchone()
-            current_group = result[0] if result[0] is not None else 0
-            
-            # Mevcut gruptaki benzersiz index'leri çek
-            cursor.execute("SELECT DISTINCT iteration FROM scan_results WHERE group_number = %s", (current_group,))
-            group_indices = set(row[0] for row in cursor.fetchall())
-            
-            cursor.close()
-            conn.close()
-            
-            return current_group, group_indices
-
     def run_scan_cycle(self):
         ROBOT_POSITIONS = config["robot_positions"]
 
@@ -956,36 +867,6 @@ class JaguarScanner:
                 if "Error" in selected_results or "Index" in selected_results:
                     with open('jsons/scan_output.json', 'a') as f:
                         f.write(json.dumps(selected_results) + '\n')
-
-    def write_to_db(self, result: Dict[str, float], iteration: int, group_number: int):
-        try:
-            self.flush_sqlite_to_mysql()
-
-            conn = mysql.connector.connect(
-                host="192.168.1.180",
-                user="cobot_dbuser",
-                password="um6vv$7*sJ@5Q*",
-                database="cobot"
-            )
-            cursor = conn.cursor()
-            insert_query = "INSERT INTO scan_results (date, iteration, group_number, feature, value) VALUES (CURDATE(), %s, %s, %s, %s)"
-
-            for feature_name, raw_value in result.items():
-                try:
-                    value_float = float(raw_value)
-                except (ValueError, TypeError):
-                    value_float = None
-
-                data = (iteration, group_number, feature_name, value_float)
-                cursor.execute(insert_query, data)
-
-            conn.commit()
-            cursor.close()
-            conn.close()
-
-        except Exception as e:
-            logger.error(f"MySQL yazım hatası: {e}")
-            self.write_to_sqlite(result, iteration, group_number)  # Local yedek
 
 if __name__ == "__main__":
     scanner = JaguarScanner()
