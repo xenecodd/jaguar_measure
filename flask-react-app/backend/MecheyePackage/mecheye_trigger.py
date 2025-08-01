@@ -52,14 +52,14 @@ class TriggerWithExternalDeviceAndFixedRate(object):
 
         show_error(self.user_set.set_enum_value(DataAcquisitionTriggerSource.name, DataAcquisitionTriggerSource.Value_Software))
         show_error(self.user_set.set_enum_value(LineScanTriggerSource.name, LineScanTriggerSource.Value_FixedRate))
-        show_error(self.user_set.set_float_value(SoftwareTriggerRate.name, 2665.0))
+        show_error(self.user_set.set_float_value(SoftwareTriggerRate.name, 907))
         show_error(self.user_set.set_int_value(ScanLineCount.name, scan_line_count))
         show_error(self.user_set.set_int_value(CallbackRetrievalTimeout.name, 60000))
 
         show_error(self.user_set.set_int_value(LaserPower.name, 100))
         show_error(self.user_set.set_int_value(MinLaserLineWidth.name, 2))
         show_error(self.user_set.set_int_value(MaxLaserLineWidth.name, 30))
-        show_error(self.user_set.set_enum_value(AnalogGain.name, AnalogGain.Value_Gain_5))
+        show_error(self.user_set.set_enum_value(AnalogGain.name, AnalogGain.Value_Gain_2))
         show_error(self.user_set.set_int_value(DigitalGain.name, 0))
         show_error(self.user_set.set_int_value(MinGrayscaleValue.name, 50))
         show_error(self.user_set.set_enum_value(SpotSelection.name, SpotSelection.Value_Strongest))
@@ -70,7 +70,7 @@ class TriggerWithExternalDeviceAndFixedRate(object):
         show_error(self.user_set.set_bool_value(EnableBlindSpotFiltering.name, False))
         show_error(self.user_set.set_bool_value(EnableXAxisAlignment.name, False))
         show_error(self.user_set.set_enum_value(ExposureMode.name, ExposureMode.Value_Timed))
-        show_error(self.user_set.set_int_value(ExposureTime.name, 220))
+        show_error(self.user_set.set_int_value(ExposureTime.name, 1000))
 
         error, self.data_width = self.user_set.get_int_value(DataPointsPerProfile.name)
         show_error(error)

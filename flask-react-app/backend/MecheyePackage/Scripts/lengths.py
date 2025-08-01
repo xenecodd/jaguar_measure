@@ -2,11 +2,68 @@ import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
 from Scripts import edges
+import logging 
+from numpy import isfinite
 
-def get_40(points):
-    x_min = np.min(points[:, 0])  # X eksenindeki minimum değer
-    x_max = np.max(points[:, 0])  # X eksenindeki maksimum değer
-    x_width = x_max - x_min  # Genişlik (fark)
+logger = logging.getLogger(__name__)
+
+def get_40(points, debug=False):
+    """
+    Gelişmiş hassasiyet kontrolü ile nokta bulutu verilerinin genişliğini (x-ekseni aralığı) hesaplar.
+    
+    Args:
+        points (np.ndarray): (N, 3) şeklinde nokta bulutu verisi
+        debug (bool): Hata ayıklama çıktısını etkinleştir
+    
+    Returns:
+        float: 5 ondalık basamağa yuvarlanmış genişlik
+    """
+    if points.size == 0:
+        logger.warning("get_40 fonksiyonuna boş nokta bulutu verildi")
+        return 0.0
+    
+    if points.shape[1] < 1:
+        logger.error("Nokta bulutu en az x-koordinatlarına sahip olmalıdır (shape[1] >= 1)")
+        return 0.0
+    
+    # X-koordinatlarını çıkar
+    x_coords = points[:, 0]
+    
+    # Potansiyel NaN veya sonsuz değerleri kaldır
+    valid_x = x_coords[isfinite(x_coords)]
+    
+    if len(valid_x) == 0:
+        logger.warning("Nokta bulutunda geçerli x-koordinatı bulunamadı")
+        return 0.0
+    
+    # Daha yüksek hassasiyetle min ve max hesapla
+    # Yalnızca y ekseni ymax ile ymax - 50 arasındaki noktaları seç
+    y_max = np.max(points[:, 1])
+    y_min_range = y_max - 50
+    mask = (points[:, 1] <= y_max) & (points[:, 1] >= y_min_range)
+    x_coords_in_y_range = points[mask, 0]
+    valid_x = x_coords_in_y_range[isfinite(x_coords_in_y_range)]
+
+    x_min = np.min(valid_x)
+    x_max = np.max(valid_x)
+    
+    # Genişliği hesapla
+    x_width_raw = x_max - x_min
+    
+    # Kayan nokta hassasiyet sorunlarından kaçınmak için 5 ondalık basamağa yuvarla
+    x_width = round(x_width_raw, 5)
+    
+    if debug:
+        logger.info(f"get_40 Hata Ayıklama Bilgisi:")
+        logger.info(f"  Nokta bulutu şekli: {points.shape}")
+        logger.info(f"  Geçerli x-koordinatları: {len(valid_x)}")
+        logger.info(f"  X min: {x_min:.10f}")
+        logger.info(f"  X max: {x_max:.10f}")
+        logger.info(f"  Ham genişlik: {x_width_raw:.15f}")
+        logger.info(f"  Yuvarlanmış genişlik: {x_width}")
+        logger.info(f"  X aralığı: [{np.min(valid_x):.6f}, {np.max(valid_x):.6f}]")
+        logger.info(f"  X'in standart sapması: {np.std(valid_x):.6f}")
+    
     return x_width
 
 def save_filtered_point_cloud(points_array, file_path):
@@ -196,7 +253,7 @@ def filter_and_visualize_projection_with_ply(points):
     ]
     
     l_81_5 = np.min(projected_points_2d[:, 1])-np.min(points[:, 1])
-    
+    l_7_1 = np.max(projected_points_2d[:, 1])-np.min(projected_points_2d[:, 1])
     # Görselleştirme
     plt.figure(figsize=(8, 8))
     plt.scatter(points[:, 2], points[:, 1], color='red', s=1, label="All Points (Y-Z Proj.)")
@@ -208,4 +265,4 @@ def filter_and_visualize_projection_with_ply(points):
     plt.legend()
     plt.grid(True)  
 
-    return l_81_5
+    return l_81_5, l_7_1

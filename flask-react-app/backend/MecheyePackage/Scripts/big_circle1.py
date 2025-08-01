@@ -3,8 +3,10 @@ import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
 from scipy.optimize import leastsq
+from scipy.stats import circstd
 from Scripts import edges
-
+import datetime
+import os
 
 
 class CircleFitter:
@@ -12,15 +14,14 @@ class CircleFitter:
         """
         CircleFitter sınıfı, verilen nokta bulutu (pcd) üzerinde çember fitting işlemleri yapar.
         """
-
         self.pcd = point
         self.commonp = None
         self.datum = self.get_datum()
 
     def get_B(self, strip_width=20):
         points = self.pcd
-        medianx =np.median(points[:, 0])
-        mediany = np.median(points[:, 1]) # Y eksenindeki orta nokta
+        medianx = np.median(points[:, 0])
+        mediany = np.median(points[:, 1])  # Y eksenindeki orta nokta
         strip_points = points[(np.abs(points[:, 1] - mediany) < strip_width / 2) & 
                               (np.abs(points[:, 0] - medianx) < strip_width / 2)]
         if len(strip_points) == 0:
@@ -31,9 +32,87 @@ class CircleFitter:
         strip_width = 1
         x_center = np.median(self.pcd[:, 0])
         strip_points = self.pcd[np.abs(self.pcd[:, 0] - x_center) < strip_width / 2]
-        self.datum = np.min(strip_points[:,1])
+        self.datum = np.min(strip_points[:, 1])
         return self.datum
-    
+
+    def calculate_error_metrics(self, x_points, y_points, xc, yc, r, circle_name="Circle"):
+        """
+        Çember fitting için hata metriklerini hesaplar ve txt dosyasına yazar.
+        
+        Args:
+            x_points, y_points: Çember fitting yapılan noktalar
+            xc, yc, r: Hesaplanan çember merkezi ve yarıçapı
+            circle_name: Çember ismi (Circle 1, Circle 2 vb.)
+        """
+        n_points = len(x_points)
+
+        # Her nokta için çember merkezine olan mesafe
+        distances_to_center = np.sqrt((x_points - xc)**2 + (y_points - yc)**2)
+
+        # Geometrik hata: Her noktanın çember üzerinden sapması
+        geometric_errors = np.abs(distances_to_center - r)
+
+        # Hata metrikleri
+        mean_error = np.mean(geometric_errors)
+        rms_error = np.sqrt(np.mean(geometric_errors**2))
+        std_deviation = np.std(geometric_errors)
+        max_error = np.max(geometric_errors)
+        min_error = np.min(geometric_errors)
+
+        # Açısal analiz
+        angles_rad = np.arctan2(y_points - yc, x_points - xc)
+        angles_deg = np.degrees(angles_rad)
+        angles_deg[angles_deg < 0] += 360  # 0-360 normalize et
+
+        # Açısal dağılım metrikleri
+        angle_range = np.max(angles_deg) - np.min(angles_deg)
+        angle_mean = np.mean(angles_deg)
+
+        # ✅ Circular (dairesel) standart sapma – doğru yöntem
+        angle_std = np.degrees(circstd(angles_rad, high=2*np.pi, low=0))
+
+        # Açısal sektörlerde dağılım (her 45° bir sektör)
+        sectors = np.floor(angles_deg / 45).astype(int)
+        sector_counts = np.bincount(sectors, minlength=8)
+
+        # TXT dosyasına yaz
+        timestamp = datetime.datetime.now().strftime("%d_%H%M")
+        filename = f"{circle_name}{timestamp}.txt"
+        mode = 'a' if os.path.exists(filename) else 'w'
+
+        with open(filename, mode, encoding='utf-8') as f:
+            f.write(f"\n{'='*60}\n")
+            f.write(f"ÇEMBER FİTTİNG ANALİZİ - {circle_name}\n")
+            f.write(f"Analiz Zamanı: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"{'='*60}\n\n")
+
+            f.write(f"GENEL BİLGİLER:\n")
+            f.write(f"Nokta Sayısı: {n_points}\n")
+            f.write(f"Çember Merkezi: ({xc:.4f}, {yc:.4f})\n")
+            f.write(f"Yarıçap: {r:.4f}\n\n")
+
+            f.write(f"GEOMETRİK HATA METRİKLERİ:\n")
+            f.write(f"Ortalama Hata: {mean_error:.6f}\n")
+            f.write(f"RMS Hata: {rms_error:.6f}\n")
+            f.write(f"Standart Sapma: {std_deviation:.6f}\n")
+            f.write(f"Maksimum Hata: {max_error:.6f}\n")
+            f.write(f"Minimum Hata: {min_error:.6f}\n\n")
+
+            f.write(f"AÇISAL DAĞILIM ANALİZİ:\n")
+            f.write(f"Açı Aralığı: {angle_range:.2f}°\n")
+            f.write(f"Açısal Ortalama: {angle_mean:.2f}°\n")
+            f.write(f"Açısal Standart Sapma (circular): {angle_std:.2f}°\n\n")
+
+            f.write(f"SEKTÖR DAĞILIMI (45° sektörler):\n")
+            for i, count in enumerate(sector_counts):
+                start_angle = i * 45
+                end_angle = (i + 1) * 45
+                f.write(f"Sektör {i+1} ({start_angle}°-{end_angle}°): {count} nokta\n")
+
+            f.write(f"\n{'='*60}\n")
+
+        print(f"Hata metrikleri {filename} dosyasına kaydedildi.")
+
     def get_distance(self, second_crc=True, z_distance_to_datum=102.1, reel_datum=None):
         """
         Çember merkezinin doğru noktaya öklid mesafesini hesaplar ve görselleştirir.
@@ -59,7 +138,6 @@ class CircleFitter:
             xc_outer, zc_outer = self.xc_outer, self.zc_outer
 
         # Median ve z_center hesaplamaları
-        
         z_center = datum + z_distance_to_datum
 
         # Öklid mesafesi
@@ -67,11 +145,6 @@ class CircleFitter:
 
         # Mesafenin doğruluk kontrolü
         ok = distance < 3
-
-        # Bilgileri yazdır
-        # print(f"Çember Merkezi: ({xc_outer:.2f}, {zc_outer:.2f})")
-        # print(f"z_center: {z_center:.2f}, Median: {median:.2f}")
-        # print(f"Mesafe: {distance:.2f} mm, Durum: {'OK' if ok else 'HATA'}")
 
         # Görselleştirme
         plt.figure(figsize=(8, 8))
@@ -85,8 +158,6 @@ class CircleFitter:
         plt.legend()
 
         return distance, ok
-
-    
 
     def fit_circle(self, x, y):
         """
@@ -109,7 +180,8 @@ class CircleFitter:
         result, _ = leastsq(cost_function, guess, args=(x, y))
         return result  # xc, yc, r
 
-    def fit_circles_and_plot(self, find_second_circle=True, val_x=0.18, val_z=0.796, delta_z=13):
+    def fit_circles_and_plot(self, name, find_second_circle=True, val_x=0.18, val_z=0.796, delta_z=14, clc_metrics=False):
+
         """
         Nokta bulutunun X-Z düzleminde çember fitting işlemlerini gerçekleştirir ve görselleştirir.
         
@@ -121,7 +193,6 @@ class CircleFitter:
         """
         try:
             self.find_second_circle = find_second_circle
-            # print(f"B: {self.get_B()}")
             
             # X-Z düzlemine projekte edilen noktalar
             projected_points_2d = self.pcd[:, [0, 1]]
@@ -137,7 +208,7 @@ class CircleFitter:
             min_x, max_x = np.min(projected_points_2d[:, 0]), np.max(projected_points_2d[:, 0])
             min_z, max_z = np.min(projected_points_2d[:, 1]), np.max(projected_points_2d[:, 1])
             x_min = min_x + val_x * (max_x - min_x)
-            x_max = x_min + 28
+            x_max = x_min + 26
             z_min = min_z + val_z * (max_z - min_z)
             z_max = z_min + delta_z
 
@@ -146,6 +217,10 @@ class CircleFitter:
             x_2d_1, z_2d_1 = x2d[mask_1], z2d[mask_1]
             xc_outer, zc_outer, r_outer = self.fit_circle(x_2d_1, z_2d_1)
             self.xc_outer, self.zc_outer = xc_outer, zc_outer
+
+            # İlk çember için hata metriklerini hesapla
+            if clc_metrics:
+                self.calculate_error_metrics(x_2d_1, z_2d_1, xc_outer, zc_outer, r_outer, name)
 
             # Çemberlerin çizimi
             theta = np.linspace(0, 2 * np.pi, 100)
@@ -187,9 +262,7 @@ class CircleFitter:
             plt.axis('equal')
             plt.legend()
 
-            # print(f"Çember 1 Merkezi: ({xc_outer:.2f}, {zc_outer:.2f}), Yarıçap: {r_outer:.2f}")
             if find_second_circle:
-                # print(f"Çember 2 Merkezi: ({xc_outer_2:.2f}, {zc_outer_2:.2f}), Yarıçap: {r_outer_2:.2f}")
                 return (xc_outer, zc_outer, r_outer), (xc_outer_2, zc_outer_2, r_outer_2)
             else:
                 return (xc_outer, zc_outer, r_outer)

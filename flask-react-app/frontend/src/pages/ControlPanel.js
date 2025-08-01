@@ -253,7 +253,7 @@ const ControlPanel = () => {
 
               {/* Control Buttons - Scrollable if needed */}
               <div className="flex-1 p-2 sm:p-3 space-y-2 sm:space-y-3 overflow-y-auto min-h-0">
-                {!traceValue && (
+                {traceValue && (
                   <Button
                     text="Arayüzden Taramayı Başlat"
                     type="success"

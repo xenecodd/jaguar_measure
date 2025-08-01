@@ -1,48 +1,38 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from scipy.interpolate import griddata
+from scipy.spatial import cKDTree
 
 def get_scale():
-    return 12
-def upscale_points(points, scale, image_size=(500, 500)):
-    """Noktaları yüksek çözünürlüklü bir görüntüye çizin."""
+    return 13
+
+def upscale_points(points, scale, image_size=(300, 300)):
     upscale_size = (image_size[0] * scale, image_size[1] * scale)
     image = np.zeros(upscale_size, dtype=np.uint8)
     for x, y in points:
         x, y = int(x * scale), int(y * scale)
-        if 0 <= x < upscale_size[1] and 0 <= y < upscale_size[0]:  # Sınırları kontrol et
-            cv2.circle(image, (x, y), radius=1, color=255, thickness=-1)
+        if 0 <= x < upscale_size[1] and 0 <= y < upscale_size[0]:
+            cv2.circle(image, (x, y), radius=0, color=255, thickness=3)
     return image
 
 def detect_edges(image):
-    """Canny kenar algılama ile kenarları tespit edin."""
-    # Daha fazla bulanıklık için kernel boyutunu artır
-    blurred = cv2.GaussianBlur(image, (5, 5), 0)  # Kernel boyutunu artırdık
-    # Canny kenar algılama
-    edges = cv2.Canny(blurred, 150, 200)  # Optimize edilmiş eşik değerleri
+    blurred = cv2.GaussianBlur(image, (1,1), 0.5)
+    edges = cv2.Canny(image, 150, 200)
     return edges
 
+def radius_outlier_removal(points, radius=5, min_neighbors=3):
+    tree = cKDTree(points)
+    counts = tree.query_ball_point(points, r=radius)
+    mask = np.array([len(c) >= min_neighbors for c in counts])
+    return points[mask]
 
 def process_and_visualize(points):
-    """Noktaları işleyin ve görselleştirin."""
-    # Yüksek çözünürlük için görüntüyü büyüt
-    high_res_image = upscale_points(points,scale=get_scale())
-
-    # Kenar algılama
+    scale = get_scale()
+    high_res_image = upscale_points(points, scale=scale)
     edges = detect_edges(high_res_image)
 
-    # Kenarların koordinatlarını çıkar
-    edge_coords = np.column_stack(np.where(edges > 0))  # Kenar piksellerinin koordinatları
-
-    # Görselleştirme
-    # plt.figure(figsize=(12, 6))
-    # plt.subplot(1, 2, 1)
-    # plt.title("Orijinal Noktalar")
-    # plt.imshow(high_res_image, cmap='gray')
-    # plt.subplot(1, 2, 2)
-    # plt.title("Kenarlar")
-    # plt.imshow(edges, cmap='gray')
-    # plt.show()
+    edge_coords = np.column_stack(np.where(edges > 0))
+    # Radius-based outlier temizliği
+    edge_coords = radius_outlier_removal(edge_coords, radius=5, min_neighbors=3)
 
     return edge_coords

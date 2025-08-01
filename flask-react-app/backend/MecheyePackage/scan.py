@@ -26,7 +26,14 @@ API_BASE_URL = f"http://{DEVICE_IP}:{PORT}"
 
 logger = logging.getLogger(__name__)
 
-mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=1.0)
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, 'config.json')
+
+with open(config_path, "r") as f:
+    config = json.load(f)
+
+mech_eye = TriggerWithExternalDeviceAndFixedRate(vel_mul=config["vel_mul"])
 robot = mech_eye.robot
 
 
@@ -42,10 +49,10 @@ def handle_errors(func):
             else:
                 robot.MoveCart(p91, 0, 0, vel=config["vel_mul"] * 50)
             robot.WaitMs(500)
-            mech_eye.profiler.disconnect()
-            robot.WaitMs(500)
-            robot.SetDO(7, 0)  # Set DO7 to 0 (vacuum off)
-            robot.WaitMs(500)
+            # mech_eye.profiler.disconnect()
+            # robot.WaitMs(500)
+            # robot.SetDO(7, 0)  # Set DO7 to 0 (vacuum off)
+            # robot.WaitMs(500)
             logger.error("Robot moved to safe position due to error.")
             # # Get the scanner instance and restart the cycle
             # scanner = args[0]  # assuming first argument is self
@@ -80,12 +87,6 @@ def is_mysql_available() -> bool:
         return True
     except mysql.connector.Error:
         return False
-
-base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, 'config.json')
-
-with open(config_path, "r") as f:
-    config = json.load(f)
 
 # Add save_figures configuration if not present
 if "save_figures" not in config:
@@ -375,17 +376,17 @@ class JaguarScanner:
         small = small[small[:, 2] > np.min(small[:, 2]) + 37]
         small = small[small[:, 0] < np.min(small[:, 0]) + 50]
         small = self.to_origin(small)
-
         if config["save_point_clouds"]:
             self.pcd.points = o3d.utility.Vector3dVector(small)
             out_path = os.path.join(os.path.dirname(__file__), "Scan_Outputs", "small.ply")
             o3d.io.write_point_cloud(out_path, self.pcd)
             logger.info(f"Small point cloud saved to {out_path}")
-
+        # raw_small = small.copy()
+        # self.l_40 = get_40(raw_small)
         circle_fitter = CircleFitter(small)
         # If needed, try/except can be used for parameters that may cause errors.
         _, z_center_small, radius_small = circle_fitter.fit_circles_and_plot(
-            find_second_circle=False, val_x=0.18, val_z=0.2, delta_z=25
+            find_second_circle=False, val_x=0.175, val_z=0.195, delta_z=23,clc_metrics=True,name="SMALL"
         )
         # Save the plot before getting other measurements
         save_figure(plt, "small_circles.png")
@@ -439,12 +440,11 @@ class JaguarScanner:
             logger.info(f"Horizontal post point cloud saved to {out_path_post}")
 
         self.circle_fitter = CircleFitter(horizontal)
-        _, circle2 = self.circle_fitter.fit_circles_and_plot()
+        _, circle2 = self.circle_fitter.fit_circles_and_plot(clc_metrics=True,name="HORIZONTAL")
         # Save the plot before getting other measurements
         save_figure(plt, "horizontal_circles.png")
         
         self.dist_3mm_h = self.circle_fitter.get_distance()[0]
-        self.l_40 = get_40(horizontal)
         self.height = np.max(self.horizontal[:, 1]) - self.circle_fitter.get_datum()
         self.feature_1 = circle2[1]
         self.feature_2 = circle2[2]
@@ -470,6 +470,7 @@ class JaguarScanner:
             logger.info(f"Vertical point cloud saved to {out_path_vertical}")
         
         vertical_copy = self.to_origin(vertical.copy())
+        self.l_40 = get_40(vertical_copy)
         l_17_2, ok_17_2 = horn_diff(vertical_copy)
         save_figure(plt, "vertical_horn_17_2.png")
         if not config["use_agg"]:
@@ -501,8 +502,9 @@ class JaguarScanner:
         l_42 = np.max(vertical[:, 1]) - b_vertical
         l_248 = arm_horn_lengths(vertical, b_vertical)
         mean_3mm = np.mean([self.dist_3mm_h, self.dist_3mm_s])
-        l_88_6 = self.feature_1 - self.feature_2
-        l_81_5 = filter_and_visualize_projection_with_ply(self.horizontal)
+        
+        l_81_5,l_7_1 = filter_and_visualize_projection_with_ply(self.horizontal)
+        l_88_6 = l_81_5 + l_7_1
         save_figure(plt, "vertical_projection.png")
         if not config["use_agg"]:
             plt.show()
@@ -869,5 +871,5 @@ class JaguarScanner:
                         f.write(json.dumps(selected_results) + '\n')
 
 if __name__ == "__main__":
-    scanner = JaguarScanner()
+    scanner = JaguarScanner(vel_mul=config["vel_mul"])
     scanner.run_scan_cycle()
