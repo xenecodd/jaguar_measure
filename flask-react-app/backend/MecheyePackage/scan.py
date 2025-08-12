@@ -386,7 +386,7 @@ class JaguarScanner:
         circle_fitter = CircleFitter(small)
         # If needed, try/except can be used for parameters that may cause errors.
         _, z_center_small, radius_small = circle_fitter.fit_circles_and_plot(
-            find_second_circle=False, val_x=0.175, val_z=0.195, delta_z=23,clc_metrics=True,name="SMALL"
+            find_second_circle=False, val_x=0.20, val_z=0.2, delta_z=23,clc_metrics=False,name="SMALL"
         )
         # Save the plot before getting other measurements
         save_figure(plt, "small_circles.png")
@@ -440,7 +440,7 @@ class JaguarScanner:
             logger.info(f"Horizontal post point cloud saved to {out_path_post}")
 
         self.circle_fitter = CircleFitter(horizontal)
-        _, circle2 = self.circle_fitter.fit_circles_and_plot(clc_metrics=True,name="HORIZONTAL")
+        _, circle2 = self.circle_fitter.fit_circles_and_plot(clc_metrics=False,name="HORIZONTAL")
         # Save the plot before getting other measurements
         save_figure(plt, "horizontal_circles.png")
         

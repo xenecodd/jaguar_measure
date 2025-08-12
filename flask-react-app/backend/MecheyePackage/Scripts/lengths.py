@@ -78,50 +78,42 @@ def arm_horn_lengths(points, b_vertical=None):
     if b_vertical is None:
         raise ValueError("b_vertical değeri None olamaz.")
 
-    # Y ve Z eksenlerinde min-max
-    min_y, max_y = np.min(points[:, 1]), np.max(points[:, 1])
-    min_z, max_z = np.min(points[:, 2]), np.max(points[:, 2])
-
-    # Filtreleme parametreleri
-    val_y = 0.1
-    val_z = 0.25
-
-    y_min = min_y + val_y * (max_y - min_y)
-    y_max = y_min + 80
-    z_min = min_z + val_z * (max_z - min_z)
-    z_max = z_min + 50
-
-    y_min2, y_max2 = y_min + 70, y_max + 90
-    z_min2, z_max2 = z_min + 62, z_max + 75
-
     # X merkezine göre bölme
     x_center = (np.max(points[:, 0]) + np.min(points[:, 0])) / 2
     delta_x = 1
 
     # Filtrelenmiş noktalar
     filtered_points = points[
-        (points[:, 1] > y_min) & (points[:, 1] < y_max) &
-        (points[:, 2] > z_min) & (points[:, 2] < z_max)
+        (points[:, 0] > x_center) & (points[:, 0] < x_center+ delta_x)
     ]
-
-    filtered_points2 = points[
-        (points[:, 1] > y_min2) & (points[:, 1] < y_max2) &
-        (points[:, 2] > z_min) & (points[:, 2] < z_max)
-    ]
-
-    filtered_points3 = points[
-        (points[:, 2] > z_min2) & (points[:, 2] < z_max2)
-    ]
-
+    
     # Boş veri kontrolü
-    if filtered_points.size == 0 or filtered_points2.size == 0 or filtered_points3.size == 0:
-        print("Uyarı: Filtrelenmiş nokta bulutlarından biri boş!")
+    if filtered_points.size == 0:
+        logger.error("Uyarı: Filtrelenmiş nokta bulutu boş!")
+        return 0.0
 
-    # save_filtered_point_cloud(filtered_points, "filtered_points.ply")
-    # save_filtered_point_cloud(filtered_points2, "filtered_points2.ply")
-    # save_filtered_point_cloud(filtered_points3, "filtered_points3.ply")
+    # Görselleştirme
+    plt.figure(figsize=(12, 8))
+    
+    # Orijinal nokta bulutu (gri, küçük)
+    plt.scatter(points[:, 0], points[:, 1], c='lightgray', s=1, alpha=0.5, label='Orijinal')
+    
+    # Filtrelenmiş nokta bulutları (daha büyük ve renkli)
+    if filtered_points.size > 0:
+        plt.scatter(filtered_points[:, 0], filtered_points[:, 1], c='red', s=3, alpha=0.8, label='Filtre 1')
+    
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('Nokta Bulutu Filtreleme Sonuçları (XY Görünümü)')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.axis('equal')  # Eşit ölçeklendirme
+    
+    # PNG olarak kaydet
+    # plt.savefig('filtered_point_clouds_xy.png', dpi=300, bbox_inches='tight')
+    # plt.show()
 
-    l_248 = b_vertical - np.min(points[:, 1])
+    l_248 = b_vertical - np.min(filtered_points[:, 1])
     return l_248
 
 def horn_diff(points, y_offset_low=60, y_offset_high=100, z_threshold=8, margin_fraction=0.05):

@@ -17,7 +17,7 @@ def initial_guess(x, y):
     r = np.mean(np.sqrt((x - xc)**2 + (y - yc)**2))
     return [xc, yc, r]
 
-def slope(pcd, b_vertical=None, y_divisor=0.21, delta_y=0.5, crc_l=56.67):
+def slope(pcd, b_vertical=None, y_divisor=0.22, delta_y=0.5, crc_l=58.67):
     """
     Nokta bulutu üzerinde kaydırma, filtreleme ve çember fitting işlemleri yapar.
 
