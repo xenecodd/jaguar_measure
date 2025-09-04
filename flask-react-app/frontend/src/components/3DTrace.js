@@ -12,6 +12,7 @@ function ThreeDTrace({ containerRef, tcpData }) {
   const geometryRef = useRef();
   const lineRef = useRef();
   const testSphereRef = useRef();
+  const arrowHelperRef = useRef();
   
 
   useEffect(() => {
@@ -65,6 +66,16 @@ function ThreeDTrace({ containerRef, tcpData }) {
     testSphereRef.current = sphere;
     scene.add(sphere);
 
+    // TCP yönelimini gösteren ok - topun üzerine eklenecek
+    const direction = new THREE.Vector3(0, 0, 1); // Başlangıç yönü (Z pozitif)
+    const origin = new THREE.Vector3(0, 0, 0);
+    const length = 20; // Ok uzunluğu
+    const arrowHelper = new THREE.ArrowHelper(direction, origin, length, 0xff6600, length * 0.2, length * 0.1);
+    arrowHelperRef.current = arrowHelper;
+    
+    // Oku topun üzerine ekle (parent olarak ayarla)
+    sphere.add(arrowHelper);
+
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
@@ -88,6 +99,34 @@ function ThreeDTrace({ containerRef, tcpData }) {
       material.dispose();
     };
   }, [containerRef]);
+
+  // Euler açılarını rotasyon matrisine çeviren fonksiyon
+  const eulerToRotationMatrix = (rx, ry, rz) => {
+    // Farklı formatları test etmek için seçenekler
+    
+    // SEÇENEK 1: Derece → Radyan (varsayılan)
+    let x = THREE.MathUtils.degToRad(rx);
+    let y = THREE.MathUtils.degToRad(ry);
+    let z = THREE.MathUtils.degToRad(rz);
+    
+    // SEÇENEK 2: Zaten radyan cinsindeyse bu satırları kullan:
+    // let x = rx;
+    // let y = ry;
+    // let z = rz;
+    
+    // SEÇENEK 3: Eksenleri değiştirmek gerekiyorsa:
+    // let x = THREE.MathUtils.degToRad(ry);
+    // let y = THREE.MathUtils.degToRad(rz);
+    // let z = THREE.MathUtils.degToRad(rx);
+    
+    // Farklı Euler sıralamalarını test et:
+    const euler = new THREE.Euler(x, y, z, 'XYZ'); // Varsayılan
+    // const euler = new THREE.Euler(x, y, z, 'ZYX'); // Alternatif 1
+    // const euler = new THREE.Euler(x, y, z, 'YXZ'); // Alternatif 2
+    
+    const rotationMatrix = new THREE.Matrix4().makeRotationFromEuler(euler);
+    return rotationMatrix;
+  };
 
   // Gelen TCP verisi ile güncelle
   useEffect(() => {
@@ -120,6 +159,22 @@ function ThreeDTrace({ containerRef, tcpData }) {
       testSphereRef.current.position.copy(point);
     }
 
+    // Oku güncelle (rotasyon değerleri varsa)
+    if (arrowHelperRef.current && tcpData.rx !== undefined && tcpData.ry !== undefined && tcpData.rz !== undefined) {
+      // Debug için konsola yazdır
+      
+      // Rotasyon matrisini hesapla
+      const rotationMatrix = eulerToRotationMatrix(tcpData.rx, tcpData.ry, tcpData.rz);
+      
+      // TCP'nin varsayılan yönü +Y yönü
+      const baseDirection = new THREE.Vector3(0, 1, 0); // +Y yönü (TCP varsayılan yönü)
+      
+      const rotatedDirection = baseDirection.clone().applyMatrix4(rotationMatrix);
+      
+      // Okun yönünü güncelle
+      arrowHelperRef.current.setDirection(rotatedDirection.normalize());
+    }
+
   }, [tcpData]);
 
   return null;
@@ -131,6 +186,9 @@ ThreeDTrace.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number,
     z: PropTypes.number,
+    rx: PropTypes.number,
+    ry: PropTypes.number,
+    rz: PropTypes.number,
   }),
 };
 

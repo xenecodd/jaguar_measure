@@ -4,9 +4,14 @@ import StatusCard from "./StatusCard";
 import FeatureChart from "./FeatureChart";
 import FileDownload from 'js-file-download';
 import Button from "../components/Button";
+import { ReactComponent as vertical } from '../vertical.svg';
+import { ReactComponent as horizontal } from '../horizontal.svg';
+import { ReactComponent as small } from '../small.svg';
+import { FaArrowsAltH, FaArrowsAltV, FaCompressArrowsAlt, FaArrowRight } from "react-icons/fa";
 
 const DebugDashboard = () => {
     const [latestScan, setLatestScan] = useState(null);
+    const [svgType, setSvgType] = useState("vertical");
     const [loading, setLoading] = useState(true);
     const [filesLoading, setFilesLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -18,7 +23,7 @@ const DebugDashboard = () => {
     const [showResults, setShowResults] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
     const [availableFiles, setAvailableFiles] = useState([]);
-
+    const [index, setIndex] = useState(0);
     // New state for historical data functionality
     const [dataMode, setDataMode] = useState("latest"); // "latest" or "historical"
     const [availableDates, setAvailableDates] = useState([]);
@@ -35,6 +40,26 @@ const DebugDashboard = () => {
             ) || []
         ));
     }, [latestScan]);
+
+    const arr1 = [
+        "Feature6 (L248)",
+        "Feature8 (L79.73)",
+        "Feature7 (L42)",
+        "Feature10 (R2-35)",
+        "Feature12 (88.6)",
+        "Feature9 (R1-50)",
+        "Feature14 (81.5)"
+    ];
+
+    const arr2 = [
+        "Feature15 (L23.4)",
+        "Feature17 (2C)",
+        "Feature4 (25mm/2)",
+        "Feature11 (3mm)",
+        "Feature16 (L17.2)",
+        "Feature3 (23.1)",
+        "Feature13 (10.6)"
+    ];
 
     // Initialize default dates (yesterday)
     useEffect(() => {
@@ -264,6 +289,7 @@ const DebugDashboard = () => {
     };
 
     const toggleIteration = (index) => {
+        setIndex((index) => latestScan?.scan_results[index]?.features?.find(f => f.name.toLowerCase() === "index") || 0);
         setExpandedIterations(prev => ({
             ...prev,
             [index]: !prev[index]
@@ -370,6 +396,201 @@ const DebugDashboard = () => {
         );
     }
 
+    const TechDraw = ({ iterationIndex = 0 }) => {
+        const svgTypes = ["vertical", "horizontal", "small"];
+
+        // Next SVG type navigation function
+        const getNextSvgType = (currentType) => {
+            const currentIndex = svgTypes.indexOf(currentType);
+            return svgTypes[(currentIndex + 1) % svgTypes.length];
+        };
+
+        const handleNextSvgType = () => {
+            const nextType = getNextSvgType(svgType);
+            setSvgType(nextType);
+        };
+
+        let SvgObject;
+        if (svgType === "horizontal") SvgObject = horizontal;
+        else if (svgType === "vertical") SvgObject = vertical;
+        else SvgObject = small;
+
+        const features = latestScan?.scan_results?.find(iter => {
+            const idxFeature = iter.features?.find(f => f.name?.toLowerCase() === "index");
+            return String(idxFeature?.value) === String(iterationIndex);
+        })?.features || [];
+
+        const getFeature = (idx, defaultName) => ({
+            name: features[idx]?.name || defaultName,
+            value: features[idx]?.value ?? "N/A",
+        });
+
+        const svgWidth = 822;
+        const svgHeight = 531;
+
+        // Subtle color palette for technical drawings
+        const colors = [
+            { bg: "#F3F4F6", text: "#374151", border: "#6366F1" }, // Blue accent
+            { bg: "#F3F4F6", text: "#374151", border: "#10B981" }, // Green accent
+            { bg: "#F3F4F6", text: "#374151", border: "#F59E0B" }, // Orange accent
+            { bg: "#F3F4F6", text: "#374151", border: "#EF4444" }, // Red accent
+            { bg: "#F3F4F6", text: "#374151", border: "#8B5CF6" }, // Purple accent
+            { bg: "#F3F4F6", text: "#374151", border: "#06B6D4" }, // Cyan accent
+            { bg: "#F3F4F6", text: "#374151", border: "#84CC16" }, // Lime accent
+            { bg: "#F3F4F6", text: "#374151", border: "#F97316" }, // Orange variant
+        ];
+
+        let featureLabels;
+        if (svgType === "horizontal") {
+            featureLabels = [
+                { idx: 0, x: 225, y: 85 },
+                { idx: 1, x: 560, y: 10 },
+                { idx: 4, x: 360, y: 450 },
+            ];
+        } else if (svgType === "vertical") {
+            featureLabels = [
+                { idx: 5, x: 28, y: 27 },
+                { idx: 6, x: 625, y: 22 },
+                { idx: 7, x: 373, y: 32 },
+                { idx: 8, x: 460, y: 265 },
+                { idx: 9, x: 468, y: 150 },
+                { idx: 11, x: 800, y: 180 },
+                { idx: 13, x: 840, y: 240 },
+            ];
+        } else {
+            featureLabels = [
+                { idx: 10, x: 802, y: 300 },
+                { idx: 12, x: -30, y: 350 },
+                { idx: 14, x: 640, y: 30 },
+                { idx: 15, x: 680, y: 430 },
+                { idx: 16, x: 730, y: 85 },
+                { idx: 2, x: 50, y: 300 },
+                { idx: 3, x: 700, y: 280 },
+            ];
+        }
+
+        const iterationIndices = latestScan?.scan_results?.map(iter => {
+            const idxFeature = iter.features?.find(f => f.name?.toLowerCase() === "index");
+            return idxFeature?.value;
+        }) || [];
+
+        return (
+            <div className="w-full p-6 bg-white border border-gray-200 rounded-lg">
+                {/* SVG Type Buttons */}
+                <div className="mb-6 flex items-center gap-2">
+                    {[
+                        { type: "vertical", label: "Vertical" },
+                        { type: "horizontal", label: "Horizontal" },
+                        { type: "small", label: "Small" }
+                    ].map(({ type, label }) => (
+                        <button
+                            key={type}
+                            onClick={() => setSvgType(type)}
+                            className={`px-4 py-2 text-sm font-medium rounded border transition-colors
+                                ${svgType === type
+                                    ? "bg-gray-900 text-white border-gray-900"
+                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Iteration Selector */}
+                <div className="mb-6 flex flex-wrap gap-2">
+                    {iterationIndices.map((idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => setIndex(Number(idx))}
+                            className={`px-3 py-1 text-sm font-medium rounded border transition-colors
+                                ${iterationIndex === idx
+                                    ? "bg-gray-900 text-white border-gray-900"
+                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                }`}
+                        >
+                            {idx}
+                        </button>
+                    ))}
+                </div>
+
+                {/* SVG Container with Arrow Navigation */}
+                <div className="flex justify-center items-center gap-4">
+                    <div className="relative border border-gray-200 rounded"
+                        style={{ width: svgWidth, height: svgHeight }}>
+                        <SvgObject style={{ width: svgWidth, height: svgHeight, display: "block" }} />
+                        {featureLabels.map(({ idx, x, y }, i) => {
+                            const { name, value } = getFeature(idx, `feature${idx + 1}`);
+                            const colorScheme = colors[idx % colors.length];
+                            return (
+                                <div
+                                    key={i}
+                                    className="absolute rounded shadow-lg text-center"
+                                    style={{
+                                        left: x,
+                                        top: y,
+                                        transform: "translate(-50%, -100%)",
+                                        pointerEvents: "none",
+                                        zIndex: 10,
+                                        minWidth: "80px",
+                                        backgroundColor: colorScheme.bg,
+                                        borderColor: colorScheme.border,
+                                        borderWidth: "2px",
+                                        borderStyle: "solid"
+                                    }}
+                                >
+                                    <div
+                                        className="font-semibold text-xs px-2 py-1"
+                                        style={{ color: colorScheme.text }}
+                                    >
+                                        {name}
+                                    </div>
+                                    <div
+                                        className="text-xs px-2 pb-1"
+                                        style={{ color: colorScheme.text }}
+                                    >
+                                        {value}
+                                    </div>
+                                    <div
+                                        className="absolute left-1/2 top-full w-px h-3 transform -translate-x-1/2"
+                                        style={{ backgroundColor: colorScheme.border }}
+                                    ></div>
+                                    <div className="absolute left-1/2 top-full transform -translate-x-1/2 translate-y-2">
+                                        <div
+                                            className="w-2 h-2 rotate-45 transform -translate-y-1"
+                                            style={{ backgroundColor: colorScheme.border }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Right Arrow Navigation Button */}
+                    <button
+                        onClick={handleNextSvgType}
+                        className="flex items-center justify-center w-12 h-12 bg-white border border-gray-300 rounded-full hover:bg-gray-50 hover:border-gray-400 transition-colors shadow-sm"
+                        title={`Next: ${getNextSvgType(svgType)}`}
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-gray-600"
+                        >
+                            <polyline points="9,18 15,12 9,6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     const renderEnhancedSummary = () => {
         return (
             <div className="mb-6 rounded-lg border overflow-hidden shadow-sm bg-white">
@@ -446,6 +667,10 @@ const DebugDashboard = () => {
                 </div>
                 {stats.failed > 0 && Object.keys(stats.failureReasons).length > 0 && (
                     <div className="p-4 bg-white border-t">
+                        <p className="font-semibold mb-6">Technical Drawing</p>
+                        <div className="flex justify-center items-center">
+                            <TechDraw iterationIndex={index} />
+                        </div>
                         <p className="font-semibold mb-3">Common Failure Reasons:</p>
                         <div className="overflow-x-auto">
                             <table className="min-w-full bg-white">
@@ -463,7 +688,21 @@ const DebugDashboard = () => {
                                             const percentage = (count / stats.total * 100).toFixed(1);
                                             return (
                                                 <tr key={idx} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                                                    <td className="py-2 px-3 text-red-700">{reason}</td>
+                                                    <button
+                                                        onClick={() =>
+                                                            setSvgType(
+                                                                arr1.includes(reason)
+                                                                    ? "vertical"
+                                                                    : arr2.includes(reason)
+                                                                        ? "small"
+                                                                        : "horizontal"
+                                                            )
+                                                        }
+                                                        className="py-2 px-3 text-red-700"
+                                                    >
+                                                        {reason}
+                                                    </button>
+
                                                     <td className="py-2 px-3">{count}</td>
                                                     <td className="py-2 px-3 w-1/3">
                                                         <div className="flex items-center">
@@ -1026,9 +1265,11 @@ const DebugDashboard = () => {
                     >
                         {showResults ? 'Hide Results' : 'Show Results'}
                     </button>
+
                 </div>
                 {renderEnhancedSummary()}
                 {renderControlPanel()}
+
                 <div id="feature-chart-section">
                     {selectedFeature && (
                         <FeatureChart

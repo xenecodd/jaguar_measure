@@ -1,5 +1,4 @@
 import os
-import sqlite3
 import threading
 import time
 import numpy as np
@@ -9,11 +8,9 @@ import matplotlib
 from Scripts import *
 from mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
 from points import *
-import sys
 import json
 import mysql.connector
 import logging
-from typing import Dict
 import socketio
 from ResultWriter import AppwriteDataWriter
 
@@ -140,12 +137,12 @@ class JaguarScanner:
         self.robot_tcp = [0, 0, 0, 0, 0, 0]
         self.sio = socketio.Client()
         self.current_di0_value = 0
+        self.current_di1_value = 0
         self.di0_thread = threading.Thread(target=self.read_di0_updates, daemon=True)
         self.di0_thread.start()
         self.rescan = 0
         self.db_writer = AppwriteDataWriter()
         
-
     def read_di0_updates(self):
         sio = self.sio
         @sio.event
@@ -154,16 +151,35 @@ class JaguarScanner:
 
         @sio.event
         def robot_status(data):
-            self.robot_tcp = data.get("TCP", None)
-            self.current_di0_value = data.get("DI0", 0)
-            # logger.error(f"DI0 updated: {self.current_di0_value}")
-            # logger.error(f"Robot TCP: {self.robot_tcp}")
+            json_data = {"data": data, "error": None}
+            try:
+                self.robot_tcp = list(data.get("TCP", {"x": 0, "y": 0, "z": 0, "rx": 0, "ry": 0, "rz": 0}).values())
+                self.current_di0_value = data.get("DI0", 0)
+                self.current_di1_value = data.get("DI1",0)
+                logger.error("di1",self.current_di1_value) 
+            except Exception as e:
+                json_data["error"] = str(e)
+                logger.error(f"Error processing robot_status: {e}")
+            
+            # try:
+            #     with open('robot_data.json', 'w') as f:
+            #         json.dump(json_data, f, indent=4)
+            #     print(f"Data written to robot_data.json: {json_data}")
+            # except Exception as e:
+            #     logger.error(f"Error writing to JSON file: {e}")
 
         try:
             sio.connect('http://localhost:5000')
             sio.wait()
         except Exception as e:
-            logger.error(f"Bağlantı hatası: {e}")
+            json_data = {"data": None, "error": f"Connection error: {str(e)}"}
+            try:
+                with open('robot_data.json', 'w') as f:
+                    json.dump(json_data, f, indent=4)
+                # logger.error(f"Connection error written to robot_data.json: {e}")
+            except Exception as e:
+                logger.error(f"Error writing connection error to JSON file: {e}")
+            logger.error(f"Connection error: {e}")
 
     @staticmethod
     def send_feedback():
@@ -225,7 +241,7 @@ class JaguarScanner:
         min_x = np.min(points[:, 0])
         y_candidates = points[:, 1][points[:, 0] < min_x + 23]
         y_min, y_max = np.min(y_candidates), np.max(y_candidates)
-        return points[(points[:, 1] < y_min) | (points[:, 1] > y_max)]
+        return points[(points[:, 1] < y_min-5) | (points[:, 1] > y_max+5)]
 
     def get_next_valid_index(self, current_index: int, total_points: int) -> int:
         with open(config_path, 'r') as file:
@@ -516,8 +532,8 @@ class JaguarScanner:
             "l_42": l_42,
             "l_79_73": l_79_73,
             "l_248": l_248,
-            "r1": (r1 - self.feature_2),
-            "r2": (r2 + self.feature_2),
+            "r1": (r1 - self.feature_2/2),
+            "r2": (r2 + self.feature_2/2),
             "feature_1": self.feature_1,
             "mean_3mm": mean_3mm,
             "l_88_6": l_88_6,
@@ -528,23 +544,6 @@ class JaguarScanner:
         current_results = self.combine_results(vertical_results)
         logger.debug("Vertical measurements processed successfully.")
         return current_results
-
-    def pick_tape(self):
-        self.robot.SetDO(1, 1)      # mainflow on
-        self.robot.SetDO(0, 0)      # Piston off
-        time.sleep(3)
-        self.robot.SetDO(5, 0)      # Rail open
-        self.robot.SetDO(2, 1)      # Rail closed
-        time.sleep(2)
-        self.robot.SetDO(0, 1)      # Piston on
-        time.sleep(1)
-        self.robot.SetDO(3, 1)      # Vacuum on
-        time.sleep(2)
-        self.robot.SetDO(0, 0)      # Piston off
-        time.sleep(4)
-        self.robot.SetDO(2, 0)
-        self.robot.SetDO(5, 1)      
-        time.sleep(2)
 
     def after_scan(self,quality_check: int):
 
@@ -587,57 +586,86 @@ class JaguarScanner:
 
                 else: # If put_back is false or drop point is not trash, take the part to the band station and drop it at the metal_detector point
                     logger.error("Going to band station.")
-                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 70)
                     # Piston and vacuum control steps for dropping to metal detector
-                    
+                    self.robot.Mode(1)
                     self.robot.SetDO(1, 1)      # mainflow on
                     self.robot.SetDO(0, 0)      # Piston off
-                    self.robot.WaitMs(3000)
-                    self.robot.SetDO(5, 0)      # Rail open
-                    self.robot.SetDO(2, 1)      # Rail closed
-                    self.robot.WaitMs(2000)
+                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 70)
+
+                    index = read_current_point_index()
+                    if index%2==1 and index<32:
+                        value = 155
+                    elif index<32 :
+                        value = 154
+                    if index%2==1 and index>32:
+                        value = 151
+                    elif index>32:
+                        value = 154
+
+                    preplace[1] = value
+                    prepreplace[1] = value
+                    place[1] = value
+                    safeback[1] = value
+                    if not self.current_di1_value:
+                        self.robot.SetDO(3, 0)      # Vacuum off
+                        self.robot.SetDO(5, 0)      # Rail open
+                        self.robot.SetDO(2, 1)      # Rail closed
+                        self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 70)
+                        self.robot.SetDO(0, 1)      # Piston on
+                        self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
+                        self.robot.SetDO(3, 1)      # Vacuum on
+                        self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 10)
+                        self.robot.WaitMs(2000)
+                        self.robot.SetDO(0, 0)      # Piston off
+                        self.robot.WaitMs(2000)
+                        self.robot.SetDO(2, 0)
+                        self.robot.SetDO(5, 1)      #Rail
+                        self.robot.WaitMs(2000)
+                    else:
+                        self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 70)
+                        self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
+                        self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 10)
+
+                    # self.robot.WaitMs(2000)
+                    # self.robot.SetDO(7, 0)      # Drop the part
+                    # self.robot.WaitMs(1000)
+                    # self.robot.MoveL(safeback, 0, 0, vel=config["vel_mul"] * 35)
+                    # self.robot.WaitMs(1000)
                     self.robot.SetDO(0, 1)      # Piston on
                     self.robot.WaitMs(1000)
-                    self.robot.SetDO(3, 1)      # Vacuum on
-                    self.robot.WaitMs(2000)
-                    self.robot.SetDO(0, 0)      # Piston off
-                    self.robot.WaitMs(4000)
-                    self.robot.SetDO(2, 0)
-                    self.robot.SetDO(5, 1)      
-                    self.robot.WaitMs(2000)
-                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 10)
-                    self.robot.SetDO(7, 0)      # Drop the part
-                    self.robot.WaitMs(1000)
-                    self.robot.MoveL(safeback, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.WaitMs(1000)
-                    self.robot.SetDO(0, 1)      # Piston on
-                    self.robot.WaitMs(2000)
                     self.robot.SetDO(3, 0)      # Vacuum off (piston vacuum)
                     self.robot.WaitMs(1000)
                     self.robot.SetDO(0, 0)      # Piston off
-                    self.robot.WaitMs(3000)
+                    self.robot.WaitMs(1000)
                     self.robot.SetDO(5, 0)      # Rail open
                     self.robot.SetDO(2, 1)      # Rail closed
-                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 20)
+                    self.robot.MoveL(place, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.WaitMs(1000)
                     self.robot.SetDO(7, 1)
                     self.robot.WaitMs(1000)
-                    self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 10)
-                    self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.SetDO(0, 1)      # Piston on
+                    self.robot.MoveL(preplace, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.SetDO(3, 1)      # Vacuum on
+                    self.robot.MoveL(prepreplace, 0, 0, vel=config["vel_mul"] * 10)
+                    self.robot.SetDO(0, 0)      # Piston off
+                    self.robot.WaitMs(2500)
+                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 80)
+                    self.robot.SetDO(2, 0)
+                    self.robot.SetDO(5, 1)      #Rail
+                    self.robot.Mode(0)
                     self.robot.WaitMs(500)
-                    self.robot.MoveL(p90, 0, 0, vel=config["vel_mul"] * 35)    
-                    self.robot.MoveCart(metal_detector, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveL(p90, 0, 0, vel=config["vel_mul"] * 80) 
+                    self.robot.SetDO(13,1)   
+                    self.robot.MoveCart(metal_detector, 0, 0, vel=config["vel_mul"] * 80)
                     self.robot.MoveCart(post_metal_detector, 0, 0, vel=config["vel_mul"] * 35)
                     self.robot.WaitMs(500)
                     self.robot.SetDO(7, 0)
                     self.robot.WaitMs(500)
-                    self.robot.MoveCart(metal_detector, 0, 0, vel=config["vel_mul"] * 35)
-                    self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 35)    
-                    self.robot.MoveL(p91, 0, 0, vel=config["vel_mul"] * 35)
+                    self.robot.MoveCart(metal_detector, 0, 0, vel=config["vel_mul"] * 50)
+                    self.robot.SetDO(12,1)
+                    self.robot.SetDO(13,0) 
+                    self.robot.MoveCart(p90, 0, 0, vel=config["vel_mul"] * 35)
 
                     logger.error("Object dropped at appropriate drop point.")
             elif config["put_back"] :
@@ -690,7 +718,7 @@ class JaguarScanner:
             "Feature10 (R2-35)": safe_get(vertical_results, "r2"),
             "Feature11 (3mm)": safe_get(vertical_results, "mean_3mm"),
             "Feature12 (88.6)": safe_get(vertical_results, "l_88_6"),
-            "Feature13 (10.6)": self.feature_3 - self.radius_small,
+            "Feature13 (10.6)": self.feature_3 - self.radius_small/2,
             "Feature14 (81.5)": safe_get(vertical_results, "l_81_5"),
             "Feature15 (L23.4)": safe_get(vertical_results, "l_23_4"),
             "Feature16 (L17.2)": safe_get(vertical_results, "l_17_2"),
@@ -710,7 +738,10 @@ class JaguarScanner:
 
     def run_scan_cycle(self):
         ROBOT_POSITIONS = config["robot_positions"]
-
+        self.robot.SetDO(3, 1)      # Vacuum on
+        self.robot.SetDO(0,0) #
+        self.robot.SetDO(1, 1) #
+        self.robot.SetDO(13,0) #Stop metal detector band
         # Başlangıçta grup bilgilerini çek
         self.current_group, self.group_indices = self.get_current_group_info()
 

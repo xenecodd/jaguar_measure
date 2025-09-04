@@ -10,21 +10,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import ThreeDTrace from '../components/3DTrace';
 
 // Status indicator component
-const StatusIndicator = ({ active, label, size = 'sm' }) => {
-  const sizeClasses = {
-    sm: 'h-2 w-2',
-    md: 'h-3 w-3',
-    lg: 'h-4 w-4'
-  };
+const StatusIndicator = ({ active, label}) => {
 
   return (
     <div className="flex items-center gap-2">
-      <div 
-        className={`${sizeClasses[size]} rounded-full transition-all duration-300 ${
-          active 
-            ? 'bg-emerald-400 shadow-emerald-400/50 shadow-md animate-pulse' 
+      <div
+        className={`h-4 w-4 rounded-full transition-all duration-300 ${active
+            ? 'bg-emerald-400 shadow-emerald-400/50 shadow-md animate-pulse'
             : 'bg-slate-500'
-        }`}
+          }`}
         role="status"
         aria-label={`${label}: ${active ? 'active' : 'inactive'}`}
       />
@@ -52,8 +46,8 @@ const CoordinateCard = ({ label, value, color = 'indigo' }) => {
       <div className={`text-xs font-semibold uppercase tracking-wide mb-1 ${colorClasses[color]}`}>
         {label}
       </div>
-      <div 
-        className="text-slate-200 font-mono text-xs sm:text-sm font-medium truncate" 
+      <div
+        className="text-slate-200 font-mono text-xs sm:text-sm font-medium truncate"
         title={value}
         role="text"
         aria-label={`${label} coordinate: ${formatCoordinate(value)}`}
@@ -135,11 +129,11 @@ const ControlPanel = () => {
 
   const handleStartScan = useCallback(async (altButton = false) => {
     try {
-      const response = await apiService.controlScan({ 
-        message: 'START', 
-        alt_button: altButton 
+      const response = await apiService.controlScan({
+        message: 'START',
+        alt_button: altButton
       });
-      
+
       if (response.status === 200) {
         toast.success(response.data.message);
         setStatus((prev) => ({ ...prev, scan_active: true }));
@@ -181,9 +175,9 @@ const ControlPanel = () => {
     <div className="h-screen w-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
       <div className="h-full w-full p-2 sm:p-3 lg:p-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-[2fr_1fr] lg:grid-rows-[1fr_auto] gap-2 sm:gap-3 lg:gap-4 h-full">
-          
+
           {/* Scan Monitoring */}
-          <section 
+          <section
             className="lg:col-span-3 bg-slate-800/40 backdrop-blur-md rounded-xl border border-slate-700/50 shadow-2xl overflow-hidden"
             role="region"
             aria-label="Tarama İzleme"
@@ -195,13 +189,13 @@ const ControlPanel = () => {
                 </div>
                 <h2 className="text-base sm:text-xl font-bold text-indigo-300">Tarama İzleme</h2>
               </div>
-              <StatusIndicator 
-                active={status?.scan_active} 
+              <StatusIndicator
+                active={status?.scan_active}
                 label={status?.scan_active ? "Aktif" : "Bekliyor"}
                 size="md"
               />
             </header>
-            
+
             <div className="h-[calc(100%-3rem)] sm:h-[calc(100%-4rem)] p-2 sm:p-3">
               <div className="w-full h-full rounded-lg overflow-hidden border border-slate-700/30">
                 <ScanTrace onScan={handleTraceChange} />
@@ -210,7 +204,7 @@ const ControlPanel = () => {
           </section>
 
           {/* Control Panel - Fixed width to prevent hiding */}
-          <aside 
+          <aside
             className="lg:col-span-1 bg-slate-800/40 backdrop-blur-md rounded-xl border border-slate-700/50 shadow-2xl overflow-hidden min-w-0"
             role="complementary"
             aria-label="Robot Kontrol Paneli"
@@ -220,10 +214,10 @@ const ControlPanel = () => {
                 <h1 className="text-center text-sm sm:text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-2 sm:mb-3">
                   Robot Kontrol Paneli
                 </h1>
-                
+
                 <div className="flex items-center justify-center gap-2 p-2 sm:p-3 bg-slate-900/30 rounded-lg border border-slate-700/30">
-                  <StatusIndicator 
-                    active={!connectionError && !loading} 
+                  <StatusIndicator
+                    active={!connectionError && !loading}
                     label="Bağlantı"
                     size="sm"
                   />
@@ -242,6 +236,7 @@ const ControlPanel = () => {
                 <div className="space-y-1.5 sm:space-y-2">
                   <StatusIndicator active={status?.scan_active} label="Tarama Durumu" />
                   <StatusIndicator active={status?.TCP} label="TCP Bağlantısı" />
+                  <StatusIndicator active={!status?.DI0} label="Parça Tutuldu" />
                   <div className="flex items-center gap-2">
                     <StatusIndicator active={status?.MODE === 2} label="" />
                     <span className="text-xs sm:text-sm font-medium text-slate-300">
@@ -262,7 +257,7 @@ const ControlPanel = () => {
                     aria-label="Arayüzden taramayı başlat"
                   />
                 )}
-                
+
                 <div className="grid grid-cols-1 gap-2 sm:gap-3">
                   <Button
                     text="Taramayı Başlat"
@@ -286,7 +281,7 @@ const ControlPanel = () => {
           </aside>
 
           {/* 3D Positioning - Full width on mobile, spans full width on desktop */}
-          <section 
+          <section
             className="lg:col-span-4 bg-slate-800/40 backdrop-blur-md rounded-xl border border-slate-700/50 shadow-2xl overflow-hidden"
             role="region"
             aria-label="3D Konumlandırma"
@@ -310,19 +305,22 @@ const ControlPanel = () => {
                   <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 sm:gap-3 h-full">
                     {/* 3D Visualization */}
                     <div className="xl:col-span-4 h-full min-h-[200px] sm:min-h-[300px]">
-                      <div 
-                        ref={containerRef} 
+                      <div
+                        ref={containerRef}
                         className="w-full h-full rounded-lg overflow-hidden border border-slate-700/30 bg-slate-900/20"
                       >
                         <ThreeDTrace
                           containerRef={containerRef}
                           tcpData={
-                            status.TCP[1]
-                              ? { 
-                                  x: status.TCP[1][0] / 7, 
-                                  z: status.TCP[1][1] / 7, 
-                                  y: status.TCP[1][2] / 7 
-                                }
+                            status.TCP
+                              ? {
+                                x: status.TCP.x / 7,
+                                z: status.TCP.y / 7,
+                                y: status.TCP.z / 7,
+                                rx: status.TCP.rx ?? 0,
+                                ry: status.TCP.ry ?? 0,
+                                rz: status.TCP.rz ?? 0
+                              }
                               : null
                           }
                         />
@@ -335,22 +333,22 @@ const ControlPanel = () => {
                         <span className="w-1 h-3 sm:h-4 bg-emerald-400 rounded-full"></span>
                         Koordinatlar
                       </h3>
-                      {status.TCP[1] && (
+                      {status.TCP && (
                         <div className="space-y-2 sm:space-y-3">
-                          <CoordinateCard 
-                            label="X Ekseni" 
-                            value={status.TCP[1][0]} 
-                            color="indigo" 
+                          <CoordinateCard
+                            label="X Ekseni"
+                            value={status.TCP["x"]}
+                            color="indigo"
                           />
-                          <CoordinateCard 
-                            label="Y Ekseni" 
-                            value={status.TCP[1][1]} 
-                            color="emerald" 
+                          <CoordinateCard
+                            label="Y Ekseni"
+                            value={status.TCP["y"]}
+                            color="emerald"
                           />
-                          <CoordinateCard 
-                            label="Z Ekseni" 
-                            value={status.TCP[1][2]} 
-                            color="amber" 
+                          <CoordinateCard
+                            label="Z Ekseni"
+                            value={status.TCP["z"]}
+                            color="amber"
                           />
                         </div>
                       )}

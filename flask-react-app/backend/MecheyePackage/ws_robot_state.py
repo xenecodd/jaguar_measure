@@ -25,20 +25,8 @@ class WebSocketManager:
 
         self.lock = threading.Lock()
 
-        self.di_values = {
-            "90": 1,
-            "96": 0,
-            "98": 0,
-            "99": 0
-        }
-        self.tcp = {
-            "x": 5,
-            "y": 3,
-            "z": 1,
-            "rx": 0,
-            "ry": 0,
-            "rz": 0
-        }
+        self.di_values = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]  # DI0-DI15
+        self.tcp = [3, 3, 3, 3, 3, 3] # x,y,z,rx,ry,rz
 
         self.mode = 1
 
@@ -68,10 +56,22 @@ class WebSocketManager:
 
             with self.lock:
                 if "cl_di" in data:
-                    self.di_values["90"] = data["cl_di"][0]
-                    self.di_values["96"] = data["cl_di"][6]
-                    self.di_values["98"] = data["cl_di"][8]
-                    self.di_values["99"] = data["cl_di"][9]
+                    self.di_values[0] = data["cl_di"][0]
+                    self.di_values[1] = data["cl_di"][1]
+                    self.di_values[2] = data["cl_di"][2]
+                    self.di_values[3] = data["cl_di"][3]
+                    self.di_values[4] = data["cl_di"][4]
+                    self.di_values[5] = data["cl_di"][5]
+                    self.di_values[6] = data["cl_di"][6]
+                    self.di_values[7] = data["cl_di"][7]
+                    self.di_values[8] = data["cl_di"][8]
+                    self.di_values[9] = data["cl_di"][9]
+                    self.di_values[10] = data["cl_di"][10]
+                    self.di_values[11] = data["cl_di"][11]
+                    self.di_values[12] = data["cl_di"][12]
+                    self.di_values[13] = data["cl_di"][13]
+                    self.di_values[14] = data["cl_di"][14]
+                    self.di_values[15] = data["cl_di"][15]
 
                 if "tcp" in data:
                     self.tcp = data["tcp"]
@@ -231,7 +231,7 @@ ws_manager = WebSocketManager()
 def initialize_websocket():
     return ws_manager.connect()
 
-def start_websocket(url, cookies=None):
+def start_websocket():
     return ws_manager.connect()
 
 def get_di_values():

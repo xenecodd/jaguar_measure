@@ -10,8 +10,8 @@ from config import BASE_DIR, Config
 import threading
 import multiprocessing
 import time
-from services.scan_service import save_to_excel, get_available_files_from_directory, format_filename_to_label, run_scan, auto_restart_monitor, monitor_robot
-from services.robot_service import safe_get_di, read_current_point_index, write_current_point_index
+from services.scan_service import save_to_excel, get_available_files_from_directory, run_scan, auto_restart_monitor, monitor_robot
+from services.robot_service import read_current_point_index, write_current_point_index
 from MecheyePackage.mecheye_trigger import TriggerWithExternalDeviceAndFixedRate
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
@@ -99,7 +99,7 @@ def scan():
                 time.sleep(0.5)  # Give time for process to stop
             
             # Only restart if DI8 is safe
-            if safe_get_di(98) == (0, 0) or data["FORCE_RESTART"]:
+            if (state.di_values[8] == 0 and state.di_values[14] and state.di_values[15]) or data["FORCE_RESTART"]:
                 logger.error("Restarting scan process")
                 # Create new events
                 state.stop_event = multiprocessing.Event()

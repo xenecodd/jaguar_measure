@@ -26,18 +26,15 @@ def get_robot_status(max_retries=10):
         try:
             # Yeni manager'dan veri al
             robot_state = ws_manager.get_robot_state()
-            values = robot_state["di_values"]
+            di_values = robot_state["di_values"]
             tcp = robot_state["tcp"]
             mode = robot_state["mode"]
             
-            if values and tcp:
-                tcp_tuple = tuple((0, [tcp["x"], tcp["y"], tcp["z"]]))
+            if di_values and tcp:
                 return (
-                    tuple([0, values["98"]]), 
-                    tuple([0, values["99"]]), 
-                    tuple([0, values["90"]]), 
-                    tcp_tuple,
-                    mode
+                    di_values,  # Tüm DI değerleri (DI0-DI15)
+                    tcp,        # TCP değerleri
+                    mode        # Mode değeri
                 )
         except Exception as e:
             logger.error(f"get_robot_status error: {e}")
@@ -48,7 +45,6 @@ def get_robot_status(max_retries=10):
 
 def robot_status_monitor():
     """Robot durumunu sürekli izleyen fonksiyon"""
-    global di8, di9, di0, tcp
     logger.info("Robot status monitor started")
     
     while True:
@@ -61,30 +57,21 @@ def robot_status_monitor():
                 continue
             
             # Robot verilerini al
-            di8, di9, di0, tcp, mode = get_robot_status()
-            
-            # Geri kalan kod aynı...
-            state.update_di_values(di0=di0, di8=di8, di9=di9, tcp=tcp, mode=mode)
-            status = state.get_status()
-            
-            if status_callback and status:
-                status_callback('robot_status', status)
+            result = get_robot_status()
+            if result != -1:
+                di_values, tcp, mode = result
+                
+                # State'i güncelle
+                state.update_di_values(di_values=di_values, tcp=tcp, mode=mode)
+                status = state.get_status()
+                
+                if status_callback and status:
+                    status_callback('robot_status', status)
                 
         except Exception as e:
             logger.error(f"Error in robot status monitor: {e}")
         
         time.sleep(0.1)
-
-def safe_get_di(ch):
-    if ch == 98:
-        return di8
-    elif ch == 99:
-        return di9
-    elif ch == 90:
-        return di0
-    else:
-        logger.error(f"Invalid channel: {ch}")
-        return -1
 
 def read_current_point_index() -> int:
     file_path = str(BASE_DIR.parent / "backend" / "MecheyePackage" / "point_index.txt")
@@ -104,9 +91,6 @@ def write_current_point_index(index: int):
 
 def start_robot_service():
     """Robot servisini başlat (bağımsız thread)"""
-    # Health check thread'i
-    # health_thread = threading.Thread(target=health_check, daemon=True)
-    # health_thread.start()
     
     # Robot status monitor thread'i
     status_thread = threading.Thread(target=robot_status_monitor, daemon=True)

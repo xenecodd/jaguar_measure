@@ -27,7 +27,6 @@ class CustomAcquisitionCallback(AcquisitionCallbackBase):
         self.profile_batch.append(batch)
         mutex.release()
 
-
 class TriggerWithExternalDeviceAndFixedRate(object):
     def __init__(self, vel_mul=1):
         self.profiler = Profiler()

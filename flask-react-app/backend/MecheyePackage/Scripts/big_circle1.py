@@ -263,9 +263,9 @@ class CircleFitter:
             plt.legend()
 
             if find_second_circle:
-                return (xc_outer, zc_outer, r_outer), (xc_outer_2, zc_outer_2, r_outer_2)
+                return (xc_outer, zc_outer, r_outer*2),(xc_outer_2, zc_outer_2, r_outer_2*2)
             else:
-                return (xc_outer, zc_outer, r_outer)
+                return (xc_outer, zc_outer, r_outer*2)
 
         except Exception as e:
             print(f"Hata: {e}")

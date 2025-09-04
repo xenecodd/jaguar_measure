@@ -20,7 +20,7 @@ class AppwriteDataWriter:
         self._init_appwrite_client()
         
         # Database configuration
-        self.database_id = "cobot_operations"
+        self.database_id = "Jaguar"
         self.collection_id = "mission_results"
         
         self.logger.info("AppwriteDataWriter initialized successfully")
@@ -87,7 +87,7 @@ class AppwriteDataWriter:
         """Ensure all required database attributes exist"""
         attributes = [
             ("date", "string", 20),
-            ("iteration", "integer", None),
+            ("index", "integer", None),
             ("group_number", "integer", None),
             ("feature", "string", 255),
             ("value", "double", None),
@@ -154,9 +154,9 @@ class AppwriteDataWriter:
             self.logger.warning(f"Appwrite service unavailable: {e}")
             return False
 
-    def write_to_sqlite(self, result: Dict[str, Any], iteration: int, group_number: int, mission_id: str = None) -> None:
+    def write_to_sqlite(self, result: Dict[str, Any], index: int, group_number: int, mission_id: str = None) -> None:
         """Write data to local SQLite buffer with optimized logging"""
-        self.logger.debug(f"Buffering {len(result)} features - Iteration: {iteration}, Group: {group_number}")
+        self.logger.debug(f"Buffering {len(result)} features - index: {index}, Group: {group_number}")
         
         try:
             conn = sqlite3.connect("local_buffer.db")
@@ -172,7 +172,7 @@ class AppwriteDataWriter:
                     CREATE TABLE buffered_results (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         date TEXT,
-                        iteration INTEGER,
+                        index INTEGER,
                         group_number INTEGER,
                         feature TEXT,
                         value REAL,
@@ -191,7 +191,7 @@ class AppwriteDataWriter:
             
             records_written = 0
             failed_conversions = 0
-            result_id = f"iter_{iteration}_group_{group_number}_{datetime.now().strftime('%H%M%S')}"
+            result_id = f"iter_{index}_group_{group_number}_{datetime.now().strftime('%H%M%S')}"
             mission_id = mission_id or f"mission_{group_number}"
             
             for feature, raw_value in result.items():
@@ -199,14 +199,14 @@ class AppwriteDataWriter:
                     value = float(raw_value) if raw_value is not None else None
                 except (ValueError, TypeError):
                     if failed_conversions == 0:  # Log only first conversion error to reduce noise
-                        self.logger.warning(f"Value conversion issues detected in batch (iteration {iteration})")
+                        self.logger.warning(f"Value conversion issues detected in batch (index {index})")
                     value = None
                     failed_conversions += 1
                 
                 cursor.execute("""
-                    INSERT INTO buffered_results (date, iteration, group_number, feature, value, result_id, mission_id)
+                    INSERT INTO buffered_results (date, index, group_number, feature, value, result_id, mission_id)
                     VALUES (DATE('now'), ?, ?, ?, ?, ?, ?)
-                """, (iteration, group_number, feature, value, result_id, mission_id))
+                """, (index, group_number, feature, value, result_id, mission_id))
                 
                 records_written += 1
             
@@ -244,7 +244,7 @@ class AppwriteDataWriter:
             else:
                 self.logger.info("No existing groups found, starting with group 0")
             
-            # Get all iterations for the current group
+            # Get all indexs for the current group
             group_results = self.db.list_documents(
                 database_id=self.database_id,
                 collection_id=self.collection_id,
@@ -256,9 +256,9 @@ class AppwriteDataWriter:
             
             group_indices = set()
             for doc in group_results['documents']:
-                group_indices.add(doc['iteration'])
+                group_indices.add(doc['index'])
             
-            self.logger.info(f"Group {current_group} has {len(group_indices)} iterations: {sorted(group_indices)}")
+            self.logger.info(f"Group {current_group} has {len(group_indices)} indexs: {sorted(group_indices)}")
             return current_group, group_indices
             
         except Exception as e:
@@ -288,19 +288,19 @@ class AppwriteDataWriter:
             
             for i, row in enumerate(buffered_data, 1):
                 # Handle different row formats for backward compatibility
-                if len(row) == 6:  # Old format: id, date, iteration, group_number, feature, value
-                    _, date, iteration, group_number, feature, value = row
-                    result_id = f"iter_{iteration}_group_{group_number}_{i}"
+                if len(row) == 6:  # Old format: id, date, index, group_number, feature, value
+                    _, date, index, group_number, feature, value = row
+                    result_id = f"iter_{index}_group_{group_number}_{i}"
                     mission_id = f"mission_{group_number}"
-                elif len(row) == 7:  # Format with result_id: id, date, iteration, group_number, feature, value, result_id
-                    _, date, iteration, group_number, feature, value, result_id = row
+                elif len(row) == 7:  # Format with result_id: id, date, index, group_number, feature, value, result_id
+                    _, date, index, group_number, feature, value, result_id = row
                     mission_id = f"mission_{group_number}"
-                else:  # New format with both: id, date, iteration, group_number, feature, value, result_id, mission_id
-                    _, date, iteration, group_number, feature, value, result_id, mission_id = row
+                else:  # New format with both: id, date, index, group_number, feature, value, result_id, mission_id
+                    _, date, index, group_number, feature, value, result_id, mission_id = row
                 
                 document_data = {
                     "date": date,
-                    "iteration": iteration,
+                    "index": index,
                     "group_number": group_number,
                     "feature": feature,
                     "value": value,
@@ -344,9 +344,9 @@ class AppwriteDataWriter:
         except Exception as e:
             self.logger.error(f"Critical error during flush operation: {e}")
 
-    def write_to_db(self, result: Dict[str, Any], iteration: int, group_number: int, mission_id: str = None) -> None:
+    def write_to_db(self, result: Dict[str, Any], index: int, group_number: int, mission_id: str = None) -> None:
         """Write data to database with intelligent error handling and reduced logging noise"""
-        self.logger.info(f"Database write - Iteration: {iteration}, Group: {group_number}, Features: {len(result)}")
+        self.logger.info(f"Database write - index: {index}, Group: {group_number}, Features: {len(result)}")
         
         try:
             # First, try to flush any existing buffered data
@@ -354,7 +354,7 @@ class AppwriteDataWriter:
             
             successful_writes = 0
             failed_writes = 0
-            result_id = f"iter_{iteration}_group_{group_number}_{datetime.now().strftime('%H%M%S')}"
+            result_id = f"iter_{index}_group_{group_number}_{datetime.now().strftime('%H%M%S')}"
             mission_id = mission_id or f"mission_{group_number}"
             error_messages = set()  # Track unique errors
             
@@ -363,12 +363,12 @@ class AppwriteDataWriter:
                     value_float = float(raw_value) if raw_value is not None else None
                 except (ValueError, TypeError):
                     if failed_writes == 0:  # Log conversion issues once per batch
-                        self.logger.warning(f"Data type conversion issues in iteration {iteration}")
+                        self.logger.warning(f"Data type conversion issues in index {index}")
                     value_float = None
                 
                 document_data = {
                     "date": datetime.now().strftime("%Y-%m-%d"),
-                    "iteration": iteration,
+                    "index": index,
                     "group_number": group_number,
                     "feature": feature_name,
                     "value": value_float,
@@ -395,7 +395,7 @@ class AppwriteDataWriter:
             # Batch buffer failed writes
             if failed_writes > 0:
                 failed_features = {k: v for i, (k, v) in enumerate(result.items()) if i >= successful_writes}
-                self.write_to_sqlite(failed_features, iteration, group_number, mission_id)
+                self.write_to_sqlite(failed_features, index, group_number, mission_id)
                 
                 if failed_writes > 2:  # Summarize if many failures
                     self.logger.warning(f"Multiple write failures ({failed_writes} total), all buffered locally")
@@ -410,7 +410,7 @@ class AppwriteDataWriter:
             
         except Exception as e:
             self.logger.error(f"Critical error during database write, buffering all data: {e}")
-            self.write_to_sqlite(result, iteration, group_number, mission_id)
+            self.write_to_sqlite(result, index, group_number, mission_id)
 
     def create_document(self, data: Dict[str, Any], document_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Create a single document with enhanced logging"""

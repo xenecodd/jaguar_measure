@@ -81,43 +81,6 @@ const DebugPanel = () => {
     };
   }, [loading]);
 
-  // Refresh logs periodically with exponential backoff on failure
-  // useEffect(() => {
-  //   let retryDelay = 5000; // Start with 5 seconds
-  //   let maxDelay = 30000;  // Max delay of 30 seconds
-  //   let consecutiveErrors = 0;
-
-  //   const fetchLogsWithBackoff = async () => {
-  //     try {
-  //       const response = await Promise.race([
-  //         apiService.getScanLog(),
-  //         new Promise((_, reject) =>
-  //           setTimeout(() => reject(new Error("Fetch timeout")), 5000)
-  //         )
-  //       ]);
-
-  //       const logs = response?.logs || response?.data?.logs || [];
-  //       setScanLog(logs);
-
-  //       // Reset on success
-  //       consecutiveErrors = 0;
-  //       retryDelay = 5000;
-  //     } catch (err) {
-  //       console.error("Error refreshing logs:", err);
-  //       consecutiveErrors++;
-
-  //       // Implement exponential backoff
-  //       if (consecutiveErrors > 1) {
-  //         retryDelay = Math.min(retryDelay * 1.5, maxDelay);
-  //       }
-  //     }
-  //   };
-
-  //   // Set up interval with current delay
-  //   const logInterval = setInterval(fetchLogsWithBackoff, retryDelay);
-
-  //   return () => clearInterval(logInterval);
-  // }, []);
 
   // Auto-scroll log container when new logs arrive
   useEffect(() => {
@@ -230,7 +193,23 @@ const DebugPanel = () => {
         <StatusCard title="Vacuum(DI0)" value={status.DI0 !== undefined ? 1 - status.DI0 : undefined} />
         <StatusCard title="Scan Active" value={status.scan_active} isBoolean={true} />
         <StatusCard title="Monitor Active" value={status.monitor_active} isBoolean={true} />
+
+        {/* Yeni eklenen bariyer kartları */}
+        <StatusCard title="Light Barrier 1 (DI14)" value={status.DI14} />
+        <StatusCard title="Light Barrier 2 (DI15)" value={status.DI15} />
+
+        {/* Ortak acil durum kartı */}
+        <StatusCard
+          title="Light Barrier Emergency"
+          value={
+            status.DI14 === 0 || status.DI15 === 0
+              ? "EMERGENCY"
+              : "OK"
+          }
+          isBoolean={false}
+        />
       </div>
+
 
       {/* Air Signal Button */}
       <div className="mb-6">

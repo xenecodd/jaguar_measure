@@ -6,7 +6,6 @@ import numpy as np
 import logging
 from models.robot_state import state
 from config import Config
-from services.robot_service import safe_get_di
 import multiprocessing
 from config import Config
 from openpyxl.styles import PatternFill
@@ -101,6 +100,7 @@ def make_json_serializable(obj):
 def generate_json_data(results, tolerances=config['tolerances']):
     """
     Generates JSON data from scan results, with tolerance checks and color coding.
+    Feature values are rounded to 3 decimal places.
     """
     if tolerances is None:
         tolerances = {}
@@ -139,9 +139,20 @@ def generate_json_data(results, tolerances=config['tolerances']):
         }
         
         for feature, value in result.items():
+            # Round numeric values to 3 decimal places
+            rounded_value = value
+            if isinstance(value, (float, int)):
+                rounded_value = round(value, 3)
+            elif isinstance(value, str):
+                try:
+                    float_val = float(value)
+                    rounded_value = round(float_val, 3)
+                except ValueError:
+                    rounded_value = value
+
             feature_data = {
                 "name": feature,
-                "value": value,
+                "value": rounded_value,
                 "background_color": iteration_color
             }
             
@@ -153,7 +164,7 @@ def generate_json_data(results, tolerances=config['tolerances']):
             try:
                 json.dumps(feature_data["value"])
             except TypeError:
-                feature_data["value"] = str(value)
+                feature_data["value"] = str(rounded_value)
             
             # Tolerance check and color coding
             if feature in tolerances:
@@ -161,7 +172,7 @@ def generate_json_data(results, tolerances=config['tolerances']):
                 
                 try:
                     # Try to convert to numeric for tolerance check
-                    numeric_value = float(value) if isinstance(value, str) else value
+                    numeric_value = float(rounded_value) if isinstance(rounded_value, str) else rounded_value
                     
                     # Calculate distance from target
                     distance = calculate_tolerance_distance(numeric_value, target)
@@ -173,8 +184,8 @@ def generate_json_data(results, tolerances=config['tolerances']):
                     tolerance_data = {
                         "target": target,
                         "tolerance": tolerance,
-                        "distance": distance,
-                        "tolerance_remaining": tolerance - distance,
+                        "distance": round(distance, 3),
+                        "tolerance_remaining": round(tolerance - distance, 3),
                         "within_tolerance": within_tolerance,
                         "color": "00B050" if within_tolerance else "FF0000"  # Green if within tolerance, red if not
                     }
@@ -338,7 +349,7 @@ def cleanup_scan_process(process):
             if process.poll() is None:  # Still running
                 process.terminate()
                 try:
-                    process.wait(timeout=5)  # Wait up to 5 seconds
+                    process.wait(timeout=2)  # Wait up to 5 seconds
                 except subprocess.TimeoutExpired:
                     process.kill()  # Force kill if terminate hangs
                     process.wait()
@@ -355,21 +366,30 @@ def monitor_robot(stop_event, restart_event):
     # Başlatmadan önce kısa bir bekleme süresi
     time.sleep(1)
     
-    logger.info(f"Monitor robot started - Current DI8: {safe_get_di(98)}")
+    logger.info(f"Monitor robot started - Current DI8: {state.di_values[8]}, DI9: {state.di_values[9]}")
     
     # DI8 durumunu kontrol et; güvenli değilse scan durduruluyor.
     while not stop_event.is_set():
         try:
-            di8 = safe_get_di(98)
+            di8 = state.di_values[8]
+            di14 = state.di_values[14]
+            di15 = state.di_values[15]
+            # di1 = state.di_values[1]
+            # logger.error("DI8 %d", (di8))
+            # logger.error("di14 %d", (di14))
+            # logger.error("di15 %d", (di15))
+            # logger.info("di11 %d", (di1))
+
+            
         except Exception as e:
             logger.error(f"Error reading DI8: {e}")
             break
-        if di8 == (0, 1):
+        if (di8 == 1 or di14 ==0 or di15 == 0) and state.mode == 0:
             logger.info(f"Stop condition met: DI8={di8}")
             state.profiler.stop_acquisition()
             state.profiler.disconnect()
-            robot.StopMotion()
             stop_event.set()
+            robot.StopMotion()
             state.set_scan_started(False)
             break
             
@@ -379,12 +399,12 @@ def monitor_robot(stop_event, restart_event):
     # DI9 üzerinden yeniden başlatma sinyali bekleniyor:
     while True:
         try:
-            current_di9 = safe_get_di(99)
+            current_di9 = state.di_values[9]
         except Exception as e:
             logger.error(f"Error reading DI9: {e}")
             break
 
-        if current_di9 == (0, 1):
+        if current_di9 == 1:
             logger.info(f"Restart signal detected: DI9={current_di9}")
             restart_event.set()
             break
@@ -402,17 +422,17 @@ def auto_restart_monitor():
     while True:
         # Check conditions for starting a new scan:
         # 1. Scan is not already running
-        # 2. DI9 (start button) is (0,1)
-        # 3. DI8 (safety button) is (0,0)
+        # 2. DI9 (start button) is 1
+        # 3. DI8 (safety button) is 0
         if (not state.scan_started and 
-            state.di9_status == (0, 1) and 
-            state.di8_status == (0, 0)) or state.alt_button_pressed:
+            state.di_values[9] == 1 and 
+            state.di_values[8] == 0) or state.alt_button_pressed:
             
             if state.alt_button_pressed:
                 state.alt_button_pressed = False
                 logger.info("Auto-restart triggered by ALT button")
             else:
-                logger.info(f"Auto-restart triggered by DI9={state.di9_status}, DI8={state.di8_status}")
+                logger.info(f"Auto-restart triggered by DI9={state.di_values[9]}, DI8={state.di_values[8]}")
 
             # Create new events
             state.stop_event = multiprocessing.Event()
@@ -444,7 +464,7 @@ def auto_restart_monitor():
             logger.info("Processing restart event")
             state.restart_event.clear()
 
-            if state.di8_status == (0, 0):
+            if state.di_values[8] == 0:
                 logger.info("Conditions are safe for restart")
                 state.stop_event = multiprocessing.Event()
 
@@ -464,7 +484,7 @@ def auto_restart_monitor():
                 state.set_scan_started(True)
                 logger.info("Scan restarted successfully")
             else:
-                logger.warning(f"Cannot restart: unsafe conditions DI8={state.di8_status}")
+                logger.warning(f"Cannot restart: unsafe conditions DI8={state.di_values[8]}")
 
         time.sleep(0.5)
 
